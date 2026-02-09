@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AIEC Protocol // SAFETY INTERLOCK</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --color-void: #050505;
+      --color-cyan: #00F3FF;
+      --color-gold: #FFD700;
+      --color-orange: #FF4500;
+    }
+
+    html,body { height:100%; }
+    body {
+      margin:0;
+      background:var(--color-void);
+      color:white;
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+      cursor: default;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:var(--color-void); }
+    ::-webkit-scrollbar-thumb { background:#1a1a1a; border:1px solid var(--color-cyan); border-radius:12px; }
+
+    /* Noise overlay */
+    .noise-overlay {
+      position: fixed; inset:0; z-index:60; pointer-events:none; opacity:0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' fill='rgba(0,0,0,0.03)'/%3E%3C/svg%3E");
+    }
+
+    /* scanlines */
+    .scanlines {
+      position: fixed; inset:0; z-index:61; pointer-events:none;
+      background-image: linear-gradient(transparent 85%, rgba(255,255,255,0.02) 86%, rgba(0,0,0,0.05) 100%);
+      background-size: 100% 6px;
+      opacity:0.06;
+    }
+
+    /* subtle pattern overlay (carbon) */
+    .pattern {
+      position: fixed; inset:0; z-index:59; pointer-events:none;
+      background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+      opacity:0.05;
+    }
+
+    /* UI helpers */
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.06); }
+    .card { border-radius: 18px; }
+
+    /* hero typography */
+    .hero-title { font-family: 'Rajdhani', sans-serif; line-height: .85; letter-spacing: -0.02em; }
+
+    /* small helpers */
+    .mono { font-family: 'Space Mono', monospace; letter-spacing: 0.1em; }
+  </style>
+</head>
+<body>
+
+  <!-- overlays -->
+  <div class="noise-overlay"></div>
+  <div class="scanlines"></div>
+  <div class="pattern"></div>
+
+  <!-- Floating top nav -->
+  <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+    <div class="bg-black/60 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 flex items-center gap-6 shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
+      <div class="hidden lg:block cursor-pointer flex items-center gap-3" onclick="scrollToTop()">
+        <div class="w-2 h-2 rounded-full bg-[var(--color-cyan)] animate-pulse shadow-[0_0_10px_var(--color-cyan)]"></div>
+        <span class="text-white/80 mono text-xs font-bold">AIEC PROTOCOL // EST. 2026</span>
+      </div>
+
+      <div id="menu" class="flex gap-6 overflow-x-auto items-center max-w-[60vw]">
+        <button class="text-white/60 hover:text-white text-xs mono font-bold" onclick="scrollToSection('adaptive')">ADAPTIVE</button>
+        <button class="text-white/60 hover:text-white text-xs mono font-bold" onclick="scrollToSection('intelligence')">INTELLIGENCE</button>
+        <button class="text-white/60 hover:text-white text-xs mono font-bold" onclick="scrollToSection('entropy')">ENTROPY</button>
+        <button class="text-white/60 hover:text-white text-xs mono font-bold" onclick="scrollToSection('control')">CONTROL</button>
+        <button class="text-white/60 hover:text-white text-xs mono font-bold" onclick="scrollToSection('system')">SYSTEM</button>
+      </div>
+
+      <button class="ml-4 px-4 py-2 bg-[var(--color-cyan)] text-black rounded-full text-xs mono font-bold" onclick="scrollToSection('sales')">
+        BUY NOW
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="min-h-screen flex items-center justify-center relative pt-36 pb-20 z-10 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://i.postimg.cc/g2XQLhzL/Gemini-Generated-Image-ws3qvkws3qvkws3q.png'); opacity: 0.45; filter: saturate(0.9) contrast(0.95);"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-transparent to-[#050505]/95"></div>
+
+    <div class="relative z-20 max-w-[100rem] w-full px-6 text-center">
+      <div class="mb-12">
+        <h1 class="hero-title text-6xl md:text-8xl lg:text-[6.5rem] font-bold">ADAPTIVE INTELLIGENCE<br/><span class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-cyan)] via-white to-[var(--color-cyan)]">ENTROPY CONTROL SYSTEM</span></h1>
+        <p class="mt-8 mono text-white/90 text-sm md:text-lg font-bold uppercase tracking-widest">Thermodynamic regularization for the singularity.</p>
+      </div>
+
+      <div class="flex flex-col md:flex-row justify-center gap-8 items-start mt-8">
+        <div class="max-w-xl glass p-8 rounded-2xl text-left border-l-8 border-[var(--color-orange)]">
+          <h3 class="text-[var(--color-orange)] font-bold text-2xl flex items-center gap-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M10.29 3.86L1.82 12.33a1 1 0 0 0 0 1.41l8.47 8.47a1 1 0 0 0 1.41 0L20.7 15.7a1 1 0 0 0 0-1.41L11.71 3.86a1 1 0 0 0-1.42 0z"></path></svg> The Instability</h3>
+          <p class="text-gray-200 mt-4 leading-relaxed">Current infrastructure is reactive. By the time a market crash or grid blackout is detected, entropy has cascaded beyond containment.</p>
+        </div>
+
+        <div class="flex flex-col items-center gap-6">
+          <button class="px-8 py-4 bg-[var(--color-gold)] text-black font-bold rounded-lg" onclick="scrollToSection('sales')">REQUEST ACCESS</button>
+          <div class="text-sm text-white/60 mono">Thermodynamic regularization • Institutional Grade</div>
+        </div>
+
+        <div class="max-w-xl glass p-8 rounded-2xl text-left border-l-8 border-[var(--color-cyan)]">
+          <h3 class="text-[var(--color-cyan)] font-bold text-2xl flex items-center gap-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2-1.343-2-3-2zM5 20v-2.5C5 14.567 7.567 13 11 13h2c3.433 0 6 1.567 6 4.5V20"></path></svg> Cognitive Velocity</h3>
+          <p class="text-gray-200 mt-4 leading-relaxed">When information flow exceeds cognitive processing limits you hit the Hallucination Horizon — AIEC prevents that by imposing a physics-first veto.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10">
+
+    <!-- ADAPTIVE -->
+    <section id="adaptive" class="py-24 px-6">
+      <div class="max-w-7xl mx-auto text-center mb-12">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white/5 border border-white/10 mb-6 text-[var(--color-cyan)]">
+          <!-- activity icon simple -->
+          <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M3 12h3l3 8 4-16 3 8h4"></path></svg>
+        </div>
+        <h2 class="text-5xl font-bold hero-title">Adaptive Grid</h2>
+        <p class="mono text-[var(--color-cyan)] tracking-widest mt-2">Infrastructure Mesh Stabilization</p>
+      </div>
+
+      <div class="max-w-[90rem] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="card glass p-8">
+          <div class="mb-4"><svg class="w-8 h-8 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M12 8v8"></path></svg></div>
+          <h3 class="text-2xl font-bold">Load Balancing</h3>
+          <p class="mt-3 text-gray-200">Real-time energy distribution preventing localized blackouts.</p>
+        </div>
+
+        <div class="card glass p-8">
+          <div class="mb-4"><svg class="w-8 h-8 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg></div>
+          <h3 class="text-2xl font-bold">Self-Healing Mesh</h3>
+          <p class="mt-3 text-gray-200">Automated rerouting of power and data around damaged nodes.</p>
+        </div>
+
+        <div class="card glass p-8">
+          <div class="mb-4"><svg class="w-8 h-8 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M12 2v20"></path></svg></div>
+          <h3 class="text-2xl font-bold">Entropy Regulation</h3>
+          <p class="mt-3 text-gray-200">Thermal monitoring to keep hardware within optimal thermodynamics.</p>
+        </div>
+      </div>
+
+      <div class="max-w-4xl mx-auto mt-12 bg-black/50 p-10 rounded-2xl border border-white/10">
+        <h4 class="text-3xl font-bold mb-4">THE POWER GRID PROBLEM</h4>
+        <p class="text-gray-200 leading-relaxed">Traditional grids are reactive. AIEC implements a <strong class="text-[var(--color-cyan)]">Predictive Thermodynamic Model</strong> that anticipates load shifts milliseconds before they occur, vetting energy requests before they stress hardware.</p>
+      </div>
+    </section>
+
+    <!-- INTELLIGENCE -->
+    <section id="intelligence" class="py-24 px-6 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.6))]">
+      <div class="max-w-7xl mx-auto text-center mb-12">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white/5 border border-white/10 mb-6 text-[var(--color-cyan)]">
+          <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M12 2a10 10 0 100 20 10 10 0 000-20z"></path></svg>
+        </div>
+        <h2 class="text-5xl font-bold hero-title">Neural Veto</h2>
+        <p class="mono text-[var(--color-cyan)] tracking-widest mt-2">AI Hallucination Control</p>
+      </div>
+
+      <div class="max-w-[90rem] mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div class="card glass p-8">
+            <h3 class="font-bold text-2xl">Truth Verification</h3>
+            <p class="mt-3 text-gray-200">Cross-referencing generated tokens against immutable fact databases.</p>
+          </div>
+          <div class="card glass p-8">
+            <h3 class="font-bold text-2xl">Logic Gating</h3>
+            <p class="mt-3 text-gray-200">Preventing non-sequitur outputs by measuring semantic entropy.</p>
+          </div>
+          <div class="card glass p-8">
+            <h3 class="font-bold text-2xl">Cognitive Cap</h3>
+            <p class="mt-3 text-gray-200">Limiting processing depth to prevent recursive error loops.</p>
+          </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h3 class="text-4xl font-bold mb-4">STOPPING THE DRIFT</h3>
+            <p class="text-gray-200 leading-relaxed">LLMs suffer from drift — AIEC treats drift as thermodynamic inefficiency and applies a cooling algorithm to neural weights, freezing hallucinations before they reach output.</p>
+          </div>
+          <div class="bg-white/5 border border-white/10 p-8 rounded-2xl">
+            <div class="font-mono text-lg text-[var(--color-cyan)] mb-4">> SIMULATING VETO...</div>
+            <div class="space-y-3">
+              <div class="h-4 w-3/4 bg-white/20 rounded"></div>
+              <div class="h-4 w-full bg-white/20 rounded"></div>
+              <div class="h-4 w-5/6 bg-red-500/50 rounded animate-pulse"></div>
+              <div class="text-red-500 text-sm font-bold">>> HALLUCINATION DETECTED. OUTPUT BLOCKED.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTROPY -->
+    <section id="entropy" class="py-24 px-6">
+      <div class="max-w-7xl mx-auto text-center mb-12">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white/5 border border-white/10 mb-6 text-[var(--color-orange)]">
+          <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M12 2v20"></path></svg>
+        </div>
+        <h2 class="text-5xl font-bold hero-title">Entropy Core</h2>
+        <p class="mono text-[var(--color-orange)] tracking-widest mt-2">The Physics of Information</p>
+      </div>
+
+      <div class="max-w-[90rem] mx-auto space-y-12">
+        <p class="text-gray-200 max-w-3xl mx-auto text-lg">"In a closed system, entropy always increases." Information behaves like energy. Too much unchecked data creates "Noise." The OBELISK PROTOCOL demonstrates real-time entropy negation. Scroll to observe protection sequence.</p>
+
+        <!-- gallery mapped from your ENTROPY_GALLERY -->
+        <div class="space-y-12">
+          <!-- item 1 -->
+          <div class="flex flex-col md:flex-row items-center gap-8">
+            <div class="flex-1">
+              <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <img src="https://i.postimg.cc/sfJr35xQ/download.jpg" alt="OBELISK CORE // BASELINE" class="w-full h-auto transform transition-transform group-hover:scale-105" />
+                <div class="absolute top-4 left-4 bg-black/60 text-[var(--color-orange)] px-3 py-1 text-xs mono rounded">FIG 01</div>
+              </div>
+            </div>
+            <div class="flex-1 space-y-3">
+              <div class="text-[var(--color-orange)] mono text-sm tracking-wider flex items-center gap-2">TIMESTAMP: T+0.00s</div>
+              <h3 class="text-3xl font-bold">OBELISK CORE // BASELINE</h3>
+              <p class="text-gray-200 border-l-4 border-[var(--color-orange)] pl-4">System integrity at 100%. Thermal noise within nominal parameters. The foundation is secure.</p>
+            </div>
+          </div>
+
+          <!-- item 2 -->
+          <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+            <div class="flex-1">
+              <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <img src="https://i.postimg.cc/dQ9YJG3Q/download-(1).jpg" alt="THREAT DETECTED // BLOOM" class="w-full h-auto" />
+                <div class="absolute top-4 left-4 bg-black/60 text-[var(--color-orange)] px-3 py-1 text-xs mono rounded">FIG 02</div>
+              </div>
+            </div>
+            <div class="flex-1 space-y-3">
+              <div class="text-[var(--color-orange)] mono text-sm tracking-wider flex items-center gap-2">TIMESTAMP: T+15.00s</div>
+              <h3 class="text-3xl font-bold">THREAT DETECTED // BLOOM</h3>
+              <p class="text-gray-200 border-l-4 border-[var(--color-orange)] pl-4">External data injection causing rapid decoherence. Entropy rising above safety thresholds.</p>
+            </div>
+          </div>
+
+          <!-- additional gallery items (condensed) -->
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="card glass p-6">
+              <img src="https://i.postimg.cc/NGxcQRFM/download-(2).jpg" alt="" class="w-full rounded" />
+              <h4 class="mt-4 font-bold">AIEC INTERVENTION // ENGAGED</h4>
+              <p class="text-gray-200">Thermodynamic governor applying immediate impedance. The 'Veto' protocol is active.</p>
+            </div>
+            <div class="card glass p-6">
+              <img src="https://i.postimg.cc/T2c6Tn13/download-(3).jpg" alt="" class="w-full rounded" />
+              <h4 class="mt-4 font-bold">SHIELD HARMONICS // STABILIZING</h4>
+              <p class="text-gray-200">Converting kinetic attack energy into harmless thermal waste. The structure holds.</p>
+            </div>
+            <div class="card glass p-6">
+              <img src="https://i.postimg.cc/dQ9YJG30/download-(4).jpg" alt="" class="w-full rounded" />
+              <h4 class="mt-4 font-bold">CASCADE FAILURE // DIVERTED</h4>
+              <p class="text-gray-200">Isolating infected nodes. Grid frequency resynchronizing to prevent total collapse.</p>
+            </div>
+            <div class="card glass p-6">
+              <img src="https://i.postimg.cc/1RKQyDX8/download-(5).jpg" alt="" class="w-full rounded" />
+              <h4 class="mt-4 font-bold">NEURAL RESYNC // IN PROGRESS</h4>
+              <p class="text-gray-200">Re-aligning logic gates to physics-based truth constraints. Hallucination dampened.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTROL -->
+    <section id="control" class="py-24 px-6 bg-black/20">
+      <div class="max-w-7xl mx-auto text-center mb-12">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white/5 border border-white/10 mb-6 text-[#00F3FF]">
+          <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M3 12h18"></path></svg>
+        </div>
+        <h2 class="text-5xl font-bold hero-title">Market Control</h2>
+        <p class="mono text-[var(--color-cyan)] tracking-widest mt-2">High-Frequency Trading Stabilization</p>
+      </div>
+
+      <div class="max-w-[90rem] mx-auto">
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+          <div class="card glass p-8">
+            <h4 class="font-bold text-xl">Flash Crash Veto</h4>
+            <p class="text-gray-200 mt-3">Halting trading algorithms instantly when volatility exceeds entropy limits.</p>
+          </div>
+          <div class="card glass p-8">
+            <h4 class="font-bold text-xl">Liquidity Preservation</h4>
+            <p class="text-gray-200 mt-3">Ensuring market depth remains physically sustainable.</p>
+          </div>
+          <div class="card glass p-8">
+            <h4 class="font-bold text-xl">Arbitrage Dampening</h4>
+            <p class="text-gray-200 mt-3">Reducing predatory latency arbitrage efficiency.</p>
+          </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto bg-[#0A0A0A]/90 border border-white/10 p-6 rounded-2xl mono text-sm text-green-400">
+          <div class="opacity-60 mb-2 flex justify-between"><span>LIVE MARKET TERMINAL // AEIC MONITORING</span><span class="animate-pulse">● REC</span></div>
+          <div>[10:42:01] ORDER FLOW: NORMAL</div>
+          <div>[10:42:02] BID/ASK SPREAD: 0.02%</div>
+          <div class="text-red-500 font-bold">[10:42:05] VOLATILITY SPIKE DETECTED (ENTROPY &gt; 85%)</div>
+          <div class="text-[var(--color-cyan)] font-bold">[10:42:05] AEIC INTERVENTION: TRADING PAUSED (300ms)</div>
+          <div>[10:42:06] ORDER BOOK REALIGNED. RESUMING.</div>
+          <div>[10:42:07] STABILITY RESTORED.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECT PHOENIX (sub-section of control) -->
+    <section class="py-20 px-6">
+      <div class="max-w-6xl mx-auto text-center">
+        <div class="inline-block px-4 py-1 border border-[#FFD700] rounded-full text-[#FFD700] mb-6">CLASSIFIED PROTOTYPE // DEPLOYED</div>
+        <h3 class="text-4xl md:text-6xl font-bold mb-6">PROJECT <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#FFA500]">PHOENIX</span></h3>
+        <p class="text-gray-200 max-w-3xl mx-auto">The Phoenix DV$ Architecture applies AEIC principles to crypto. It calculates Information Fidelity and vetoes fake-outs.</p>
+
+        <div class="grid md:grid-cols-2 gap-8 mt-8 max-w-4xl mx-auto">
+          <div class="card glass p-8">
+            <h4 class="text-[#FFD700] font-mono font-bold mb-2">SIGNAL INTEGRITY VETO</h4>
+            <p class="text-gray-300">If entropy suggests a fake-out, the Signal Integrity Protocol vetoes the trade instantly.</p>
+          </div>
+          <div class="card glass p-8">
+            <h4 class="text-[#FFD700] font-mono font-bold mb-2">KAMA SAFEGUARDS</h4>
+            <p class="text-gray-300">Kaufman's Adaptive Moving Average as a dynamic volatility filter; the bot adapts entry/exit sensitivity based on market noise.</p>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <button class="px-8 py-3 border border-[#FFD700] text-[#FFD700] rounded" onclick="alert('Requesting performance data — institutional verification required.')">REQUEST PERFORMANCE DATA</button>
+          <div class="text-xs text-white/30 mt-3 mono">*Restricted Access. Institutional verification required.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SYSTEM -->
+    <section id="system" class="py-24 px-6">
+      <div class="max-w-7xl mx-auto text-center mb-8">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white/5 border border-white/10 mb-6 text-[var(--color-cyan)]">
+          <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M3 12h18"></path></svg>
+        </div>
+        <h2 class="text-5xl font-bold hero-title">Defense Systems</h2>
+        <p class="mono text-[var(--color-cyan)] tracking-widest mt-2">Aerospace & Military Integration</p>
+      </div>
+
+      <div class="max-w-[90rem] mx-auto grid md:grid-cols-2 gap-8">
+        <div class="card glass p-8">
+          <h4 class="text-2xl font-bold mb-2">GLOBAL OVERWATCH</h4>
+          <p class="text-gray-200">AIEC connects siloed defense networks into a unified entropy map. Predicting geopolitical flashpoints via data-density analysis.</p>
+        </div>
+        <div class="card glass p-8">
+          <h4 class="text-2xl font-bold mb-2">SECURE COMMS</h4>
+          <p class="text-gray-200">Quantum-resistant encryption layering. The information degrades into noise for unauthorized users.</p>
+        </div>
+
+        <div class="card glass p-8">
+          <h4 class="text-2xl font-bold mb-2">AUTONOMOUS DRONES</h4>
+          <p class="text-gray-200">Swarm logic stability — each drone maintains a localized entropy budget for decision-making.</p>
+        </div>
+        <div class="card glass p-8">
+          <h4 class="text-2xl font-bold mb-2">CONTRACTING</h4>
+          <p class="text-gray-200">Available for GovCloud deployment. FedRAMP High Ready.</p>
+          <button class="mt-6 text-[var(--color-cyan)] font-bold" onclick="scrollToSection('sales')">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SALES / Pricing -->
+    <section id="sales" class="py-24 px-6 bg-gradient-to-b from-transparent to-black/80">
+      <div class="max-w-7xl mx-auto text-center mb-8">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white/5 border border-white/10 mb-6 text-[var(--color-cyan)]">
+          <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M12 2l3 7h7l-5.5 4L20 21l-8-6-8 6 3.5-7L2 9h7z"></path></svg>
+        </div>
+        <h2 class="text-5xl font-bold hero-title">Acquire Protocol</h2>
+        <p class="mono text-[var(--color-cyan)] tracking-widest mt-2">Licensing & Enterprise Solutions</p>
+      </div>
+
+      <div class="max-w-[90rem] mx-auto grid lg:grid-cols-3 gap-8">
+        <!-- NODE -->
+        <div class="glass p-8 rounded-2xl border border-white/10">
+          <div class="text-sm mono uppercase tracking-widest mb-3">NODE ACCESS</div>
+          <div class="text-4xl font-bold mb-2">$5,000 <span class="text-sm text-gray-400">/mo</span></div>
+          <div class="inline-block bg-white/5 py-1 px-3 rounded text-xs text-gray-400 mb-6">SINGLE THREAD</div>
+          <p class="text-gray-200 mb-6">Local instantiation for individual AI models or micro-grids.</p>
+          <ul class="text-gray-300 mb-6 space-y-2">
+            <li>Entropy Veto (Local)</li>
+            <li>Latency Governor (Standard)</li>
+            <li>Hallucination Dampening</li>
+            <li>Real-Time Variance Metrics</li>
+            <li>Flash-Crash Isolation</li>
+          </ul>
+          <button class="w-full py-3 bg-white/10 rounded">REQUEST ACCESS (NDA)</button>
+        </div>
+
+        <!-- FLEET (highlight) -->
+        <div class="p-8 rounded-2xl border border-[var(--color-cyan)] bg-white/6 shadow-[0_0_60px_rgba(0,243,255,0.07)] transform md:-translate-y-6">
+          <div class="absolute -mt-12 left-1/2 -translate-x-1/2 bg-[var(--color-cyan)] text-black px-6 py-2 rounded-full text-sm font-bold">Recommended</div>
+          <div class="mt-6 text-[var(--color-cyan)] mono uppercase tracking-widest mb-3">CORPORATE FLEET</div>
+          <div class="text-4xl font-bold mb-2">$25,000 <span class="text-sm text-gray-400">/mo</span></div>
+          <div class="inline-block bg-white/5 py-1 px-3 rounded text-xs text-gray-400 mb-6">REGIONAL CLUSTER</div>
+          <p class="text-gray-200 mb-6">Multi-node orchestration for regional utilities and mid-market exchanges.</p>
+          <ul class="text-gray-300 mb-6 space-y-2">
+            <li>Entropy Veto (Regional Cluster)</li>
+            <li>Latency Governor (Aggressive)</li>
+            <li>Multi-Node Orchestration</li>
+            <li>Regional Load Balancing</li>
+            <li>Custom Variance Heuristics</li>
+          </ul>
+          <button class="w-full py-3 bg-[var(--color-cyan)] text-black rounded font-bold">REQUEST FLEET QUOTE (NDA)</button>
+        </div>
+
+        <!-- GRID -->
+        <div class="glass p-8 rounded-2xl border border-white/10">
+          <div class="text-sm mono uppercase tracking-widest mb-3">ENTERPRISE GRID</div>
+          <div class="text-4xl font-bold mb-2">$125,000 <span class="text-sm text-gray-400">/mo</span></div>
+          <div class="inline-block bg-white/5 py-1 px-3 rounded text-xs text-gray-400 mb-6">GLOBAL MESH</div>
+          <p class="text-gray-200 mb-6">Full lattice integration for sovereign grids and Tier-1 exchanges.</p>
+          <ul class="text-gray-300 mb-6 space-y-2">
+            <li>Entropy Veto (Global Mesh)</li>
+            <li>Latency Governor (Pre-Emptive)</li>
+            <li>Shadow Simulation (t+1)</li>
+            <li>Dedicated FPGA Interposer</li>
+            <li>24/7 "War Room" Engineer Uplink</li>
+          </ul>
+          <button class="w-full py-3 bg-white/10 rounded">INITIATE CLASSIFIED UPLINK</button>
+        </div>
+      </div>
+
+      <div class="max-w-4xl mx-auto mt-12 p-8 border border-white/10 rounded-2xl bg-black/40 text-center">
+        <h4 class="text-white/60 mb-4 mono tracking-widest">Trusted By Global Infrastructure</h4>
+        <div class="h-20 opacity-20"> [ Institutional partner space — add logos here ] </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#050505] border-t border-white/10 pt-12 pb-6 mt-12">
+    <div class="max-w-[90rem] mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-3 h-3 rounded-full bg-[var(--color-cyan)] shadow-[0_0_10px_var(--color-cyan)]"></div>
+            <span class="text-lg font-bold">AIEC PROTOCOL</span>
+          </div>
+          <p class="text-gray-400 text-sm max-w-xs">Thermodynamic regularization for the singularity. Implementing institutional-grade entropy control across global financial and energy infrastructures.</p>
+        </div>
+
+        <div>
+          <h5 class="mono text-sm text-white/80 mb-4 tracking-wider">ECOSYSTEM</h5>
+          <ul class="space-y-2 text-gray-400 text-xs">
+            <li><a href="#adaptive" class="hover:text-[var(--color-cyan)]">ADAPTIVE GRID</a></li>
+            <li><a href="#intelligence" class="hover:text-[var(--color-cyan)]">NEURAL VETO</a></li>
+            <li><a href="#entropy" class="hover:text-[var(--color-cyan)]">ENTROPY CORE</a></li>
+            <li><a href="#control" class="hover:text-[var(--color-cyan)]">MARKET CONTROL</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="mono text-sm text-white/80 mb-4 tracking-wider">LEGAL FRAMEWORK</h5>
+          <ul class="space-y-2 text-gray-400 text-xs">
+            <li><button class="hover:text-white">TECHNICAL WHITEPAPER</button></li>
+            <li><button class="hover:text-white">TERMS OF SERVICE</button></li>
+            <li><button class="hover:text-white">PRIVACY POLICY</button></li>
+            <li><button class="hover:text-white">PATENT FILINGS (CIPO)</button></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="mono text-sm text-white/80 mb-4 tracking-wider">SYSTEM STATUS</h5>
+          <div class="p-4 bg-black/40 border border-white/10 rounded">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs mono text-gray-400">OPERATIONAL</span>
+              <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            </div>
+            <div class="w-full bg-white/10 h-1 rounded-full overflow-hidden mb-2"><div style="width:98%" class="h-full bg-[var(--color-cyan)]"></div></div>
+            <div class="text-[10px] text-[var(--color-cyan)] mono">UPTIME: 99.999%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 mono">
+        <div>© 2026 AIEC PROTOCOL. ALL RIGHTS RESERVED.</div>
+        <div class="flex items-center gap-2"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M12 2l4 4-4 4-4-4z"></path></svg> ENCRYPTED CONNECTION // SHA-256</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- lightweight scripts -->
+  <script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    function scrollToTop() { window.scrollTo({top:0, behavior:'smooth'}); }
+
+    // small helper to show how you'd open "support" like the original chat widget
+    function openSupport() {
+      alert('AIEC Support Interface Online — this static build does not connect to Gemini APIs.');
+    }
+  </script>
+
+</body>
+</html>
