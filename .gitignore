@@ -1,0 +1,11 @@
+.vercel
+.env*.local
+
+node_modules/
+dist/
+**/*.mp4
+**/*.webm
+**/*.mp3
+**/*.pdf
+**/*.gif
+.env*

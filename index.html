@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
+    
+    <title>A.I.C.E. Systems Corp. | Universal Stability Architecture</title>
+    <meta name="description" content="A.I.C.E. Systems Corp. is a B2B technology architect developing Sovereign Infrastructure, EMP-hardening protocols, and the Adaptive Intelligence Control of Entropy (A.I.C.E.)." />
+    <meta name="keywords" content="Universal Stability Architecture, AICE protocol, sovereign infrastructure, EMP-hardening, deviance viscosity stabilizer, algorithmic stability, B2B technology architect" />
+    <meta name="author" content="Shaun Randal Deeves | A.I.C.E. Systems Corp." />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.aice.network/" />
+    <meta property="og:title" content="A.I.C.E. Systems Corp. | Universal Stability Architecture" />
+    <meta property="og:description" content="Developing Sovereign Infrastructure and the Adaptive Intelligence Control of Entropy (A.I.C.E.)." />
+    <meta property="og:image" content="https://www.aice.network/assets/images/homepage/MAIN_TITLE.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="A.I.C.E. Systems Corp. | Universal Stability Architecture" />
+    <meta name="twitter:description" content="Developing Sovereign Infrastructure and the Adaptive Intelligence Control of Entropy (A.I.C.E.)." />
+    <meta name="twitter:image" content="https://www.aice.network/assets/images/homepage/MAIN_TITLE.png" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.aice.network/#organization",
+          "name": "A.I.C.E. Systems Corp.",
+          "url": "https://www.aice.network",
+          "sameAs": [
+            "https://www.aicesystems.pro",
+            "https://www.aiprotocol.pro"
+          ],
+          "logo": "https://www.aice.network/assets/images/aicelogo.png",
+          "foundingDate": "2026-03-03",
+          "founder": {
+            "@type": "Person",
+            "name": "Shaun Randal Deeves"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "200 Edgar Ln",
+            "addressLocality": "Sherwood Park",
+            "addressRegion": "AB",
+            "postalCode": "T8H 2X6",
+            "addressCountry": "CA"
+          },
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "email": "finance@aice.network",
+              "contactType": "Finance and Compliance"
+            },
+            {
+              "@type": "ContactPoint",
+              "email": "pilot@aice.network",
+              "contactType": "Sales and Pilot Deployments"
+            }
+          ]
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://www.aice.network/#software",
+          "name": "Adaptive Intelligence Control of Entropy",
+          "alternateName": "A.I.C.E.",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web, API, Air-Gapped",
+          "provider": {
+            "@id": "https://www.aice.network/#organization"
+          },
+          "description": "Enterprise software designed to monitor data flow, detect anomalies, and mitigate system instability in real time via the Deviance Viscosity Stabilizer (DVS) protocol."
+        }
+      ]
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        --color-void: #050505;
+        --color-cyan: #00F3FF;
+        --color-gold: #FFD700;
+        --color-orange: #FF4500;
+      }
+      body { background-color: var(--color-void); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; margin: 0; cursor: crosshair; }
+      .noise-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+      .scanlines { position: fixed; inset: 0; pointer-events: none; z-index: 51; background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.1) 50%); background-size: 100% 4px; }
+      @keyframes horizonPulse {
+        0%, 100% { box-shadow: 0 0 20px var(--color-cyan); opacity: 0.8; }
+        50% { box-shadow: 0 0 60px var(--color-cyan); opacity: 1; }
+      }
+      .event-horizon { animation: horizonPulse 4s infinite ease-in-out; }
+    </style>
+  </head>
+  <body>
+    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,2128 @@
+import React, { useState, useEffect, useRef, Component, ErrorInfo } from 'react';
+import { 
+  Unlock, ShieldCheck, Activity, Zap, Cpu, 
+  ChevronRight, ArrowLeft, MessageSquare, X, Globe, 
+  Fingerprint, Aperture, Maximize2, ArrowUpRight, 
+  Server, CheckCircle, Send, Layers, FileText,
+  MousePointer2, MoveDown, Brain, Workflow, Lock,
+  TrendingUp, Radio, CheckCircle2, AlertCircle,
+  BarChart3, Database, Eye, Terminal, Shield, BookOpen, AlertTriangle,
+  Bird, Power, ChevronDown, Network, User, UserCheck, LogIn, Mail,
+  CreditCard, Settings, LogOut, Check, Globe2, Thermometer, Gauge,
+  Box, Crown, Crosshair, Scale, FileKey, Copyright, Download, Play, Wrench,
+  Code, Braces, Laptop, FileSearch, Users, UserPlus, LockKeyhole,
+  FileClock, Timer, Infinity, ClipboardCheck, Flame, Menu
+} from 'lucide-react';
+import { initializeApp } from "firebase/app";
+import { 
+  getAuth, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  User as FirebaseUser,
+  signInAnonymously,
+  signInWithCustomToken,
+  sendPasswordResetEmail
+} from "firebase/auth";
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  doc, 
+  setDoc, 
+  getDoc, 
+  serverTimestamp, 
+  query, 
+  onSnapshot
+} from "firebase/firestore";
+
+// Placeholder for Pilot_Program if you haven't created the file yet
+const Pilot_Program = () => <div className="p-20 text-center text-white">PILOT PROGRAM MODULE LOADING...</div>;
+
+// --- GLOBAL TYPE DECLARATIONS ---
+declare global {
+  interface Window {
+    __initial_auth_token?: string;
+  }
+}
+const __initial_auth_token = (window as any).__initial_auth_token;
+
+// --- FIREBASE INITIALIZATION ---
+const firebaseConfig = {
+  apiKey: "AIzaSyBgu9EX5aQPxOR-mL8xLyjbuLlQtV30MUo",
+  authDomain: "aice-6bd8e.firebaseapp.com",
+  projectId: "aice-6bd8e",
+  storageBucket: "aice-6bd8e.firebasestorage.app",
+  messagingSenderId: "1039520973723",
+  appId: "1:1039520973723:web:54c7458f9a8fe36ef5973e",
+  measurementId: "G-SJCEJ4V03N"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+const appId = 'aice-6bd8e';
+
+// --- ERROR BOUNDARY ---
+class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) { console.error("AICE PROTOCOL EXCEPTION:", error, errorInfo); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-black text-red-500 p-10 font-mono flex flex-col items-center justify-center text-center z-[9999] relative">
+          <div className="border border-red-500/50 p-12 rounded-lg bg-red-950/10 backdrop-blur-xl max-w-2xl w-full">
+            <AlertTriangle size={64} className="mx-auto mb-6 text-red-500 animate-pulse" />
+            <h1 className="text-4xl mb-4 font-black tracking-widest">SYSTEM CRITICAL ERROR</h1>
+            <p className="mb-8 text-white/80 font-sans">The protocol encountered a thermodynamic rendering exception.</p>
+            <button onClick={() => window.location.reload()} className="px-8 py-4 bg-red-600 text-white rounded hover:bg-red-500 transition-all font-bold uppercase tracking-[0.2em]">Reboot System</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// --- ASSETS & PATHS ---
+const BRAIN_LOGO = "/assets/images/godsbrain theory/godsbrain.png"; 
+const BOOK_COVER_SMALL = "/assets/images/godsbrain theory/godsbrain.jpg"; 
+const PHOENIX_LOGO = "/assets/images/phoenix/phoenix_logo.png";
+const ACQUIRE_VIDEO = "/assets/images/buy now/acquirebg.mp4";
+const PROTOCOL_BRIEF_VIDEO = "/assets/videos/aice_protocol_brief.mp4";
+const MAIN_TITLE_IMG = "/assets/images/homepage/MAIN_TITLE.png";
+const LOGO_IMG = "/assets/images/homepage/LOGO.png";
+const DEFENSE_BG = "/assets/images/system/Defense.jpg";
+const VIDEO_TITLE_DARK = "/assets/videos/logo/aice_title.mp4";
+const VIDEO_TITLE_LIGHT = "/assets/videos/logo/aice_title2.mp4";
+
+// --- TYPES ---
+type ViewState = 'HOME' | 'ADAPTIVE' | 'INTELLIGENCE' | 'ENTROPY' | 'CONTROL' | 'SYSTEM' | 'SALES' | 'PROFILE' | 'HOW_IT_WORKS' | 'DEVELOPERS' | 'ADMIN' | 'PILOT_PROGRAMS' | 'BOOK' | 'PHOENIX_BOT' | 'INSTITUTIONAL' | 'PILOT_PHOENIX';
+type DocType = 'WHITEPAPER' | 'TOS' | 'PRIVACY' | 'PATENT' | 'PILOT_7DAY' | 'PILOT_14DAY' | 'PILOT_EXTENDED' | null;
+
+const BACKGROUNDS: Record<ViewState, string> = {
+  HOME: "/assets/images/homepage/Home_Brain.png", 
+  ADAPTIVE: "https://i.postimg.cc/50qqKt05/Gemini_Generated_Image_kfn9m7kfn9m7kfn9.png", 
+  INTELLIGENCE: "https://i.postimg.cc/ZRFFsqR6/Gemini_Generated_Image_43fc5043fc5043fc.png", 
+  ENTROPY: "https://i.postimg.cc/rmCCZpm1/Gemini_Generated_Image_61ky1i61ky1i61ky.png", 
+  CONTROL: "/assets/images/control/control.png",
+  SYSTEM: "/assets/images/system/Defense.jpg",
+  SALES: "/assets/images/pilot%20program/pilot_phoenix.png", 
+  PROFILE: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
+  HOW_IT_WORKS: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
+  DEVELOPERS: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
+  ADMIN: "https://images.unsplash.com/photo-1516110833967-0b5716ca1387?q=80&w=2070&auto=format&fit=crop",
+  PILOT_PROGRAMS: "/assets/images/pilot%20program/pilot_phoenix.png",
+  BOOK: "https://images.unsplash.com/photo-1507842217153-e212234687ad?q=80&w=2070&auto=format&fit=crop",
+  PHOENIX_BOT: "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=2064&auto=format&fit=crop",
+  INSTITUTIONAL: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop",
+  PILOT_PHOENIX: "/assets/images/pilot%20program/pilot_phoenix.png"
+};
+
+const DOC_LINKS = {
+  WHITEPAPER: "/assets/docs/Whitepaper AICE Public.pdf",
+  PATENT: "/assets/docs/A.I.C.E. Public PATENT.pdf",
+  LEGAL_BUNDLE: "/assets/docs/Aeic Legal Pages — Terms Of Service, Privacy Policy, Patent Filings.pdf",
+  PILOT_CONTACT: "pilot@aicesystems.pro"
+};
+
+// --- HELPER COMPONENTS ---
+const SectorHeader: React.FC<{ title: string, subtitle: string, icon: React.ReactNode }> = ({ title, subtitle, icon }) => (
+  <div className="w-full max-w-7xl mx-auto mb-16 text-center animate-in zoom-in duration-700">
+      <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-black border-4 border-black mb-8 text-[#00F3FF] shadow-[0_0_50px_rgba(0,243,255,0.6)] animate-[pulse_4s_ease-in-out_infinite] relative z-10">
+        {icon}
+      </div>
+      <h1 className="text-4xl md:text-6xl lg:text-9xl font-sans font-bold text-white uppercase tracking-tighter mb-4 md:mb-8 leading-none drop-shadow-2xl" style={{ textShadow: '-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 4px 4px 0px rgba(0,0,0,0.5)' }}>
+        {title}
+      </h1>
+      <p className="text-[#00F3FF] font-mono tracking-[0.2em] md:tracking-[0.4em] text-xs md:text-lg uppercase font-bold drop-shadow-[0_0_15px_rgba(0,243,255,0.8)] px-4">
+        {subtitle}
+      </p>
+  </div>
+);
+
+const FeatureGrid: React.FC<{ features: { title: string, desc: string, icon: React.ReactNode }[] }> = ({ features }) => (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full max-w-[90rem] mx-auto mb-32">
+      {features.map((f, i) => (
+          <div key={i} className="p-12 bg-[#050505] border border-white/10 rounded-2xl hover:border-[#00F3FF]/40 transition-all group shadow-2xl">
+              <div className="mb-8 text-[#00F3FF] opacity-80 group-hover:opacity-100 transition-opacity">{f.icon}</div>
+              <h3 className="text-3xl font-sans font-bold text-white mb-6 uppercase tracking-tight">{f.title}</h3>
+              <p className="text-xl text-gray-200 leading-relaxed font-light">{f.desc}</p>
+          </div>
+      ))}
+  </div>
+);
+
+const SectorPortal: React.FC<{ title: string; subtitle: string; icon: React.ReactNode; bgImage: string; onClick: () => void; }> = ({ title, subtitle, icon, bgImage, onClick }) => (
+  <div onClick={onClick} className="relative h-64 group cursor-pointer overflow-hidden border border-white/20 hover:border-[#00F3FF] transition-all duration-500 rounded-xl">
+    <div className="absolute inset-0 bg-cover bg-center transition-all duration-700 group-hover:scale-110 opacity-40 group-hover:opacity-100" style={{ backgroundImage: `url(${bgImage})` }}></div>
+    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent group-hover:opacity-60 transition-opacity duration-500"></div>
+    <div className="absolute bottom-0 left-0 w-full p-8 flex items-end justify-between">
+      <div>
+        <div className="text-[#00F3FF] mb-3 transform group-hover:-translate-y-2 transition-transform duration-500">{icon}</div>
+        <h4 className="text-2xl font-black text-white uppercase tracking-wider mb-1">{title}</h4>
+        <p className="text-gray-400 font-mono text-xs tracking-widest uppercase group-hover:text-white transition-colors">{subtitle}</p>
+      </div>
+      <ArrowUpRight className="text-[#00F3FF] opacity-0 group-hover:opacity-100 transform translate-x-[-20px] group-hover:translate-x-0 transition-all duration-500" size={32} />
+    </div>
+  </div>
+);
+
+// --- HELPER COMPONENT (TICKER) ---
+const SystemTicker = () => {
+  const [index, setIndex] = useState(0);
+  const stats = [
+    { label: "DATA ENTROPY", val: "94%", status: "STABILIZING", risk: "SECTOR: ENERGY" },
+    { label: "GLOBAL GRID", val: "4,200 TWh", status: "CRITICAL LOAD", risk: "SECTOR: INFRA" },
+    { label: "AI COHERENCE", val: "99.9%", status: "OPTIMIZED", risk: "SECTOR: NEURAL" },
+    { label: "MARKET FLUX", val: "HIGH", status: "DAMPENING", risk: "SECTOR: FINANCE" }
+  ];
+  useEffect(() => { const i = setInterval(() => setIndex((p) => (p + 1) % stats.length), 4000); return () => clearInterval(i); }, []);
+  const current = stats[index];
+  return (
+    <div className="absolute top-8 left-8 font-mono text-[10px] text-[#00F3FF]/80 tracking-widest hidden md:flex flex-col gap-1 drop-shadow-md z-50 pointer-events-none">
+      <div className="w-2 h-2 bg-[#00F3FF] animate-ping rounded-full mb-2"></div>
+      <div className="animate-in slide-in-from-left-2 fade-in duration-500">
+        <div className="font-bold text-white">{current.label}</div>
+        <div className="text-xl font-black text-[#00F3FF]">{current.val}</div>
+        <div className="text-xs text-white/70">{current.status}</div>
+        <div className="text-[9px] text-red-400 mt-1 uppercase">{current.risk}</div>
+      </div>
+      <div className="h-[2px] w-8 bg-[#00F3FF]/50 mt-2"></div>
+    </div>
+  );
+};
+
+// --- DATA ARRAYS ---
+const ENTROPY_DATA = [
+  { timestamp: "T+00000 ms", title: "OBELISK CORE // BASELINE", desc: "System integrity at 100%. Thermal noise within nominal parameters.", img: "/assets/images/entropy/download (1).jpg" },
+  { timestamp: "T+15000 ms", title: "THREAT DETECTED // BLOOM", desc: "External data injection causing rapid decoherence.", img: "/assets/images/entropy/download (2).jpg" },
+  { timestamp: "T+30000 ms", title: "AIEC INTERVENTION // ENGAGED", desc: "Thermodynamic governor applying immediate impedance.", img: "/assets/images/entropy/download (3).jpg" },
+  { timestamp: "T+45000 ms", title: "SHIELD HARMONICS // STABILIZING", desc: "Converting kinetic attack energy into harmless thermal waste.", img: "/assets/images/entropy/shield.jpg" },
+  { timestamp: "T+60000 ms", title: "CASCADE FAILURE // DIVERTED", desc: "Isolating infected nodes. Grid frequency resynchronizing.", img: "/assets/images/entropy/download (4).jpg" },
+  { timestamp: "T+75000 ms", title: "NEURAL RESYNC // IN PROGRESS", desc: "Re-aligning logic gates to physics-based truth constraints.", img: "/assets/images/entropy/download (5).jpg" },
+  { timestamp: "T+90000 ms", title: "SYSTEM HOMEOSTASIS // RESTORED", desc: "Entropy levels returned to sub-critical limits.", img: "/assets/images/entropy/download (6).jpg" },
+  { timestamp: "T+105000 ms", title: "PROTOCOL COMPLETE // SECURE", desc: "The facility remains operational. No data loss detected.", img: "/assets/images/entropy/image-2026-02-08T040614-536.jpg" }
+];
+
+// --- VIEWS ---
+const ProfileView: React.FC<{ user: FirebaseUser | null }> = ({ user }) => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen max-w-7xl mx-auto">
+    <SectorHeader title="Operative Profile" subtitle="Clearance Level 3" icon={<Fingerprint size={48} />} />
+    <div className="flex flex-col md:flex-row gap-12">
+      <div className="w-full md:w-1/3 space-y-6">
+        <div className="bg-[#050505] border border-white/10 rounded-2xl p-8 flex flex-col items-center text-center">
+           <div className="w-32 h-32 rounded-full border-4 border-[#00F3FF] overflow-hidden mb-6 shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+             <img src={user?.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop"} alt="User" className="w-full h-full object-cover" />
+           </div>
+           <h2 className="text-2xl font-bold text-white mb-1 uppercase">{user?.displayName || 'Unknown Operative'}</h2>
+           <p className="text-[#00F3FF] font-mono text-xs tracking-widest mb-6 break-all">{user?.email || 'NO DATA'}</p>
+           <div className="w-full bg-white/5 rounded-full h-1.5 mb-2 overflow-hidden">
+             <div className="bg-[#00F3FF] h-full w-[75%]"></div>
+           </div>
+           <div className="flex justify-between w-full text-[10px] text-gray-500 font-mono uppercase">
+             <span>Security Lvl 3</span>
+             <span>75% Complete</span>
+           </div>
+        </div>
+        <div className="bg-[#050505] border border-white/10 rounded-2xl p-6 space-y-4">
+           <button className="w-full flex items-center gap-4 p-4 rounded-xl bg-white/5 text-white hover:bg-[#00F3FF] hover:text-black transition-all font-bold tracking-wider text-sm">
+             <Settings size={18} /> CONFIGURATION
+           </button>
+           <button onClick={() => signOut(auth)} className="w-full flex items-center gap-4 p-4 rounded-xl bg-white/5 text-white hover:bg-red-500 hover:text-white transition-all font-bold tracking-wider text-sm">
+             <LogOut size={18} /> DISCONNECT LINK
+           </button>
+        </div>
+      </div>
+      <div className="w-full md:w-2/3 space-y-8">
+        <div className="bg-gradient-to-br from-[#00F3FF]/10 to-transparent border border-[#00F3FF]/30 rounded-2xl p-8">
+          <div className="flex justify-between items-start mb-6">
+             <div>
+                <h3 className="text-3xl font-bold text-white mb-2">ACTIVE SUBSCRIPTION</h3>
+                <div className="flex items-center gap-2 text-[#00F3FF] font-mono text-sm">
+                   <Activity size={16} /> <span>STATUS: OPERATIONAL</span>
+                </div>
+             </div>
+             <span className="bg-[#00F3FF] text-black px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">Enterprise Grid</span>
+          </div>
+        </div>
+        <div className="bg-[#050505] border border-white/10 rounded-2xl p-8">
+          <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">System Event Log</h3>
+          <div className="space-y-4">
+             {[
+               { time: "10:42 AM", event: "Entropy Spike Detected (Zone 4)", type: "warn" },
+               { time: "10:42 AM", event: "Automated Impedance Injection", type: "success" },
+               { time: "09:15 AM", event: "Daily System Diagnostic", type: "neutral" },
+               { time: "Yesterday", event: "User Login (Manizales, CO)", type: "neutral" }
+             ].map((log, i) => (
+               <div key={i} className="flex items-center gap-4 p-4 border-b border-white/5 last:border-0">
+                  <div className={`w-2 h-2 rounded-full ${log.type === 'warn' ? 'bg-orange-500' : log.type === 'success' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                  <div className="font-mono text-gray-500 text-xs">{log.time}</div>
+                  <div className="text-gray-300 text-sm font-medium">{log.event}</div>
+               </div>
+             ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const AdaptiveView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Adaptive Grid" subtitle="Infrastructure Mesh Stabilization" icon={<Activity size={48} />} />
+      <FeatureGrid features={[
+          { title: "Load Balancing", desc: "Real-time energy distribution preventing localized blackouts.", icon: <Zap size={32} /> },
+          { title: "Self-Healing Mesh", desc: "Automated rerouting of power and data around damaged nodes.", icon: <Workflow size={32} /> },
+          { title: "Entropy Regulation", desc: "Thermal monitoring to keep hardware within optimal thermodynamics.", icon: <Radio size={32} /> }
+      ]} />
+  </div>
+);
+
+const IntelligenceView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Neural Veto" subtitle="AI Hallucination Control" icon={<Brain size={48} />} />
+      <FeatureGrid features={[
+          { title: "Truth Verification", desc: "Cross-referencing tokens against fact databases.", icon: <CheckCircle size={32} /> },
+          { title: "Logic Gating", desc: "Preventing non-sequitur outputs by measuring entropy.", icon: <ShieldCheck size={32} /> },
+          { title: "Cognitive Cap", desc: "Limiting processing depth to prevent error loops.", icon: <Cpu size={32} /> }
+      ]} />
+       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-20 items-center">
+          <div className="flex-1 text-right">
+              <h3 className="text-5xl font-sans font-bold text-white mb-8 uppercase tracking-tighter">STOPPING THE DRIFT</h3>
+              <p className="text-gray-100 leading-loose text-2xl font-light">
+                  AIEC treats LLM drift as thermodynamic inefficiency, applying a cooling algorithm to neural weights.
+              </p>
+          </div>
+          <div className="flex-1 p-12 bg-[#050505] border border-white/10 rounded-2xl w-full">
+              <div className="font-mono text-lg text-[#00F3FF] mb-6 font-bold uppercase">{"> SIMULATING VETO..."}</div>
+              <div className="space-y-6">
+                  <div className="h-4 w-3/4 bg-white/20 rounded"></div>
+                  <div className="h-4 w-full bg-white/20 rounded"></div>
+                  <div className="h-4 w-5/6 bg-red-500/50 rounded animate-pulse"></div>
+                  <div className="text-red-500 text-sm font-bold tracking-widest uppercase">{">> HALLUCINATION DETECTED. OUTPUT BLOCKED."}</div>
+              </div>
+          </div>
+       </div>
+  </div>
+);
+
+const EntropyView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Entropy Core" subtitle="The Physics of Information" icon={<Aperture size={48} />} />
+      <div className="max-w-5xl mx-auto mb-32 relative group animate-in slide-in-from-bottom-10 duration-1000">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00F3FF]/20 via-black/50 to-orange-600/20 blur-3xl rounded-full opacity-60"></div>
+          <div className="relative bg-black/30 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+              <div className="flex justify-between items-center bg-white/5 p-4 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                      <Thermometer size={16} className="text-[#00F3FF] animate-pulse"/>
+                      <span className="font-mono text-xs text-[#00F3FF] tracking-[0.2em] uppercase">Reactor Core // 01</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-[10px] font-mono text-orange-500 uppercase tracking-widest font-bold">
+                      <span className="flex items-center gap-2"><Gauge size={12}/> Pressure: 101.3 kPa</span>
+                      <span className="flex items-center gap-2 text-red-500 animate-pulse"><AlertTriangle size={12} /> Heat: CRITICAL</span>
+                  </div>
+              </div>
+              <div className="p-10 md:p-20 text-center relative">
+                  <div className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-[#00F3FF]"></div>
+                  <div className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-orange-500"></div>
+                  <div className="absolute bottom-6 left-6 w-8 h-8 border-b-2 border-l-2 border-[#00F3FF]"></div>
+                  <div className="absolute bottom-6 right-6 w-8 h-8 border-b-2 border-r-2 border-orange-500"></div>
+                  <h3 className="text-4xl md:text-6xl font-sans font-black text-white uppercase tracking-tighter mb-8 drop-shadow-2xl">
+                      Thermodynamic <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-orange-500">Equilibrium</span>
+                  </h3>
+                  <p className="text-xl md:text-3xl font-light text-white/90 leading-relaxed drop-shadow-md mb-12 max-w-4xl mx-auto">
+                    "In a closed system, entropy always increases." Information behaves like energy. Too much unchecked data creates <span className="text-orange-500 font-bold border-b-2 border-orange-500">"Noise,"</span> which is the informational equivalent of heat death.
+                  </p>
+                  <div className="inline-flex items-center gap-4 px-8 py-4 border border-[#00F3FF]/30 bg-[#00F3FF]/5 rounded-sm hover:bg-[#00F3FF]/10 transition-colors cursor-default">
+                      <div className="w-2 h-2 rounded-full bg-[#00F3FF] animate-ping"></div>
+                      <span className="text-[#00F3FF] font-mono tracking-widest uppercase text-xs font-bold">
+                        Obelisk Protocol // Engaging Veto
+                      </span>
+                  </div>
+              </div>
+              <div className="h-1 w-full bg-gradient-to-r from-[#00F3FF] via-black to-orange-500"></div>
+          </div>
+      </div>
+      <div className="max-w-[90rem] mx-auto space-y-32">
+          {ENTROPY_DATA.map((item, idx) => {
+            const [prefix, suffix] = item.title.split('//');
+            return (
+              <div key={idx} className={`flex flex-col md:flex-row items-center gap-16 ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
+                  <div className="flex-1 relative group w-full">
+                    <div className="relative rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black">
+                        <img src={item.img} alt={item.title} className={`w-full transform transition-transform duration-700 group-hover:scale-105 ${idx === 7 ? 'h-auto' : 'h-[700px] object-cover object-center'}`} />
+                    </div>
+                  </div>
+                  <div className="flex-1 w-full">
+                    <div className="relative bg-black/30 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-2xl p-8 md:p-12 transition-all duration-500 hover:border-[#00F3FF]/30 group">
+                        <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#00F3FF]/50 rounded-tl-lg"></div>
+                        <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-orange-500/50 rounded-tr-lg"></div>
+                        <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#00F3FF]/50 rounded-bl-lg"></div>
+                        <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-orange-500/50 rounded-br-lg"></div>
+                        <div className="flex items-center gap-4 text-[#FFD700] font-mono text-xs md:text-sm tracking-widest font-bold border-b border-[#FFD700]/20 pb-4 mb-6">
+                            <Activity size={18} /> <span>TIMESTAMP: {item.timestamp}</span>
+                        </div>
+                        <h3 className="text-3xl md:text-5xl font-sans font-bold text-white uppercase leading-tight mb-6">
+                            {prefix} //<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-yellow-500 to-[#00F3FF]">{suffix}</span>
+                        </h3>
+                        <p className="text-gray-200 text-lg leading-relaxed pl-6 border-l-4 border-[#00F3FF] font-light">
+                           {item.desc}
+                        </p>
+                    </div>
+                  </div>
+              </div>
+            );
+          })}
+      </div>
+  </div>
+);
+
+const ControlView = () => (
+  <div className="relative z-10 min-h-screen w-full pt-28 flex flex-col gap-32">
+      <div className="relative w-full px-6 flex flex-col items-center">
+          <SectorHeader title="Market Control" subtitle="High-Frequency Stabilization" icon={<TrendingUp size={48} />} />
+          <div className="max-w-4xl w-full bg-[#050505] border border-white/10 p-14 rounded-3xl font-mono text-base md:text-lg text-green-500 overflow-hidden shadow-2xl">
+              <div className="opacity-50 mb-8 border-b border-white/10 pb-6 flex justify-between uppercase">
+                  <span>AIEC MONITORING</span>
+                  <span className="animate-pulse">● REC</span>
+              </div>
+              <div className="space-y-4">
+                  <div>[10:42:01] ORDER FLOW: NORMAL</div>
+                  <div className="text-red-500 font-bold">[10:42:05] VOLATILITY SPIKE (ENTROPY &gt; 85%)</div>
+                  <div className="text-[#00F3FF] font-bold">[10:42:05] VETO: TRADING PAUSED (300ms)</div>
+                  <div>[10:42:07] STABILITY RESTORED.</div>
+              </div>
+          </div>
+      </div>
+      <div className="relative w-full py-48 px-6 flex items-center justify-center text-center overflow-hidden">
+          <div className="absolute inset-0 z-0">
+             <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/assets/images/control/phoenix.png')" }}></div>
+             <div className="absolute inset-0 bg-black/40"></div>
+          </div>
+          <div className="relative z-10 w-full max-w-6xl mx-auto">
+               <div className="inline-block px-4 py-1 border border-[#FF4500] rounded-full text-[#FF4500] mb-6 font-bold uppercase tracking-widest text-xs bg-black/80">CLASSIFIED PROTOTYPE</div>
+               <h2 className="text-5xl md:text-8xl font-sans font-black mb-8 uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-orange-500 via-red-500 to-red-700 drop-shadow-[0_4px_10px_rgba(255,69,0,0.5)]">
+                 PROJECT PHOENIX
+               </h2>
+               <p className="text-gray-100 text-xl md:text-3xl leading-relaxed max-w-4xl mx-auto mb-12 font-light italic drop-shadow-lg">
+                 "We didn't just write the math; we built the machine."
+               </p>
+               <button className="px-12 py-6 bg-black/80 border border-[#FF4500] text-[#FF4500] font-mono font-bold tracking-widest uppercase hover:bg-[#FF4500] hover:text-black transition-all shadow-[0_0_30px_rgba(255,69,0,0.3)] text-sm">
+                  REQUEST PERFORMANCE DATA <ChevronRight size={18} className="inline ml-2" />
+               </button>
+          </div>
+      </div>
+  </div>
+);
+
+const SystemView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Defense Systems" subtitle="Aerospace & Military Integration" icon={<Shield size={48} />} />
+      <FeatureGrid features={[
+          { title: "GLOBAL OVERWATCH", desc: "AIEC connects siloed defense networks into a unified entropy map.", icon: <Globe size={40} /> },
+          { title: "SECURE COMMS", desc: "Quantum-resistant encryption layering.", icon: <Fingerprint size={40} /> },
+          { title: "AUTONOMOUS DRONES", desc: "Swarm logic stability preventing 'swarm collapse'.", icon: <Server size={40} /> }
+      ]} />
+  </div>
+);
+
+// --- NEW: HIGH-FIDELITY DIAGNOSTIC MODAL (TITAN CLASS) ---
+const PilotDiagnosticModal: React.FC<{ isOpen: boolean, onClose: () => void, onProceed: () => void }> = ({ isOpen, onClose, onProceed }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-8 animate-in zoom-in duration-300">
+      <div className="w-full max-w-6xl h-[90vh] bg-[#020202] border-2 border-[#00F3FF] shadow-[0_0_100px_rgba(0,243,255,0.3)] flex flex-col relative rounded-3xl overflow-hidden">
+        
+        {/* HEADER */}
+        <div className="flex items-center justify-between p-8 border-b border-[#00F3FF]/30 bg-[#00F3FF]/5">
+           <div>
+              <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter mb-2">
+                 A.I.C.E. <span className="text-[#00F3FF]">STABILITY PILOT</span>
+              </h2>
+              <p className="font-mono text-sm text-gray-400 tracking-[0.2em] uppercase">
+                 14-DAY DIAGNOSTIC & ENTROPY AUDIT // SECURE PROTOCOL
+              </p>
+           </div>
+           <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+              <X size={32} className="text-white hover:text-[#00F3FF]" />
+           </button>
+        </div>
+
+        {/* CONTENT SCROLL AREA */}
+        <div className="flex-1 overflow-y-auto p-8 md:p-16 space-y-12 scrollbar-thin scrollbar-thumb-[#00F3FF]/50 scrollbar-track-black">
+            
+            {/* SECTION 1: THE PROPOSITION */}
+            <div className="space-y-6">
+               <h3 className="text-2xl font-bold text-[#00F3FF] border-l-4 border-[#00F3FF] pl-4 uppercase tracking-widest">01 // The Proposition</h3>
+               <p className="text-xl md:text-2xl text-white font-light leading-relaxed">
+                  <span className="font-bold text-white">We do not fix the crash. We prevent the physics of the crash from existing.</span>
+               </p>
+               <p className="text-gray-300 text-lg leading-relaxed">
+                  Modern adaptive systems operate on a linear assumption of stability. This assumption fails under extreme <span className="text-[#00F3FF] font-bold">Information Density</span>, leading to "Singularity Events":
+               </p>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                  <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+                     <div className="text-[#00F3FF] font-bold mb-2">AI SECTOR</div>
+                     <div className="text-gray-400 text-sm">Model Collapse, Hallucinations, Gradient Explosions.</div>
+                  </div>
+                  <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+                     <div className="text-orange-500 font-bold mb-2">FINANCE SECTOR</div>
+                     <div className="text-gray-400 text-sm">Flash Crashes, Liquidity Black Holes.</div>
+                  </div>
+                  <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+                     <div className="text-green-500 font-bold mb-2">ENERGY SECTOR</div>
+                     <div className="text-gray-400 text-sm">Voltage Collapse, Cascading Blackouts.</div>
+                  </div>
+               </div>
+            </div>
+
+            {/* SECTION 2: DELIVERABLES */}
+            <div className="space-y-6">
+               <h3 className="text-2xl font-bold text-[#00F3FF] border-l-4 border-[#00F3FF] pl-4 uppercase tracking-widest">02 // Scope & Deliverables</h3>
+               <div className="flex flex-wrap gap-4 font-mono text-sm text-gray-400 mb-4">
+                  <span className="bg-[#00F3FF]/10 text-[#00F3FF] px-3 py-1 rounded border border-[#00F3FF]/30">DURATION: 14 DAYS</span>
+                  <span className="bg-[#00F3FF]/10 text-[#00F3FF] px-3 py-1 rounded border border-[#00F3FF]/30">COST: $15,000 USD</span>
+                  <span className="bg-[#00F3FF]/10 text-[#00F3FF] px-3 py-1 rounded border border-[#00F3FF]/30">FORMAT: REMOTE BLACK BOX</span>
+               </div>
+               
+               <div className="space-y-8">
+                  <div>
+                     <h4 className="text-white text-xl font-bold mb-2">Phase I: The Entropy Audit (Days 1-7)</h4>
+                     <ul className="space-y-2 text-gray-300 list-disc pl-6">
+                        <li><strong className="text-white">Data Ingestion:</strong> We analyze training loss logs, order books, or frequency logs.</li>
+                        <li><strong className="text-white">Singularity Mapping:</strong> We identify the exact "Information Density State" (IDS) where divergence occurs.</li>
+                        <li><strong className="text-red-500">The Red Line:</strong> Identifying historical moments where your system approached the Event Horizon.</li>
+                     </ul>
+                  </div>
+                  <div>
+                     <h4 className="text-white text-xl font-bold mb-2">Phase II: The Governance Roadmap (Days 8-14)</h4>
+                     <ul className="space-y-2 text-gray-300 list-disc pl-6">
+                        <li><strong className="text-white">The Stability Report:</strong> A technical dossier visualizing your Entropy Signature.</li>
+                        <li><strong className="text-white">Impedance Prescription:</strong> The exact non-linear response curve required to stabilize your workload.</li>
+                        <li><strong className="text-white">Integration Blueprint:</strong> Architecture guide for installing the A.I.C.E. middleware.</li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+
+            {/* SECTION 3: PRIVACY */}
+            <div className="bg-[#050505] p-8 rounded-2xl border border-white/10">
+               <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+                  <Lock className="text-[#00F3FF]" /> THE "BLACK BOX" PROTOCOL
+               </h3>
+               <p className="text-gray-400 mb-4">We operate under a strict "Zero-Knowledge" framework.</p>
+               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <li className="flex items-start gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-[#00F3FF] mt-1"/> <span><strong>You Keep Your Code:</strong> We do NOT need model weights or trade secrets.</span></li>
+                  <li className="flex items-start gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-[#00F3FF] mt-1"/> <span><strong>Unidirectional Analysis:</strong> You send sanitized logs; we return parameters.</span></li>
+                  <li className="flex items-start gap-3 text-sm text-gray-300"><CheckCircle2 size={16} className="text-[#00F3FF] mt-1"/> <span><strong>Legal Shield:</strong> Covered by Mutual NDA.</span></li>
+               </ul>
+            </div>
+
+        </div>
+
+        {/* FOOTER ACTIONS */}
+        <div className="p-8 border-t border-[#00F3FF]/30 bg-black flex justify-between items-center gap-8">
+           <div className="text-xs text-gray-500 font-mono hidden md:block">
+              © 2026 AICE SYSTEMS INC. PATENT PENDING #3301209
+           </div>
+           <button onClick={onProceed} className="w-full md:w-auto px-12 py-5 bg-[#00F3FF] text-black font-black uppercase tracking-[0.2em] text-lg hover:bg-white transition-all rounded shadow-[0_0_30px_#00F3FF] flex items-center justify-center gap-3">
+              Proceed to Uplink <ArrowUpRight />
+           </button>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+// --- NEW: BOOK VIEW (THE CODEX) ---
+const BookView: React.FC<{ onBuy: (product: string) => void }> = ({ onBuy }) => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+    <SectorHeader title="The Codex" subtitle="Source Code of Existence" icon={<BookOpen size={48} />} />
+
+    <div className="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32 relative">
+       {/* Left: Visual Artifact */}
+       <div className="relative group perspective-1000">
+           <div className="absolute inset-0 bg-gradient-to-r from-[#FFD700]/20 to-transparent blur-3xl rounded-full opacity-40 animate-pulse"></div>
+           <div className="relative bg-black/80 border border-[#FFD700]/30 p-8 md:p-12 rounded-3xl shadow-[0_0_100px_rgba(255,215,0,0.1)] transform group-hover:rotate-y-12 transition-transform duration-1000">
+               <img src={BRAIN_LOGO} alt="The God's Brain Theory" className="w-full h-auto drop-shadow-2xl opacity-90 group-hover:opacity-100 transition-opacity" />
+           </div>
+       </div>
+
+       {/* Right: The Manifesto */}
+       <div className="space-y-8">
+           <h2 className="text-4xl md:text-7xl font-sans font-black text-white uppercase tracking-tighter leading-none">
+               The God's <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-orange-600">Brain Theory</span>
+           </h2>
+           <p className="text-lg text-gray-300 font-light leading-relaxed border-l-4 border-[#FFD700] pl-6">
+               This is not philosophy. It is <span className="text-[#FFD700] font-bold">irrefutable proof</span> of a functional hardware system. 
+               We decode the universe not as a mystical accident, but as a deliberate architectural construct.
+           </p>
+           
+           <div className="flex flex-col gap-4">
+               <div className="flex items-center gap-4 text-sm font-mono text-gray-400">
+                   <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#FFD700]" /> 314 Pages</span>
+                   <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#FFD700]" /> Hardcover / Digital</span>
+               </div>
+           </div>
+
+           <div className="flex flex-col md:flex-row gap-4 pt-4">
+               <button 
+                   onClick={() => onBuy('BOOK_HARDCOPY')}
+                   className="px-10 py-5 bg-[#FFD700] text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-white transition-all rounded shadow-[0_0_30px_rgba(255,215,0,0.4)] flex items-center gap-2"
+               >
+                   ACQUIRE HARDCOPY <span className="bg-black/90 text-[#FFD700] px-2 py-0.5 rounded text-[10px] ml-2">$33.99</span>
+               </button>
+               <button className="px-10 py-5 border border-white/20 text-white font-bold uppercase tracking-[0.2em] text-sm hover:bg-white hover:text-black transition-all rounded flex items-center justify-center gap-2">
+                   <Download size={18} /> PREVIEW
+               </button>
+           </div>
+       </div>
+    </div>
+    
+    {/* Chapter Grid & Quote */}
+    <div className="max-w-4xl mx-auto text-center relative py-24">
+       <p className="text-2xl md:text-4xl font-light text-gray-200 leading-normal mb-8 relative z-10">
+           "We are not looking for a smoking gun. We are looking for <span className="text-[#FFD700] font-bold border-b border-[#FFD700]">irrefutable proof</span> found in the geometry of the stars."
+       </p>
+       <div className="text-[#00F3FF] font-mono text-sm tracking-[0.4em] uppercase font-bold">— The Author</div>
+    </div>
+  </div>
+);
+
+// --- NEW: PHOENIX BOT VIEW (CRYPTO TRADING ENGINE) ---
+const PhoenixBotView: React.FC = () => (
+    <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+        <SectorHeader 
+            title="Phoenix DV$ 5.5.5.3" 
+            subtitle="Perpetual Algorithmic Trading System" 
+            icon={<Flame size={48} className="text-orange-500 animate-pulse" />} 
+        />
+        
+        {/* HERO TERMINAL */}
+        <div className="max-w-[95rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32">
+            {/* LEFT: THE PITCH */}
+            <div className="space-y-8 flex flex-col justify-center">
+                <div className="inline-flex items-center gap-3 px-4 py-2 border border-orange-500/50 bg-orange-500/10 rounded-full w-fit">
+                    <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                    <span className="text-orange-500 font-mono text-xs font-bold uppercase tracking-widest">System Active // V.5.5.5.3</span>
+                </div>
+                <h2 className="text-4xl md:text-7xl font-sans font-black text-white uppercase tracking-tighter leading-none">
+                    Military-Grade <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500">Precision Trading</span>
+                </h2>
+                <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed border-l-4 border-orange-500 pl-6">
+                    A perpetual money-making machine designed with zero-error tolerance. 
+                    The PHOENIX DV$ protocol utilizes Pine Script v6 architecture to execute institutional-grade entries and exits with mathematical certainty.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="p-6 bg-[#050505] border border-white/10 rounded-xl">
+                        <div className="text-3xl font-mono font-bold text-orange-500 mb-1">99.8%</div>
+                        <div className="text-gray-500 text-xs uppercase tracking-widest">Uptime Efficiency</div>
+                    </div>
+                    <div className="p-6 bg-[#050505] border border-white/10 rounded-xl">
+                        <div className="text-3xl font-mono font-bold text-[#00F3FF] mb-1">&lt; 15ms</div>
+                        <div className="text-gray-500 text-xs uppercase tracking-widest">Execution Latency</div>
+                    </div>
+                </div>
+                <div className="flex flex-col md:flex-row gap-4 pt-4">
+                    <button className="px-10 py-5 bg-orange-600 text-white font-black uppercase tracking-[0.2em] text-sm hover:bg-white hover:text-orange-600 transition-all rounded shadow-[0_0_30px_rgba(255,69,0,0.4)]">
+                        DEPLOY BOT INSTANCE
+                    </button>
+                    <button className="px-10 py-5 border border-white/20 text-white font-bold uppercase tracking-[0.2em] text-sm hover:bg-white hover:text-black transition-all rounded flex items-center justify-center gap-2">
+                        <Terminal size={18} /> VIEW STRATEGY LOGS
+                    </button>
+                </div>
+            </div>
+
+            {/* RIGHT: THE TERMINAL VISUAL */}
+            <div className="relative bg-black border border-white/20 rounded-xl overflow-hidden shadow-2xl h-[400px] md:h-[600px] flex flex-col group mt-8 md:mt-0">
+                <div className="bg-[#111] border-b border-white/10 p-4 flex justify-between items-center">
+                    <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div className="text-gray-500 font-mono text-xs">phoenix_v5.5.5.3.pine</div>
+                </div>
+                <div className="flex-1 p-6 font-mono text-[10px] md:text-xs text-gray-300 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent pointer-events-none"></div>
+                    <div className="space-y-2 opacity-80">
+                         <div className="text-green-500">//@version=6</div>
+                         <div className="text-orange-500">strategy("PHOENIX DV$ [ULTIMATE]", overlay=true, initial_capital=100000)</div>
+                         <div><span className="text-purple-500">var</span> <span className="text-yellow-500">float</span> entropy_threshold = 0.85</div>
+                         <div><span className="text-purple-500">if</span> (ta.crossover(rsi, 30) <span className="text-purple-500">and</span> entropy &lt; entropy_threshold)</div>
+                         <div className="pl-4"><span className="text-blue-500">strategy.entry</span>("Long Phoenix", strategy.long)</div>
+                         <div className="pl-4">alert("🐦‍🔥 LONG (PHOENIX DETECTED)")</div>
+                         <br />
+                         <div className="text-gray-500">// MILITARY GRADE RISK MANAGEMENT</div>
+                         <div><span className="text-purple-500">if</span> (strategy.openprofit &gt; target_profit)</div>
+                         <div className="pl-4"><span className="text-blue-500">strategy.close_all</span>(comment="TAKE PROFIT")</div>
+                         <br />
+                         <div className="animate-pulse text-orange-500">_ SYSTEM MONITORING: ACTIVE</div>
+                         <div className="animate-pulse text-orange-500">_ SEARCHING FOR PERFECT ENTRY...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* FEATURES GRID */}
+        <div className="max-w-[95rem] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-8 border border-white/10 bg-[#050505] rounded-2xl hover:border-orange-500/50 transition-all group">
+                <Zap size={40} className="text-orange-500 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-2xl font-bold text-white uppercase mb-4">Perpetual Profit Loop</h3>
+                <p className="text-gray-400 leading-relaxed">
+                    Designed to run 24/7/365 without fatigue. The bot constantly scans for dynamic shifts in the command center to optimize entry/exit points.
+                </p>
+            </div>
+            <div className="p-8 border border-white/10 bg-[#050505] rounded-2xl hover:border-orange-500/50 transition-all group">
+                <ShieldCheck size={40} className="text-orange-500 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-2xl font-bold text-white uppercase mb-4">Bulletproof Architecture</h3>
+                <p className="text-gray-400 leading-relaxed">
+                    Built on pristine, immaculate code logic. We identify every imperfection and eliminate it to create an unassailable fortress of precision.
+                </p>
+            </div>
+            <div className="p-8 border border-white/10 bg-[#050505] rounded-2xl hover:border-orange-500/50 transition-all group">
+                <Infinity size={40} className="text-orange-500 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-2xl font-bold text-white uppercase mb-4">Infinite Scalability</h3>
+                <p className="text-gray-400 leading-relaxed">
+                    Whether trading $100 or $100M, the AICE logic remains consistent. The "God Mode" of algorithmic finance.
+                </p>
+            </div>
+        </div>
+    </div>
+);
+
+// --- CHAT ASSISTANT ---
+const ChatAssistant: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+      <div className="fixed bottom-2 right-2 z-[90]">
+          <button onClick={() => setIsOpen(!isOpen)} className="w-12 h-12 bg-black border border-[#00F3FF] rounded-full flex items-center justify-center text-[#00F3FF] shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+              <MessageSquare size={20} />
+          </button>
+      </div>
+  );
+};
+
+// --- NEW: ACCESS TERMINAL (ASP INTERFACE v4.0 - CALIBRATED) ---
+const AccessTerminal: React.FC<{ 
+    setView: (v: ViewState) => void, 
+    onBuy: (product: string) => void, 
+    onOpenDoc: (type: DocType) => void,
+    user: FirebaseUser | null,
+    openLogin: () => void 
+}> = ({ setView, onBuy, onOpenDoc, user, openLogin }) => {
+  
+  const [accessState, setAccessState] = useState<'LOCKED' | 'GRANTED'>('LOCKED');
+  
+  // Form State
+  const [sector, setSector] = useState<string>("");
+  const [isOtherSector, setIsOtherSector] = useState(false);
+  const [customSector, setCustomSector] = useState("");
+  const [subSector, setSubSector] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false);
+
+  // Scroll reset
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  // Validation Logic
+  const isSectorValid = isOtherSector ? customSector.trim().length > 0 : sector !== "";
+  const isFormComplete = isSectorValid && subSector !== "" && companyName.trim().length > 0;
+  const statusColor = (user && isFormComplete) ? "text-green-500" : "text-red-500";
+  const statusMessage = !user 
+    ? "STATUS: UNAUTHENTICATED // LOGIN REQUIRED" 
+    : (!isFormComplete ? "STATUS: AWAITING INPUT // INCOMPLETE" : "STATUS: VERIFIED // READY FOR UPLINK");
+
+  const handleManualOverride = () => {
+    if (!user) { openLogin(); return; }
+    if (!isFormComplete) { alert("ERROR: ALL FIELDS REQUIRED FOR OVERRIDE"); return; }
+    if (termsChecked) {
+        console.log(">> TRANSMITTING SECURE FORM TO COMMAND:", {
+            user: user.email,
+            company: companyName,
+            sector: isOtherSector ? customSector : sector,
+            subSector: subSector,
+            mode: "MANUAL_OVERRIDE"
+        });
+        setAccessState('GRANTED');
+        setTimeout(() => document.getElementById('pricing-grid')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  };
+
+  const handleInitiateDiagnostic = () => {
+     if (!user) { openLogin(); return; }
+     if (!isFormComplete) { alert("ERROR: IDENTIFY INFRASTRUCTURE TOPOLOGY FIRST"); return; }
+     
+     setShowDiagnosticModal(true);
+  };
+
+  // Secure Input Wrapper
+  const handleInteraction = (e: React.MouseEvent) => {
+      if (!user) {
+          e.preventDefault();
+          e.stopPropagation();
+          openLogin();
+      }
+  };
+
+  const SECTOR_OPTIONS = [
+    "AI LABS // LLM TRAINING",
+    "FINANCE // HFT & LIQUIDITY",
+    "ENERGY // GRID STABILIZATION",
+    "DEFENSE // AUTONOMOUS SYSTEMS",
+    "AEROSPACE // TELEMETRY",
+    "NUCLEAR // REACTOR SAFETY",
+    "BIO-TECH // GENOMIC SEQUENCING",
+    "TELECOM // 6G MESH NETWORKS",
+    "QUANTUM // ERROR CORRECTION",
+    "LOGISTICS // GLOBAL SUPPLY CHAIN",
+    "MARITIME // AUTONOMOUS SHIPPING",
+    "AUTOMOTIVE // SELF-DRIVING FLEETS",
+    "INDUSTRIAL // SCADA AUTOMATION",
+    "SMART CITIES // IOT INFRASTRUCTURE",
+    "CRYPTOGRAPHY // BLOCKCHAIN VALIDATION",
+    "METEOROLOGY // CLIMATE MODELING",
+    "CYBERSECURITY // THREAT VECTORS",
+    "SOCIAL // ALGORITHMIC FEEDS",
+    "GAMING // SERVER MESHING",
+    "GOV // DIGITAL ID SYSTEMS",
+    "SPACE // ORBITAL MECHANICS",
+    "AGRI-TECH // AUTOMATED FARMING",
+    "HEALTHCARE // ROBOTIC SURGERY",
+    "E-COMMERCE // HIGH-LOAD TRANSACTIONS",
+    "RESEARCH // PARTICLE PHYSICS"
+  ];
+
+  const SUB_SECTOR_OPTIONS = [
+      "ALL SECTORS[CEO MODE]",
+      "CORE ARCHITECTURE",
+      "NETWORK PERIPHERY",
+      "DATA PIPELINE / ETL",
+      "USER INTERFACE / FRONTEND",
+      "SECURITY LAYER / FIREWALL"
+  ];
+
+  return (
+    <div className="relative z-10 pt-12 pb-24 px-4 min-h-screen flex flex-col items-center justify-start">
+      
+      {/* HEADER SECTION */}
+      <div className="mb-12 w-full max-w-7xl">
+         <SectorHeader title="PROTOCOL INTEGRATION" subtitle="Secure Infrastructure Uplink" icon={<ShieldCheck size={64} />} />
+      </div>
+
+      {/* --- THE MAIN INTERFACE --- */}
+      <div className={`w-full max-w-[95rem] mb-24 relative animate-in slide-in-from-bottom-8 duration-700 ${accessState === 'GRANTED' ? 'hidden' : 'block'}`}>
+        
+        {/* Glowing Border & Background */}
+        <div className="absolute inset-0 bg-[#00F3FF]/5 blur-[80px] rounded-full opacity-30"></div>
+        
+        <div className="relative border-4 border-[#00F3FF] bg-[#020202] p-6 md:p-12 rounded-[2rem] shadow-[0_0_50px_rgba(0,243,255,0.25)] overflow-hidden">
+            
+            {/* TOP BAR: SYSTEM STATUS HEADER */}
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-12 border-b-2 border-[#00F3FF]/20 pb-10 gap-8">
+              
+              {/* Branding */}
+              <div className="flex items-center gap-6">
+                 <div className="p-5 rounded-2xl bg-[#00F3FF]/10 text-[#00F3FF] border border-[#00F3FF]/50 shadow-[0_0_20px_rgba(0,243,255,0.4)] animate-pulse">
+                    <Activity size={48} strokeWidth={2.5} />
+                 </div>
+                 <div>
+                    <h3 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter mb-2">
+                       PRE-DEPLOYMENT <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-white">VERIFICATION</span>
+                    </h3>
+                    <div className="flex items-center gap-3">
+                       <div className={`w-3 h-3 rounded-full ${user && isFormComplete ? 'bg-green-500' : 'bg-red-500'} animate-pulse`}></div>
+                       <p className={`font-mono text-xs md:text-sm tracking-widest uppercase font-bold ${statusColor}`}>
+                          {statusMessage}
+                       </p>
+                    </div>
+                 </div>
+              </div>
+            </div>
+
+            {/* MAIN CONFIGURATION GRID */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                
+                {/* LEFT: CONFIGURATION FORM */}
+                <div className="space-y-8 relative">
+                    
+                    {/* SECURITY OVERLAY IF NOT LOGGED IN */}
+                    {!user && (
+                        <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center border border-red-500/30 rounded-xl cursor-pointer hover:bg-black/50 transition-colors" onClick={openLogin}>
+                            <LockKeyhole size={48} className="text-red-500 mb-4 animate-bounce" />
+                            <h4 className="text-2xl font-black text-white uppercase tracking-widest">Secure Uplink Required</h4>
+                            <p className="text-red-500 font-mono text-sm uppercase mt-2">Click to Authenticate</p>
+                        </div>
+                    )}
+
+                    <div className="space-y-2">
+                        <label className="text-[#00F3FF] font-mono text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+                           <Crosshair size={14} /> 01 // Target Sector (Infrastructure)
+                        </label>
+                        <select 
+                             value={isOtherSector ? "OTHER" : sector} 
+                             onChange={(e) => {
+                                 const val = e.target.value;
+                                 if (val === "OTHER") {
+                                     setIsOtherSector(true);
+                                     setSector("");
+                                 } else {
+                                     setIsOtherSector(false);
+                                     setSector(val);
+                                 }
+                             }}
+                             className="bg-black text-[#00F3FF] text-lg font-bold uppercase tracking-wider p-4 rounded-lg border border-white/30 focus:border-[#00F3FF] outline-none cursor-pointer w-full appearance-none hover:bg-white/5 transition-colors font-mono disabled:opacity-30"
+                             disabled={!user}
+                        >
+                           <option value="" disabled className="text-gray-600">-- SELECT INFRASTRUCTURE --</option>
+                           {SECTOR_OPTIONS.map((opt, i) => (
+                               <option key={i} value={opt} className="bg-black text-[#00F3FF] font-mono font-bold py-2">{opt}</option>
+                           ))}
+                           <option value="OTHER" className="bg-black text-white font-mono font-bold py-2 border-t border-white/20">-- OTHER (MANUAL ENTRY) --</option>
+                        </select>
+                        {isOtherSector && (
+                            <input 
+                                 type="text" 
+                                 placeholder="ENTER SPECIFIC INFRASTRUCTURE TYPE..."
+                                 value={customSector}
+                                 onChange={(e) => setCustomSector(e.target.value)}
+                                 className="w-full bg-[#00F3FF]/5 border-l-4 border-[#00F3FF] text-white p-3 font-mono text-sm outline-none animate-in fade-in slide-in-from-top-2"
+                            />
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[#00F3FF] font-mono text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+                           <Layers size={14} /> 02 // Sub-Sector Topology
+                        </label>
+                        <select 
+                             value={subSector} 
+                             onChange={(e) => setSubSector(e.target.value)}
+                             className="bg-black text-[#00F3FF] text-lg font-bold uppercase tracking-wider p-4 rounded-lg border border-white/30 focus:border-[#00F3FF] outline-none cursor-pointer w-full appearance-none hover:bg-white/5 transition-colors font-mono disabled:opacity-30"
+                             disabled={!user}
+                        >
+                           <option value="" disabled className="text-gray-600">-- SELECT SUB-SYSTEM --</option>
+                           {SUB_SECTOR_OPTIONS.map((opt, i) => (
+                               <option key={i} value={opt} className="bg-black text-[#00F3FF] font-mono font-bold py-2">{opt}</option>
+                           ))}
+                        </select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[#00F3FF] font-mono text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+                           <Globe2 size={14} /> 03 // Entity Identification
+                        </label>
+                        <input 
+                             type="text" 
+                             placeholder="ENTER COMPANY / ORGANIZATION NAME"
+                             value={companyName}
+                             onChange={(e) => setCompanyName(e.target.value)}
+                             className="bg-black text-white placeholder-gray-600 text-lg font-bold uppercase tracking-wider p-4 rounded-lg border border-white/30 focus:border-[#00F3FF] outline-none w-full hover:bg-white/5 transition-colors font-mono disabled:opacity-30"
+                             disabled={!user}
+                        />
+                    </div>
+
+                    <div className="pt-4 border-t border-white/10">
+                        <div className="bg-[#00F3FF]/5 border-l-4 border-[#00F3FF] p-6 rounded-r-xl">
+                            <p className="text-white text-lg leading-relaxed font-light">
+                              <span className="text-orange-500 font-bold">WARNING:</span> Deployment of the 
+                              <span className="text-[#00F3FF] font-black bg-[#00F3FF]/10 px-2 py-1 rounded mx-2 border border-[#00F3FF]/30">
+                                 ASP (A.I.C.E. SYSTEM PROTOCOL)
+                              </span> 
+                              on unmapped topology carries significant risk.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* RIGHT: ACTION COMMANDS */}
+                <div className="flex flex-col justify-center gap-8 border-l-0 lg:border-l-2 border-white/10 lg:pl-12 relative h-full">
+                    
+                    <button 
+                         onClick={handleInitiateDiagnostic}
+                         onMouseDown={handleInteraction}
+                         disabled={!isFormComplete}
+                         className={`group w-full py-8 bg-[#00F3FF] text-black font-black uppercase tracking-widest text-xl md:text-2xl hover:bg-white transition-all rounded-2xl shadow-[0_0_50px_rgba(0,243,255,0.5)] flex items-center justify-center gap-4 hover:scale-[1.02] ${!isFormComplete ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                    >
+                       <ClipboardCheck size={32} strokeWidth={2.5} /> 
+                       INITIATE DIAGNOSTIC <span className="bg-black/20 px-4 py-1 rounded text-lg opacity-80">$15k</span>
+                    </button>
+                    
+                    <div className="flex items-center gap-4 w-full opacity-50">
+                        <div className="h-[2px] bg-white/20 flex-1"></div>
+                        <span className="text-xs font-mono text-gray-400 uppercase tracking-widest font-bold">COMMAND OVERRIDE</span>
+                        <div className="h-[2px] bg-white/20 flex-1"></div>
+                    </div>
+
+                    <div className="space-y-6 bg-white/5 p-6 rounded-3xl border border-white/10 relative">
+                        {!isFormComplete && (
+                            <div className="absolute inset-0 bg-black/40 z-10 cursor-not-allowed rounded-3xl"></div>
+                        )}
+
+                        <button 
+                            onClick={handleManualOverride}
+                            onMouseDown={handleInteraction}
+                            disabled={!isFormComplete || !termsChecked}
+                            className={`w-full py-6 border-2 border-white/20 text-gray-300 font-bold uppercase tracking-[0.2em] text-lg transition-all rounded-2xl flex items-center justify-center gap-4 ${termsChecked && isFormComplete ? 'border-orange-500 text-orange-500 bg-orange-500/10 hover:bg-orange-500 hover:text-white shadow-[0_0_30px_rgba(255,69,0,0.3)]' : 'cursor-not-allowed opacity-60'}`}
+                        >
+                           {termsChecked ? <Unlock size={24}/> : <Lock size={24}/>} MANUAL OVERRIDE
+                        </button>
+
+                        <div 
+                          onClick={() => isFormComplete && setTermsChecked(!termsChecked)}
+                          className={`border p-4 rounded-xl cursor-pointer transition-all ${termsChecked ? 'border-orange-500 bg-orange-500/5' : 'border-white/10 hover:border-white/30'}`}
+                        >
+                            <div className="flex gap-4 items-start">
+                                <div className={`w-6 h-6 border rounded flex items-center justify-center shrink-0 mt-1 transition-colors ${termsChecked ? 'bg-orange-500 border-orange-500' : 'border-gray-500'}`}>
+                                   {termsChecked && <Check size={16} className="text-black" />}
+                                </div>
+                                <p className="text-gray-400 text-xs md:text-sm leading-tight font-mono">
+                                    <span className="text-white font-bold">BINDING AGREEMENT:</span> I acknowledge that bypassing the Pilot Diagnostic voids all stability guarantees. I assume full liability for uncalibrated deployment. <span className="text-red-500 font-bold underline decoration-red-500/50 underline-offset-4">NO REFUNDS.</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+             </div>
+        </div>
+      </div>
+
+      {/* --- GRANTED STATE: PRODUCT GRID --- */}
+      {accessState === 'GRANTED' && (
+        <div id="pricing-grid" className="animate-in slide-in-from-bottom-20 duration-1000 w-full flex flex-col items-center">
+            
+            <div className="mb-16 text-center">
+                 <div className="inline-flex items-center gap-3 text-[#00F3FF] border border-[#00F3FF]/30 bg-[#00F3FF]/10 px-8 py-3 rounded-full mb-6">
+                    <div className="w-3 h-3 bg-[#00F3FF] rounded-full animate-pulse shadow-[0_0_10px_#00F3FF]"></div>
+                    <span className="font-mono text-sm font-bold uppercase tracking-widest">Sector Unlocked: {isOtherSector ? customSector : sector}</span>
+                 </div>
+                 <p className="text-white text-xl uppercase tracking-[0.2em] font-bold">Select Infrastructure Tier</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-[95rem] w-full items-start mb-32">
+                {/* TIER 1 */}
+                <div className="p-10 border border-white/10 bg-black/60 backdrop-blur-md rounded-[2.5rem] flex flex-col hover:border-[#00F3FF]/30 transition-all h-full shadow-2xl group">
+                    <h3 className="text-xl font-mono font-bold mb-6 uppercase text-white tracking-widest group-hover:text-[#00F3FF] transition-colors">NODE ACCESS</h3>
+                    <div className="text-5xl font-black text-white mb-4">$5k<span className="text-lg font-medium text-white/40">/mo</span></div>
+                    <ul className="space-y-4 mb-12 text-sm text-gray-300 font-sans font-medium">
+                        {["Local Entropy Veto", "Standard Latency Governor", "Single-Thread Monitoring", "Real-Time Variance Metrics"].map((f, j) => <li key={j} className="flex items-start gap-4"><CheckCircle2 size={18} className="text-[#00F3FF] shrink-0 mt-[2px]" /> {f}</li>)}
+                    </ul>
+                    <div className="mt-auto"><button onClick={() => onBuy('TIER_1')} className="w-full py-5 bg-white/5 border border-white/10 font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all rounded-xl">AUTHORIZE LICENSE</button></div>
+                </div>
+
+                {/* TIER 2 */}
+                <div className="relative p-10 border border-[#00F3FF]/30 bg-black/60 backdrop-blur-md rounded-[2.5rem] flex flex-col shadow-[0_0_50px_rgba(0,243,255,0.15)] z-10 h-full hover:scale-[1.01] transition-transform">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#00F3FF] text-black text-[10px] font-black uppercase tracking-[0.2em] px-6 py-2 rounded-full shadow-lg">Recommended</div>
+                    <h3 className="text-xl font-mono font-bold mb-6 uppercase text-[#00F3FF] tracking-widest">CORPORATE FLEET</h3>
+                    <div className="text-5xl font-black text-white mb-4">$25k<span className="text-lg font-medium text-white/40">/mo</span></div>
+                    <ul className="space-y-4 mb-12 text-sm text-white font-sans font-medium">
+                        {["Regional Cluster Veto", "Aggressive Latency Governor", "Multi-Node Orchestration", "Load Balancing (50 Nodes)"].map((f, j) => <li key={j} className="flex items-start gap-4"><CheckCircle2 size={18} className="text-[#00F3FF] shrink-0 mt-[2px]" /> {f}</li>)}
+                    </ul>
+                    <div className="mt-auto"><button onClick={() => onBuy('TIER_2')} className="w-full py-5 bg-[#00F3FF] text-black font-bold uppercase tracking-widest text-xs hover:bg-white transition-all rounded-xl shadow-lg">AUTHORIZE LICENSE</button></div>
+                </div>
+
+                {/* TIER 3 (ENTERPRISE) */}
+                <div className="relative p-10 border-4 border-[#00F3FF] bg-black/80 backdrop-blur-xl rounded-[2.5rem] flex flex-col shadow-[0_0_100px_rgba(0,243,255,0.2)] scale-105 z-20 h-full overflow-hidden group">
+                    <div className="absolute top-8 right-8"><Crown size={32} className="text-[#00F3FF] animate-pulse drop-shadow-[0_0_10px_#00F3FF]" /></div>
+                    <h3 className="text-3xl font-mono font-black mb-6 uppercase text-white tracking-[0.2em] drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">ENTERPRISE</h3>
+                    <div className="text-6xl font-black text-[#00F3FF] mb-4 drop-shadow-[0_0_15px_rgba(0,243,255,0.5)]">$125k<span className="text-xl font-medium text-white/60">+</span></div>
+                    <ul className="space-y-4 mb-12 text-sm text-white/80 font-mono font-medium relative z-10">
+                        {["Global Mesh Veto", "Ontological Truth Anchoring", "Femtosecond Variance Check", "Automated Flash-Crash Isolation"].map((f, j) => <li key={j} className="flex items-start gap-4"><Check size={10} className="text-black bg-[#00F3FF] rounded-full p-0.5" /> <span>{f}</span></li>)}
+                    </ul>
+                    <div className="mt-auto relative z-10"><button onClick={() => onBuy('TIER_3')} className="w-full py-6 bg-[#00F3FF] border-2 border-white text-black font-black uppercase tracking-[0.25em] text-xs hover:bg-white hover:text-black transition-all rounded-xl">INITIATE CLASSIFIED UPLINK</button></div>
+                </div>
+            </div>
+        </div>
+      )}
+
+      {/* DIAGNOSTIC MODAL USED HERE */}
+      <PilotDiagnosticModal 
+          isOpen={showDiagnosticModal} 
+          onClose={() => setShowDiagnosticModal(false)}
+          onProceed={() => { setShowDiagnosticModal(false); setAccessState('GRANTED'); }}
+      />
+    </div>
+  );
+};
+
+// --- NEW VIEW: HOW IT WORKS (MILITARY INSTALLATION GUIDE) ---
+const HowItWorksView: React.FC = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+    <SectorHeader title="Installation Protocol" subtitle="System Integration & Deployment" icon={<Wrench size={48} />} />
+    
+    {/* VIDEO HEADER SECTION */}
+    <div className="max-w-[90rem] mx-auto mb-32 relative group">
+        <div className="relative w-full aspect-video rounded-3xl overflow-hidden border-2 border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] bg-black">
+           {/* THE VIDEO INJECTION */}
+           <video 
+             src={PROTOCOL_BRIEF_VIDEO}
+             autoPlay
+             loop
+             muted
+             playsInline
+             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
+           />
+           {/* TEXT OVERLAY */}
+           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-end p-12">
+               <div className="flex items-center gap-4 mb-4">
+                   <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                   <span className="text-red-500 font-mono text-sm tracking-widest font-bold uppercase">Classified Briefing // Level 4 Eyes Only</span>
+               </div>
+               <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-2 font-sans" style={{ textShadow: '0 4px 10px rgba(0,0,0,0.8)' }}>Tactical Overview</h2>
+               <p className="text-gray-200 text-base md:text-lg max-w-2xl font-light">
+                 The AICE framework is not merely installed; it is <span className="text-[#00F3FF] font-bold">fused</span> to your infrastructure. Watch the briefing to understand the deployment vectors.
+               </p>
+           </div>
+           
+           {/* HUD CORNERS ON VIDEO */}
+           <div className="absolute top-8 left-8 w-16 h-16 border-t-4 border-l-4 border-[#00F3FF]/50 rounded-tl-xl"></div>
+           <div className="absolute bottom-8 right-8 w-16 h-16 border-b-4 border-r-4 border-[#00F3FF]/50 rounded-br-xl"></div>
+        </div>
+    </div>
+
+    {/* STEP BY STEP MILITARY GUIDE */}
+    <div className="max-w-6xl mx-auto space-y-24 relative">
+        <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#00F3FF] to-transparent opacity-20 hidden md:block"></div>
+        
+        {[
+            { 
+              step: "01", 
+              title: "DIAGNOSTIC RECONNAISSANCE", 
+              desc: "We do not guess; we audit. The AICE deployment team initiates a full-spectrum analysis of your current entropy levels, identifying thermal leaks, logic gaps, and liquidity vulnerabilities.",
+              icon: <Crosshair size={32} />
+            },
+            { 
+              step: "02", 
+              title: "THE HARDLINE UPLINK", 
+              desc: "Installation of the 'Black Box' governor. Whether cloud-native or on-premise, we fuse the impedance controller directly to your logic gates. This is the physical anchor for the system.",
+              icon: <Zap size={32} />
+            },
+            { 
+              step: "03", 
+              title: "SYNCHRONIZATION & HANDSHAKE", 
+              desc: "The AI begins to breathe. We calibrate the 'Veto' latency to match your system's heartbeat, ensuring that stabilization occurs within femtoseconds—too fast for human perception, perfect for machine survival.",
+              icon: <Activity size={32} />
+            },
+            { 
+              step: "04", 
+              title: "LIVE ENTROPY GOVERNANCE", 
+              desc: "The Governor is armed. The system now operates under the protection of the AICE Protocol. Any deviation from thermodynamic equilibrium is met with immediate, irrefutable correction.",
+              icon: <ShieldCheck size={32} />
+            }
+        ].map((item, i) => (
+            <div key={i} className="flex flex-col md:flex-row gap-12 items-start relative pl-0 md:pl-24 group">
+                {/* Connector Line */}
+                <div className="hidden md:block absolute left-[31px] top-12 w-16 h-[2px] bg-[#00F3FF]/50"></div>
+                
+                {/* Icon Box */}
+                <div className="w-20 h-20 bg-black border border-[#00F3FF] rounded-xl flex items-center justify-center shrink-0 z-10 shadow-[0_0_30px_rgba(0,243,255,0.2)] group-hover:scale-110 transition-transform duration-500">
+                    <div className="text-[#00F3FF]">{item.icon}</div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1">
+                    <span className="text-[#00F3FF] font-mono text-xl font-bold tracking-widest mb-2 block">PHASE // {item.step}</span>
+                    <h3 className="text-3xl md:text-4xl font-sans font-black text-white uppercase mb-6 tracking-tight">{item.title}</h3>
+                    <p className="text-gray-300 text-lg md:text-xl leading-relaxed font-light border-l-4 border-white/10 pl-6 group-hover:border-[#00F3FF] transition-colors">{item.desc}</p>
+                </div>
+            </div>
+        ))}
+    </div>
+
+    {/* FINAL CALL TO ACTION */}
+    <div className="max-w-4xl mx-auto mt-32 text-center bg-[#050505] border border-[#00F3FF]/30 p-16 rounded-3xl shadow-[0_0_60px_rgba(0,243,255,0.1)]">
+        <h3 className="text-2xl md:text-3xl font-bold text-white mb-8 uppercase tracking-widest">SYSTEM READY FOR UPLINK</h3>
+        <button className="px-12 py-6 bg-[#00F3FF] text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-white transition-all rounded shadow-[0_0_20px_#00F3FF]">INITIATE DEPLOYMENT</button>
+    </div>
+  </div>
+);
+
+// --- NEW VIEW: DEVELOPERS (INTEGRATION TEASER) ---
+const DeveloperView: React.FC = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+    <SectorHeader title="Developer Nexus" subtitle="Middleware Integration & API Docs" icon={<Terminal size={48} />} />
+    
+    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32">
+      
+      {/* LEFT: INTRO */}
+      <div className="space-y-8">
+         <h2 className="text-4xl font-bold text-white uppercase tracking-tight">Fuse the Governor to Your Stack</h2>
+         <p className="text-gray-300 text-lg leading-relaxed">
+            AICE isn't just a dashboard; it's a middleware layer. By integrating our Safety Governor SDK, you inject thermodynamic constraints directly into your training loop or grid control logic.
+         </p>
+         
+         <div className="flex gap-4">
+            <div className="flex-1 bg-[#050505] border border-white/10 p-6 rounded-xl">
+               <Cpu size={32} className="text-[#00F3FF] mb-4" />
+               <h4 className="font-bold text-white mb-2">Native Support</h4>
+               <p className="text-gray-500 text-sm">Python (PyTorch/TF), C++, Rust, Node.js</p>
+            </div>
+            <div className="flex-1 bg-[#050505] border border-white/10 p-6 rounded-xl">
+               <Globe size={32} className="text-[#00F3FF] mb-4" />
+               <h4 className="font-bold text-white mb-2">Rest API</h4>
+               <p className="text-gray-500 text-sm">Global Telemetry & Veto Signals</p>
+            </div>
+         </div>
+      </div>
+
+      {/* RIGHT: CODE BLOCKS */}
+      <div className="space-y-6">
+         
+         {/* JSON SCHEMA BLOCK */}
+         <div className="bg-[#111] border border-white/20 rounded-xl overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-3 bg-black border-b border-white/10">
+               <span className="text-[#00F3FF] font-mono text-xs font-bold flex items-center gap-2"><Braces size={14}/> TELEMETRY_SCHEMA_V1.json</span>
+               <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-red-500"></div><div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div><div className="w-2.5 h-2.5 rounded-full bg-green-500"></div></div>
+            </div>
+            <pre className="p-4 text-[10px] md:text-xs font-mono text-gray-300 overflow-x-auto leading-relaxed">
+{`{
+  "$schema": "https://api.aice.network/schemas/telemetry-v1",
+  "type": "object",
+  "properties": {
+    "node_id": { "type": "uuid" },
+    "entropy_metric": { 
+      "type": "float", 
+      "range": [0.0, 1.0],
+      "description": "Normalized Shannon entropy of current state"
+    },
+    "thermal_load": { "type": "integer", "unit": "celsius" },
+    "veto_active": { "type": "boolean" }
+  },
+  "required": ["node_id", "entropy_metric"]
+}`}
+            </pre>
+         </div>
+
+         {/* PYTHON API BLOCK */}
+         <div className="bg-[#111] border border-white/20 rounded-xl overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-3 bg-black border-b border-white/10">
+               <span className="text-yellow-500 font-mono text-xs font-bold flex items-center gap-2"><Code size={14}/> safety_governor.py</span>
+            </div>
+            <pre className="p-4 text-[10px] md:text-xs font-mono text-gray-300 overflow-x-auto leading-relaxed">
+{`from aice_sdk import Governor, EntropyLimit
+
+# Initialize the Safety Layer
+gov = Governor(api_key="sk_live_...", mode="HARD_VETO")
+
+@gov.monitor(threshold=0.85)
+def training_step(batch):
+    loss = model(batch)
+    
+    # AICE calculates entropy drift automatically
+    # If entropy > 0.85, this function is HALTED
+    # before gradients are applied.
+    
+    loss.backward()
+    return loss
+
+# Status: ACTIVE (Protection Enabled)`}
+            </pre>
+         </div>
+         
+         <div className="text-center">
+             <button className="text-[#00F3FF] text-xs font-mono uppercase tracking-widest hover:text-white transition-colors border-b border-[#00F3FF] pb-1">View Full Documentation</button>
+         </div>
+
+      </div>
+    </div>
+  </div>
+);
+
+// --- NEW PILOT PROGRAMS VIEW ---
+const PilotProgramView: React.FC<{ onOpenDoc: (type: DocType) => void, setView: (v: ViewState) => void }> = ({ onOpenDoc, setView }) => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+    <SectorHeader title="Pilot Programs" subtitle="System Stability Diagnostics" icon={<ClipboardCheck size={48} />} />
+    <div className="max-w-[90rem] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* TIER 1 */}
+        <div className="bg-[#050505] border border-white/10 rounded-3xl p-8 flex flex-col relative group hover:border-[#00F3FF] transition-all duration-500 hover:-translate-y-2">
+            <h3 className="text-2xl font-black text-white uppercase tracking-wide mb-2">Rapid Triage</h3>
+            <div className="text-4xl font-mono font-bold text-[#00F3FF] mb-6">$5,000</div>
+            <p className="text-gray-400 text-sm mb-8 leading-relaxed">A binary assessment of your system's instability risk.</p>
+            <div className="mt-auto"><button onClick={() => onOpenDoc('PILOT_7DAY')} className="w-full py-4 border border-white/20 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all rounded-lg">View S.O.W.</button></div>
+        </div>
+        {/* TIER 2 */}
+        <div className="bg-[#050505] border-2 border-orange-500 rounded-3xl p-8 flex flex-col relative group transform scale-105 z-10">
+            <h3 className="text-2xl font-black text-white uppercase tracking-wide mb-2">Standard Diagnostic</h3>
+            <div className="text-4xl font-mono font-bold text-orange-500 mb-6">$15,000</div>
+            <p className="text-gray-300 text-sm mb-8 leading-relaxed">The core A.I.C.E. product. Identify exactly where your system fails.</p>
+            <div className="mt-auto"><button onClick={() => setView('PILOT_PHOENIX')} className="w-full py-4 bg-orange-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all rounded-lg">Initiate Diagnostic</button></div>
+        </div>
+        {/* TIER 3 */}
+        <div className="bg-[#050505] border border-white/10 rounded-3xl p-8 flex flex-col relative group hover:border-[#00F3FF] transition-all duration-500 hover:-translate-y-2">
+            <h3 className="text-2xl font-black text-white uppercase tracking-wide mb-2">Extended Validation</h3>
+            <div className="text-4xl font-mono font-bold text-white mb-6">Custom</div>
+            <p className="text-gray-400 text-sm mb-8 leading-relaxed">Mission-critical integration. Live fire validation.</p>
+            <div className="mt-auto"><button onClick={() => onOpenDoc('PILOT_EXTENDED')} className="w-full py-4 border border-white/20 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all rounded-lg">View S.O.W.</button></div>
+        </div>
+    </div>
+  </div>
+);
+
+// --- AUTHENTICATION & ADMIN ---
+
+const LoginModal: React.FC<{ isOpen: boolean, onClose: () => void, user: FirebaseUser | null, initialMode?: 'register' | 'login' }> = ({ isOpen, onClose, user, initialMode = 'login' }) => {
+  const [isRegistering, setIsRegistering] = useState(initialMode === 'register');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); 
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => { 
+      setIsRegistering(initialMode === 'register'); 
+      setError(""); 
+      setSuccessMsg("");
+  }, [initialMode, isOpen]);
+
+  const logUserAccess = async (user: FirebaseUser) => {
+    try {
+      const userRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+      await setDoc(userRef, { email: user.email, lastLogin: serverTimestamp(), uid: user.uid, displayName: user.displayName || 'Operative', role: 'user' }, { merge: true });
+    } catch (e) { console.error(e); }
+  };
+
+  const mapAuthError = (errCode: string) => {
+      if (errCode.includes('password')) return "ACCESS DENIED: INVALID CREDENTIALS";
+      if (errCode.includes('email')) return "ERROR: INVALID EMAIL FORMAT";
+      if (errCode.includes('not-found')) return "USER NOT FOUND";
+      if (errCode.includes('in-use')) return "ID ALREADY REGISTERED";
+      return "SYSTEM ERROR: TRY AGAIN";
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true); setError("");
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      await logUserAccess(result.user);
+      onClose();
+    } catch (err: any) { setError(mapAuthError(err.message)); } finally { setLoading(false); }
+  };
+
+  const handleEmailAuth = async () => {
+    setLoading(true); setError(""); setSuccessMsg("");
+    
+    if (isRegistering && password !== confirmPassword) {
+        setError("SECURITY ALERT: PASSWORDS DO NOT MATCH");
+        setLoading(false);
+        return;
+    }
+    
+    if (password.length < 6) {
+        setError("SECURITY ALERT: PASSWORD TOO WEAK (MIN 6 CHARS)");
+        setLoading(false);
+        return;
+    }
+
+    try {
+      let result;
+      if (isRegistering) result = await createUserWithEmailAndPassword(auth, email, password);
+      else result = await signInWithEmailAndPassword(auth, email, password);
+      await logUserAccess(result.user);
+      onClose();
+    } catch (err: any) { setError(mapAuthError(err.message)); } finally { setLoading(false); }
+  };
+
+  const handleResetPassword = async () => {
+      if (!email) { setError("ENTER ID (EMAIL) TO RESET"); return; }
+      try {
+          await sendPasswordResetEmail(auth, email);
+          setSuccessMsg("RESET LINK TRANSMITTED TO INBOX");
+          setError("");
+      } catch (err: any) { setError(mapAuthError(err.message)); }
+  };
+
+  if (!isOpen) return null;
+  if (user) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4">
+      <div className="w-full max-w-md bg-[#050505] border border-[#00F3FF] shadow-[0_0_100px_rgba(0,243,255,0.15)] rounded-2xl relative overflow-hidden p-8 animate-in zoom-in duration-300">
+        <button onClick={onClose} className="absolute top-4 right-4 text-white/30 hover:text-[#00F3FF]"><X /></button>
+        
+        <div className="text-center mb-8">
+            <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-[#00F3FF]/10 border border-[#00F3FF] mb-4 shadow-[0_0_20px_rgba(0,243,255,0.3)]">
+                <ShieldCheck size={32} className="text-[#00F3FF]" />
+            </div>
+            <h2 className="text-2xl font-bold text-white uppercase tracking-widest mb-1">{isRegistering ? 'New Operative' : 'Identity Verification'}</h2>
+            <p className="text-xs text-[#00F3FF] font-mono tracking-wider">A.I.C.E. SECURITY PROTOCOL v2.0</p>
+        </div>
+
+        {error && <div className="bg-red-500/10 border border-red-500/50 p-3 mb-6 text-red-500 text-xs font-mono flex items-center gap-2 animate-pulse"><AlertTriangle size={12}/> {error}</div>}
+        {successMsg && <div className="bg-green-500/10 border border-green-500/50 p-3 mb-6 text-green-500 text-xs font-mono flex items-center gap-2"><CheckCircle2 size={12}/> {successMsg}</div>}
+
+        <div className="space-y-4">
+            <button onClick={handleGoogleLogin} disabled={loading} className="w-full py-3 bg-white text-black font-bold uppercase tracking-wider rounded flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="G" />
+                {loading ? 'Scanning...' : 'Sign in with Google'}
+            </button>
+            <div className="flex items-center gap-4 my-4"><div className="h-[1px] bg-white/10 flex-1"></div><span className="text-white/30 text-[10px] uppercase">OR ENCRYPTED KEY</span><div className="h-[1px] bg-white/10 flex-1"></div></div>
+
+            <div className="space-y-3">
+                <div className="relative">
+                    <Mail className="absolute left-3 top-3 text-white/30" size={18} />
+                    <input type="email" placeholder="OPERATIVE ID (EMAIL)" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-black border border-white/20 rounded p-3 pl-10 text-white text-sm outline-none focus:border-[#00F3FF] font-mono transition-colors" />
+                </div>
+                
+                {/* PASSWORD FIELD WITH TOGGLE */}
+                <div className="relative">
+                    <LockKeyhole className="absolute left-3 top-3 text-white/30" size={18} />
+                    <input 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="ACCESS CODE (PASSWORD)" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        className="w-full bg-black border border-white/20 rounded p-3 pl-10 pr-10 text-white text-sm outline-none focus:border-[#00F3FF] font-mono transition-colors" 
+                    />
+                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3 text-white/30 hover:text-white">
+                        {showPassword ? <Eye size={18} /> : <Eye className="opacity-50" size={18} />}
+                    </button>
+                </div>
+                
+                {isRegistering && (
+                    <div className="relative animate-in slide-in-from-top-2 fade-in">
+                        <LockKeyhole className="absolute left-3 top-3 text-[#00F3FF]" size={18} />
+                        <input 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="CONFIRM ACCESS CODE" 
+                            value={confirmPassword} 
+                            onChange={(e) => setConfirmPassword(e.target.value)} 
+                            className="w-full bg-black border border-[#00F3FF]/50 rounded p-3 pl-10 text-white text-sm outline-none focus:border-[#00F3FF] font-mono shadow-[0_0_10px_rgba(0,243,255,0.1)]" 
+                        />
+                    </div>
+                )}
+            </div>
+
+            {!isRegistering && (
+                <div className="flex justify-end">
+                    <button onClick={handleResetPassword} className="text-[10px] text-white/50 hover:text-[#00F3FF] uppercase tracking-wider transition-colors">
+                        Forgot Access Code?
+                    </button>
+                </div>
+            )}
+
+            <button onClick={handleEmailAuth} disabled={loading} className="w-full py-4 bg-[#00F3FF]/10 border border-[#00F3FF] text-[#00F3FF] font-black uppercase tracking-[0.2em] rounded hover:bg-[#00F3FF] hover:text-black transition-all shadow-[0_0_20px_rgba(0,243,255,0.1)] mt-2">
+                {loading ? 'AUTHENTICATING...' : (isRegistering ? 'INITIALIZE ACCOUNT' : 'VERIFY IDENTITY')}
+            </button>
+        </div>
+
+        <div className="mt-6 text-center">
+            <button onClick={() => { setIsRegistering(!isRegistering); setError(""); setSuccessMsg(""); }} className="text-white/40 text-xs hover:text-[#00F3FF] underline decoration-dotted underline-offset-4">
+                {isRegistering ? 'Return to Login Interface' : 'Request New Clearance Level'}
+            </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- ADMIN DASHBOARD ---
+const AdminView: React.FC = () => {
+    const [users, setUsers] = useState<any[]>([]);
+    
+    // Fetch all users (Simulated Admin Access for this demo)
+    useEffect(() => {
+        // NOTE: In a real app, strict Firestore Rules would prevent this read unless user.role === 'admin'
+        // For this demo, we assume the viewer has permission.
+        const usersRef = collection(db, 'artifacts', appId, 'users'); 
+        setUsers([
+            { uid: 'mock-1', email: 'admin@aice.network', role: 'COMMANDER', lastLogin: 'NOW' },
+            { uid: 'mock-2', email: 'operative.x@grid.com', role: 'USER', lastLogin: '2 HRS AGO' },
+            { uid: 'mock-3', email: 'system.monitor@vps.net', role: 'BOT', lastLogin: 'ACTIVE' },
+        ]);
+    }, []);
+
+    return (
+        <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+            <SectorHeader title="System Control" subtitle="Administrator Command Deck" icon={<Database size={48} />} />
+            
+            <div className="max-w-7xl mx-auto">
+                <div className="bg-[#050505] border border-[#00F3FF]/30 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,243,255,0.1)]">
+                    <div className="p-6 border-b border-white/10 bg-white/5 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <Users className="text-[#00F3FF]" />
+                            <h3 className="text-xl font-bold text-white uppercase tracking-widest">Personnel Database</h3>
+                        </div>
+                        <div className="flex gap-2">
+                             <button className="p-2 bg-[#00F3FF]/20 text-[#00F3FF] rounded hover:bg-[#00F3FF] hover:text-black transition-colors"><UserPlus size={18} /></button>
+                             <button className="p-2 bg-red-500/20 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors"><Lock size={18} /></button>
+                        </div>
+                    </div>
+                    
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-black text-white/50 text-xs font-mono uppercase tracking-widest border-b border-white/10">
+                                    <th className="p-6">Operative ID</th>
+                                    <th className="p-6">Clearance Role</th>
+                                    <th className="p-6">Last Uplink</th>
+                                    <th className="p-6">Status</th>
+                                    <th className="p-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-sm font-mono text-gray-300">
+                                {users.map((u, i) => (
+                                    <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                        <td className="p-6 font-bold text-white">{u.email}</td>
+                                        <td className="p-6"><span className="bg-[#00F3FF]/10 text-[#00F3FF] px-2 py-1 rounded text-[10px] border border-[#00F3FF]/30">{u.role}</span></td>
+                                        <td className="p-6">{typeof u.lastLogin === 'string' ? u.lastLogin : 'Just now'}</td>
+                                        <td className="p-6"><span className="text-green-500">● ONLINE</span></td>
+                                        <td className="p-6 text-right">
+                                            <button className="text-white/50 hover:text-white underline decoration-dotted">Edit</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- UPDATED HOME VIEW: DYNAMIC VIEWPORT SCALING & GLASS TITLE ---
+const HomeView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => (
+  <div className="hero-container relative z-20 min-h-[100svh] flex flex-col w-full"> 
+    
+    {/* 1. LOCAL DARKENING LAYER: Dims the busy background */}
+    <div className="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
+
+    {/* --- HERO CONTENT WRAPPER --- */}
+    <div className="flex-grow flex flex-col items-center justify-center relative z-20 px-6 py-20 md:py-0">
+      
+      {/* 2. ENHANCED TITLE CONTAINER (MASSIVE SCALE) */}
+      {/* Update 1: Changed max-w-[90rem] to max-w-full to unlock width constraints */}
+      <div className="relative w-full max-w-full px-4 mt-12 md:mt-0 flex justify-center items-center group cursor-default">
+          
+          {/* THE "PHANTOM GLASS" BACKING */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-black/90 via-black/50 to-transparent blur-3xl -z-10 rounded-full opacity-100 transition-opacity duration-700 group-hover:opacity-80"></div>
+          
+          {/* THE IMAGE: SCALE INCREASED */}
+          {/* Update 2: Increased height to 70vh (70% of screen) */}
+          <img 
+            src={MAIN_TITLE_IMG} 
+            alt="AICE PROTOCOL" 
+            className="relative z-10 w-auto h-auto max-w-full max-h-[40vh] md:max-h-[70vh] object-contain drop-shadow-[0_0_35px_rgba(0,0,0,0.9)] filter brightness-110 hover:scale-105 transition-transform duration-700 ease-out" 
+          />
+      </div>
+
+      
+      {/* Tagline - Optimized spacing */}
+      <div className="flex flex-col items-center gap-6 my-8 md:my-12 relative z-10">
+        <p className="font-mono text-lg md:text-3xl tracking-[0.2em] uppercase font-black max-w-6xl mx-auto px-4 animate-pulse leading-tight text-[#00F3FF] drop-shadow-[0_0_15px_rgba(0,243,255,0.8)] text-center bg-black/60 backdrop-blur-md py-3 rounded-lg border-y border-[#00F3FF]/20 shadow-lg">
+            UNIVERSAL SOLUTION FOR THE SINGULARITY
+        </p>
+        
+        {/* Laser Line */}
+        <div className="h-[2px] w-40 md:w-64 bg-gradient-to-r from-transparent via-[#00F3FF] to-transparent opacity-70 shadow-[0_0_10px_#00F3FF]"></div>
+
+        <p className="font-sans text-lg md:text-2xl tracking-widest uppercase max-w-4xl mx-auto leading-relaxed font-bold text-white drop-shadow-md text-center text-shadow-lg">
+            PREVENTING THE GLOBAL CRASH THROUGH <br className="hidden md:block" /> <span className="text-[#00F3FF] border-b-2 border-[#00F3FF]/30 pb-2">IMMUTABLE PROTECTION</span>.
+        </p>
+      </div>
+
+      {/* --- BUTTONS: CENTERED ON ARCHITECTURAL VECTORS --- */}
+      {/* Added md:pl-48 to shift the button to the right for the arrow alignment */}
+      <div className="flex flex-col items-center justify-center w-full relative z-10 md:pl-48"> 
+        
+        {/* Button 1: Initiate (Cyan) */}
+        <button 
+            onClick={() => setView('SALES')} 
+            className="group relative px-10 py-5 bg-black/80 border border-[#00F3FF] text-[#00F3FF] font-bold uppercase tracking-widest hover:bg-[#00F3FF] hover:text-black transition-all overflow-hidden w-full md:w-auto min-w-[220px] shadow-[0_0_40px_rgba(0,243,255,0.2)] hover:shadow-[0_0_60px_rgba(0,243,255,0.6)] rounded-sm" 
+        >
+          <div className="absolute inset-0 bg-[#00F3FF] translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300"></div>
+          <div className="flex items-center justify-center gap-4 relative z-10 transition-colors text-sm md:text-base">
+              <Cpu size={24} />
+              <span>INITIATE PROTOCOL</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+    {/* --- SECTOR PORTALS (DOCKED TO BOTTOM) --- */}
+    <div className="w-full max-w-[95rem] mx-auto px-6 pb-8 relative z-30 mt-auto"> 
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+           <SectorPortal 
+             title="Adaptive Grid" 
+             subtitle="Sector 01" 
+             icon={<Activity size={32} className="animate-pulse" />} 
+             bgImage={BACKGROUNDS.ADAPTIVE} 
+             onClick={() => setView('ADAPTIVE')} 
+           />
+           <SectorPortal 
+             title="Neural Veto" 
+             subtitle="Sector 02" 
+             icon={<Brain size={32} className="animate-pulse" />} 
+             bgImage={BACKGROUNDS.INTELLIGENCE} 
+             onClick={() => setView('INTELLIGENCE')} 
+           />
+           <SectorPortal 
+             title="Entropy Core" 
+             subtitle="Sector 03" 
+             icon={<Aperture size={32} className="animate-pulse" />} 
+             bgImage={BACKGROUNDS.ENTROPY} 
+             onClick={() => setView('ENTROPY')} 
+           />
+       </div>
+    </div>
+
+    {/* Bottom Indicator */}
+    <div className="w-full flex justify-center relative z-30 pb-4">
+        <button onClick={() => setView('HOW_IT_WORKS')} className="flex flex-col items-center gap-2 group opacity-70 hover:opacity-100 transition-opacity">
+            <ChevronDown size={24} className="text-[#00F3FF] animate-bounce" />
+        </button>
+    </div>
+  </div>
+);
+
+// --- MODALS & UTILS ---
+// UPDATE 2: The "Glass HUD" PDF Viewer with Download Button
+const DocumentModal: React.FC<{ isOpen: boolean, onClose: () => void, title: string, fileUrl: string }> = ({ isOpen, onClose, title, fileUrl }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md animate-in fade-in duration-200 p-4 md:p-8">
+      {/* The Tech Container */}
+      <div className="w-full max-w-6xl h-[85vh] bg-[#050505] border border-[#00F3FF] shadow-[0_0_50px_rgba(0,243,255,0.15)] flex flex-col relative overflow-hidden rounded-lg">
+        
+        {/* Decorative Corner Accents */}
+        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00F3FF]" />
+        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00F3FF]" />
+        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00F3FF]" />
+        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00F3FF]" />
+
+        {/* Header Bar */}
+        <div className="flex items-center justify-between p-4 border-b border-[#00F3FF]/20 bg-[#00F3FF]/5">
+          <div className="flex items-center space-x-3">
+            <FileText className="w-5 h-5 text-[#00F3FF]" />
+            <h3 className="font-mono text-[#00F3FF] tracking-widest text-sm md:text-base font-bold uppercase">
+              {title}
+            </h3>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-[#00F3FF]/10 rounded-full transition-colors group"
+          >
+            <X className="w-6 h-6 text-gray-400 group-hover:text-white" />
+          </button>
+        </div>
+
+        {/* PDF Preview Area (Iframe) */}
+        <div className="flex-1 bg-gray-900/50 relative">
+            <iframe 
+                src={fileUrl}
+                className="w-full h-full border-none"
+                title="Document Preview"
+            />
+        </div>
+
+        {/* Footer with DOWNLOAD Button */}
+        <div className="p-4 border-t border-[#00F3FF]/20 bg-[#00F3FF]/5 flex justify-between items-center">
+            <div className="text-xs font-mono text-gray-500 hidden md:block">
+                SECURE CONNECTION ESTABLISHED // TLS 1.3 // DOWNLOAD AUTHORIZED
+            </div>
+            <a 
+                href={fileUrl} 
+                download
+                className="flex items-center space-x-2 bg-[#00F3FF]/10 hover:bg-[#00F3FF]/20 border border-[#00F3FF] text-[#00F3FF] px-6 py-3 transition-all hover:shadow-[0_0_20px_rgba(0,243,255,0.3)] hover:scale-105 rounded"
+            >
+                <Download className="w-4 h-4" />
+                <span className="font-mono tracking-wider font-bold text-xs md:text-sm">DOWNLOAD PDF</span>
+            </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- FOOTER ---
+const Footer: React.FC<{ setView: (v: ViewState) => void, onOpenDoc: (type: DocType) => void, openLogin: (mode: 'login' | 'register') => void, user: FirebaseUser | null }> = ({ setView, onOpenDoc, openLogin, user }) => (
+  <footer className="relative z-20 bg-[#050505] border-t border-white/10 pt-24 pb-12 mt-20">
+    <div className="max-w-[95rem] mx-auto px-6">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-24">
+        
+        {/* COL 1: BRAND */}
+        <div className="space-y-8 col-span-1 md:col-span-1">
+          <button onClick={() => setView('HOME')} className="flex items-center gap-3 group">
+              <div className="w-3 h-3 rounded-full bg-[#00F3FF] shadow-[0_0_10px_#00F3FF] group-hover:scale-150 transition-transform"></div>
+              <span className="text-white font-sans font-bold text-2xl tracking-wider uppercase group-hover:text-[#00F3FF] transition-colors">AICE PROTOCOL</span>
+          </button>
+          <p className="text-gray-400 font-sans text-sm leading-relaxed">Thermodynamic regularization for the singularity.</p>
+        </div>
+
+        {/* COL 2: CORE SYSTEMS */}
+        <div className="col-span-1">
+          <h4 className="text-white font-mono font-bold tracking-[0.2em] mb-8 text-sm text-[#00F3FF]">CORE SYSTEMS</h4>
+          <ul className="space-y-3">
+            <li><button onClick={() => setView('ADAPTIVE')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase">Adaptive Grid</button></li>
+            <li><button onClick={() => setView('INTELLIGENCE')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase">Neural Veto</button></li>
+            <li><button onClick={() => setView('ENTROPY')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase">Entropy Core</button></li>
+            <li><button onClick={() => setView('PHOENIX_BOT')} className="text-gray-400 hover:text-orange-500 font-mono text-xs tracking-widest transition-colors uppercase">Phoenix Bot</button></li>
+          </ul>
+        </div>
+
+        {/* COL 3: DOCUMENTATION */}
+        <div className="col-span-1">
+          <h4 className="text-white font-mono font-bold tracking-[0.2em] mb-8 text-sm text-[#00F3FF]">DOCUMENTATION</h4>
+          <ul className="space-y-3">
+            <li><button onClick={() => setView('HOW_IT_WORKS')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase">How It Works</button></li>
+            <li><button onClick={() => setView('BOOK')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase font-bold text-[#FFD700]">Brain Blueprint</button></li>
+            <li><button onClick={() => setView('DEVELOPERS')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase">Developers / API</button></li>
+            <li><button onClick={() => onOpenDoc('WHITEPAPER')} className="text-gray-400 hover:text-white font-mono text-xs tracking-widest transition-colors uppercase">White Paper</button></li>
+	    <li><button onClick={() => onOpenDoc('PATENT')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase">Patent Filing</button></li>
+            <li><button onClick={() => onOpenDoc('TOS')} className="text-gray-400 hover:text-white font-mono text-xs tracking-widest transition-colors uppercase">Terms of Service</button></li>
+          </ul>
+        </div>
+
+        {/* COL 4: ACQUISITION */}
+        <div className="col-span-1">
+          <h4 className="text-white font-mono font-bold tracking-[0.2em] mb-8 text-sm text-[#00F3FF]">ACQUISITION</h4>
+          <ul className="space-y-3">
+            <li><button onClick={() => setView('SALES')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase">Pricing Models</button></li>
+            <li><button onClick={() => setView('PILOT_PHOENIX')} className="text-gray-400 hover:text-[#00F3FF] font-mono text-xs tracking-widest transition-colors uppercase font-bold">Pilot Programs</button></li>
+          </ul>
+        </div>
+
+        {/* COL 5: IDENTITY (UPDATED BUTTON STYLE) */}
+        <div className="col-span-1">
+           <h4 className="text-white font-mono font-bold tracking-[0.2em] mb-8 text-sm text-[#FFD700]">IDENTITY</h4>
+           <div className="space-y-4">
+             {user ? (
+                <>
+                    <button onClick={() => setView('PROFILE')} className="block text-[#00F3FF] font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">{'>'} MY PROFILE</button>
+                    <button onClick={() => setView('ADMIN')} className="block text-red-500 font-bold uppercase tracking-widest text-xs hover:text-white transition-colors">{'>'} SYSTEM CONTROL</button>
+                    <button onClick={() => signOut(auth)} className="text-gray-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors border border-white/10 rounded px-4 py-2 mt-4">DISCONNECT</button>
+                </>
+             ) : (
+                <>
+                    <button onClick={() => openLogin('login')} className="w-full text-[#00F3FF] font-bold uppercase tracking-widest text-xs hover:text-white transition-colors border border-[#00F3FF]/30 rounded px-4 py-3 bg-[#00F3FF]/5 hover:bg-[#00F3FF]/20">SECURE LOGIN</button>
+                    
+                    {/* UPDATED SIGN UP BUTTON (WHITE + TEAL BORDER + GLOW) */}
+                    <button onClick={() => openLogin('register')} className="w-full text-white font-bold uppercase tracking-widest text-xs transition-all border-2 border-[#00F3FF] rounded px-4 py-3 bg-transparent shadow-[0_0_15px_rgba(0,243,255,0.4)] hover:shadow-[0_0_25px_rgba(0,243,255,0.7)] hover:bg-[#00F3FF] hover:text-black mt-3">
+                        SIGN UP // ENLIST
+                    </button>
+                </>
+             )}
+           </div>
+        </div>
+      </div>
+      <div className="text-gray-600 text-xs font-mono tracking-widest uppercase border-t border-white/5 pt-8 flex justify-between">
+          <span><Copyright size={12} className="inline mr-2"/> 2026 AICE PROTOCOL. ALL RIGHTS RESERVED.</span>
+      </div>
+    </div>
+  </footer>
+);
+
+// --- NEW VIEW: INSTITUTIONAL / CLEAN ROOM (VIDEO 2) ---
+const InstitutionalView = () => (
+  <div className="relative min-h-screen w-full bg-white text-black overflow-hidden flex flex-col items-center">
+    
+    {/* BACKGROUND: VIDEO 2 (LIGHT MODE) */}
+    <div className="absolute inset-0 z-0">
+        <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="w-full h-full object-cover opacity-40 pointer-events-none grayscale-[20%] contrast-125"
+        >
+            <source src={VIDEO_TITLE_LIGHT} type="video/mp4" />
+        </video>
+        {/* White overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px]"></div>
+    </div>
+
+    {/* CONTENT LAYER */}
+    <div className="relative z-10 w-full max-w-7xl mx-auto pt-32 px-6">
+        
+        {/* Header */}
+        <div className="text-center mb-24 animate-in slide-in-from-bottom-8 duration-1000">
+            <div className="inline-flex items-center gap-2 border-2 border-black px-6 py-2 rounded-full mb-8">
+                <ShieldCheck size={20} className="text-black" />
+                <span className="font-bold text-xs uppercase tracking-[0.3em]">Institutional Access // Level 5</span>
+            </div>
+            <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter mb-4 text-black">
+                Irrefutable <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-600">Proof</span>
+            </h1>
+            <p className="font-mono text-xs md:text-sm uppercase tracking-[0.2em] text-gray-600 max-w-2xl mx-auto border-t border-black/20 pt-6 mt-6">
+                "We do not ask for faith. We provide audit logs."
+            </p>
+        </div>
+
+        {/* The Three Pillars of Verification */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+            {[
+                { title: "CIPO PATENT 2026", desc: "Formal legal protection of the Entropy Control Governor.", code: "CA-PAT-PENDING" },
+                { title: "AUDIT LOGS", desc: "Immutable blockchain records of every Veto event.", code: "BLK-CHAIN-VERIFIED" },
+                { title: "MATHEMATICAL PROOF", desc: "The Landauer Limit equations formalized in silicon.", code: "Q-PROOF-VALID" }
+            ].map((item, i) => (
+                <div key={i} className="bg-white/80 border border-black/10 p-10 hover:border-black transition-all group shadow-xl backdrop-blur-md">
+                    <div className="font-mono text-[10px] text-gray-500 mb-4 tracking-widest">{item.code}</div>
+                    <h3 className="text-2xl font-black uppercase mb-4 group-hover:translate-x-2 transition-transform">{item.title}</h3>
+                    <p className="text-gray-600 leading-relaxed text-sm">{item.desc}</p>
+                    <div className="w-8 h-[2px] bg-black mt-8 group-hover:w-full transition-all duration-500"></div>
+                </div>
+            ))}
+        </div>
+
+        {/* Footer CTA */}
+        <div className="text-center pb-24">
+            <button className="bg-black text-white px-12 py-6 font-bold uppercase tracking-[0.25em] text-xs hover:bg-[#00F3FF] hover:text-black transition-all shadow-2xl">
+                Download Compliance Report 🐦‍🔥
+            </button>
+        </div>
+    </div>
+  </div>
+);
+
+// --- MASTER COMPONENT (SCROLL PHYSICS & LAYOUT FIX) ---
+const AppContent: React.FC = () => {
+  const [loginMode, setLoginMode] = useState<'login' | 'register'>('login');
+  const [view, setView] = useState<ViewState>('HOME');
+  const [activeDoc, setActiveDoc] = useState<DocType>(null);
+  const [isBooting, setIsBooting] = useState(true);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [navVisible, setNavVisible] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+// --- NEW: DYNAMIC IDENTITY ENGINE (Version 5) ---
+  useEffect(() => {
+    const titles: Record<ViewState, string> = {
+      HOME: "A.I.C.E. // PROTOCOL",
+      ADAPTIVE: "A.I.C.E. // ADAPTIVE GRID",
+      INTELLIGENCE: "A.I.C.E. // NEURAL VETO",
+      ENTROPY: "A.I.C.E. // ENTROPY CORE",
+      CONTROL: "A.I.C.E. // MARKET CONTROL",
+      SYSTEM: "A.I.C.E. // DEFENSE",
+      SALES: "A.I.C.E. // ACQUISITION",
+      PROFILE: "A.I.C.E. // OPERATIVE PROFILE",
+      HOW_IT_WORKS: "A.I.C.E. // BRIEFING",
+      DEVELOPERS: "A.I.C.E. // DEV NEXUS",
+      ADMIN: "A.I.C.E. // GOD MODE",
+      PILOT_PROGRAMS: "A.I.C.E. // DIAGNOSTIC",
+      BOOK: "A.I.C.E. // THE CODEX",
+      PHOENIX_BOT: "PHOENIX DV$ // V5.5.5.3",
+      INSTITUTIONAL: "A.I.C.E. // PROOF",
+      PILOT_PHOENIX: "A.I.C.E. // PILOT"
+    };
+    // Force the browser tab title update
+    document.title = titles[view] || "A.I.C.E. PROTOCOL";
+  }, [view]);
+
+  // Ref for the SCROLL CONTAINER, not window
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
+  
+  // --- COMMERCE ENGINE ---
+  const handlePayment = (product: string) => {
+    const PAYMENT_LINKS: Record<string, string> = {
+      'PHOENIX_LIFETIME': "https://buy.stripe.com/YOUR_PHOENIX_LINK", 
+      'BOOK_HARDCOPY': "https://buy.stripe.com/YOUR_BOOK_LINK",        
+      'TIER_1': "https://buy.stripe.com/YOUR_TIER1_LINK",              
+      'TIER_2': "https://buy.stripe.com/YOUR_TIER2_LINK",              
+      'TIER_3': "mailto:finance@aicesystems.pro?subject=Enterprise_Inquiry"
+    };
+    const baseUrl = PAYMENT_LINKS[product];
+    if (baseUrl) {
+      const finalUrl = baseUrl.startsWith('mailto') ? baseUrl : (user?.email ? `${baseUrl}?prefilled_email=${encodeURIComponent(user.email)}` : baseUrl);
+      window.open(finalUrl, '_blank'); 
+    }
+  };
+    
+  // Auth Listener
+  useEffect(() => {
+    const initAuth = async () => {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+        else await signInAnonymously(auth);
+    };
+    initAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+        if (currentUser && !currentUser.isAnonymous) setIsLoginOpen(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+ // ──────────────────────────────────────────────────────────────
+  // SCROLL ENGINE: ZERO-THRESHOLD (DEPENDENCY FIX APPLIED)
+  // ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    // Wait for the Loading Screen to finish before attaching logic
+    if (isBooting) return;
+
+    const container = scrollContainerRef.current;
+    if (!container) {
+        console.error("❌ AICE CRITICAL: Scroll Container NOT FOUND. Check your ref.");
+        return;
+    }
+
+    console.log("✅ AICE SYSTEM: Scroll Engine Attached Successfully.");
+
+    let lastScrollY = container.scrollTop;
+    let ticking = false;
+    let isHidden = false; 
+
+    const updateNav = () => {
+      const currentScrollY = container.scrollTop;
+      const diff = currentScrollY - lastScrollY;
+
+      // RULE 1: At the very top? ALWAYS SHOW.
+      if (currentScrollY < 10) {
+        if (isHidden) {
+          setNavVisible(true);
+          isHidden = false;
+        }
+      } 
+      // RULE 2: Scrolling DOWN (ANY amount) -> HIDE
+      else if (diff > 0) {
+        if (!isHidden) {
+          setNavVisible(false);
+          isHidden = true;
+        }
+      } 
+      // RULE 3: Scrolling UP (ANY amount) -> SHOW
+      else if (diff < 0) {
+        if (isHidden) {
+          setNavVisible(true);
+          isHidden = false;
+        }
+      }
+
+      lastScrollY = currentScrollY;
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateNav);
+        ticking = true;
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [isBooting]); // <--- THIS IS THE CRITICAL FIX
+
+  // Reset scroll on view change
+  useEffect(() => {
+      if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
+  }, [view]);
+
+  useEffect(() => { const timer = setTimeout(() => setIsBooting(false), 1500); return () => clearTimeout(timer); }, []);
+
+  // Doc Content Logic
+  // UPDATE 3: Map document types to PDF file paths
+  const getDocContent = (type: DocType) => {
+    if (type === 'WHITEPAPER') return { title: 'TECHNICAL WHITE PAPER v1.1', fileUrl: DOC_LINKS.WHITEPAPER };
+    if (type === 'TOS') return { title: 'TERMS OF SERVICE', fileUrl: DOC_LINKS.LEGAL_BUNDLE };
+    if (type === 'PRIVACY') return { title: 'PRIVACY POLICY', fileUrl: DOC_LINKS.LEGAL_BUNDLE };
+    if (type === 'PATENT') return { title: 'OFFICIAL PATENT FILINGS', fileUrl: DOC_LINKS.PATENT };
+    
+    // Pilots are special cases (keep text or update to PDF if you have them)
+    // For now, we will return null for fileUrl to handle them differently or you can upload PDFs for these too.
+    // If you want these to open email, keep the original behavior or let me know.
+    if (type === 'PILOT_7DAY') return { title: '7-DAY RAPID TRIAGE', fileUrl: '', isPilot: true }; 
+    
+    return { title: '', fileUrl: '' };
+  };
+
+  const docData = getDocContent(activeDoc);
+
+  if (isBooting) return <div className="fixed inset-0 bg-[#050505] flex items-center justify-center z-[100] text-[#00F3FF] font-mono text-[10px] tracking-[0.5em] uppercase animate-pulse">Initializing AICE Protocol v2.0...</div>;
+
+  return (
+    // --- THE NUCLEAR FIX: Fixed Container with Internal Scroll ---
+    // This forces the app to handle scrolling, ignoring broken body/html CSS.
+    <div ref={scrollContainerRef} className="fixed inset-0 w-full h-full overflow-y-auto overflow-x-hidden bg-[#050505] text-white font-sans selection:bg-[#00F3FF] selection:text-black">
+      
+      {/* Background Layer (Fixed relative to container) - RE-CALIBRATED */}
+      <div className="fixed inset-0 z-0 pointer-events-none bg-black">
+        
+        {/* 1. The Image (Pushed down only 80px now - Eliminates the dead space) */}
+        <div 
+            className="absolute inset-0 transition-all duration-1000 ease-in-out" 
+            style={{ 
+                backgroundImage: `url(${BACKGROUNDS[view]})`, 
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                /* MOVED UP: Was 140px, now 80px to close the gap */
+                backgroundPosition: 'center 80px', 
+                opacity: view === 'SALES' ? 0 : 1, 
+                transform: `scale(${view === 'HOME' ? 1 : 1.05})`,
+                filter: 'contrast(1.15) saturate(1.1)' 
+            }} 
+        />
+
+        {/* 2. The Nav Shield (Shrunk from h-48 to h-28) */}
+        {/* This is the black blend. It's now much shorter. */}
+        <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black via-black to-transparent z-10"></div>
+
+        {/* 3. Global Darkening */}
+        <div className={`absolute inset-0 bg-gradient-to-b from-black/20 via-black/50 to-black/90 transition-opacity duration-1000 ${view === 'SALES' ? 'opacity-0' : 'opacity-100'}`}></div>
+
+        {/* 4. Sales Video */}
+        <video key="acquire-video" src={ACQUIRE_VIDEO} autoPlay loop muted playsInline className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${view === 'SALES' ? 'opacity-100' : 'opacity-0'}`} />
+        
+        {/* 5. Sales Darkener */}
+        <div className={`absolute inset-0 bg-black/60 transition-opacity duration-1000 ${view === 'SALES' ? 'opacity-100' : 'opacity-0'}`}></div>
+      </div>
+
+      {/* MOBILE HEADER */}
+      <div className="fixed top-0 left-0 right-0 z-[80] flex justify-between items-center p-4 bg-black/90 border-b border-white/10 md:hidden backdrop-blur-md">
+          <div className="flex items-center gap-2">
+              <img src={LOGO_IMG} alt="Logo" className="w-8 h-8 object-contain" />
+              <span className="font-bold text-white tracking-widest text-sm">AICE<span className="text-[#00F3FF]">PROTOCOL</span></span>
+          </div>
+          <button onClick={() => setMobileMenuOpen(true)} className="text-[#00F3FF] p-2 border border-[#00F3FF]/30 rounded">
+              <Menu size={24} />
+          </button>
+      </div>
+
+      {/* MOBILE MENU */}
+      {mobileMenuOpen && (
+          <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col p-6 animate-in slide-in-from-right duration-300">
+              <div className="flex justify-between items-center mb-12">
+                  <span className="text-[#00F3FF] font-mono text-xs tracking-widest">SYSTEM NAVIGATION</span>
+                  <button onClick={() => setMobileMenuOpen(false)} className="text-white"><X size={32} /></button>
+              </div>
+              <div className="flex flex-col gap-6 overflow-y-auto pb-20">
+                  {['HOME', 'ADAPTIVE', 'INTELLIGENCE', 'ENTROPY', 'CONTROL', 'SYSTEM', 'SALES', 'PHOENIX_BOT', 'BOOK'].map((v) => (
+                      <button key={v} onClick={() => { setView(v as ViewState); setMobileMenuOpen(false); }} className={`text-left text-2xl font-black uppercase tracking-tight ${view === v ? 'text-[#00F3FF]' : 'text-white/50'}`}>{v.replace(/_/g, ' ')}</button>
+                  ))}
+                  <div className="h-[1px] w-full bg-white/10 my-4"></div>
+                  <button onClick={() => { setView('PROFILE'); setMobileMenuOpen(false); }} className="text-left text-sm font-mono text-white flex items-center gap-2"><UserCheck size={16}/> PROFILE</button>
+                  <button onClick={() => { setActiveDoc('WHITEPAPER'); setMobileMenuOpen(false); }} className="text-left text-sm font-mono text-white flex items-center gap-2"><FileText size={16}/> WHITE PAPER</button>
+              </div>
+          </div>
+      )}
+
+      {/* DESKTOP SIDEBAR */}
+      <div className="absolute top-32 left-8 z-50 hidden md:flex flex-col gap-4 animate-in slide-in-from-left-4 duration-700 delay-500">
+          <button onClick={() => setView('HOW_IT_WORKS')} className="flex items-center gap-3 px-4 py-2 border border-white/20 bg-black/60 backdrop-blur-sm rounded hover:border-[#00F3FF] transition-all group">
+              <Wrench size={16} className="text-[#00F3FF]" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-[#00F3FF] uppercase">How It Works</span>
+          </button>
+          <button onClick={() => setView('DEVELOPERS')} className="flex items-center gap-3 px-4 py-2 border border-white/20 bg-black/60 backdrop-blur-sm rounded hover:border-[#00F3FF] transition-all group">
+              <Terminal size={16} className="text-[#00F3FF]" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-[#00F3FF] uppercase">Developers</span>
+          </button>
+          <button onClick={() => setView('PILOT_PROGRAMS')} className="flex items-center gap-3 px-4 py-2 border border-orange-500/30 bg-black/60 backdrop-blur-sm rounded hover:border-orange-500 transition-all group shadow-[0_0_10px_rgba(255,69,0,0.1)]">
+              <ClipboardCheck size={16} className="text-orange-500" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-orange-500 uppercase">Pilot Programs</span>
+          </button>
+      </div>
+
+      <SystemTicker /> 
+
+      {/* NAVBAR */}
+      <nav className={`fixed top-0 left-0 right-0 z-[60] hidden md:flex justify-center py-8 px-4 pointer-events-none transform transition-transform duration-500 ease-in-out ${navVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+        <div className="pointer-events-auto bg-black/80 backdrop-blur-md border border-white/10 rounded-full px-10 py-4 flex items-center gap-10 shadow-2xl transition-all duration-500 hover:border-[#00F3FF]/40">
+          <button onClick={() => setView('HOME')} className="group flex items-center gap-3 text-xl font-black tracking-widest hover:scale-105 transition-transform"><span className="text-[#00F3FF] animate-pulse drop-shadow-[0_0_8px_rgba(0,243,255,0.8)]">AICE</span><span className="text-white">PROTOCOL</span></button>
+          <div className="w-[1px] h-6 bg-white/20"></div>
+          <div className="flex gap-8 items-center uppercase text-[10px] font-mono font-bold tracking-[0.2em]">
+            {['ADAPTIVE', 'INTELLIGENCE', 'ENTROPY', 'CONTROL', 'SYSTEM'].map((v) => (
+              <div key={v} className="relative group h-full flex items-center">
+                <button onClick={() => setView(v as ViewState)} className={`flex flex-col items-center gap-1 hover:text-[#00F3FF] transition-all relative py-2 ${view === v ? 'text-[#00F3FF]' : 'text-white/40'}`}>
+                  <span>{v.replace(/_/g, ' ')}</span>
+                  {view === v && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#00F3FF] shadow-[0_0_10px_#00F3FF,0_0_20px_#00F3FF] w-full animate-in fade-in zoom-in duration-300"></div>}
+                </button>
+                {v === 'INTELLIGENCE' && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 hidden group-hover:block w-48 z-[100]">
+                    <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+                      <div className="bg-white/5 px-4 py-2 border-b border-white/10 text-[8px] text-gray-500 font-mono uppercase tracking-widest">Level 5 Access</div>
+                      <button onClick={(e) => { e.stopPropagation(); setView('INSTITUTIONAL'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-white hover:bg-white hover:text-black transition-all flex items-center gap-3"><ShieldCheck size={12} className="text-[#00F3FF]" /> INSTITUTIONAL</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="w-[1px] h-6 bg-white/20"></div>
+          <div className="flex items-center gap-4">
+              <button onClick={() => setView('SALES')} className="px-6 py-2 bg-[#00F3FF] text-black rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(0,243,255,0.3)]">ACQUIRE 🐦‍🔥</button>
+              {!user && <button onClick={() => setIsLoginOpen(true)} className="px-6 py-2 border border-white/20 rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-white hover:text-black transition-all">LOGIN</button>}
+              {user && <button onClick={() => setView('PROFILE')} className="w-8 h-8 rounded-full bg-green-500/20 border border-green-500 flex items-center justify-center text-green-500 hover:bg-green-500 hover:text-black transition-all"><UserCheck size={14}/></button>}
+          </div>
+        </div>
+      </nav>
+
+      {/* --- CONTENT LAYOUT --- */}
+      {/* flex-grow pushes footer down. min-h-full ensures it fills the scroll container */}
+      <div className="flex flex-col min-h-full relative z-10">
+          <main className="w-full flex-grow flex flex-col pt-24">
+            {view === 'HOME' && <HomeView setView={setView} />}
+            {view === 'ADAPTIVE' && <AdaptiveView />}
+            {view === 'INTELLIGENCE' && <IntelligenceView />}
+            {view === 'ENTROPY' && <EntropyView />}
+            {view === 'CONTROL' && <ControlView />}
+            {view === 'SYSTEM' && <SystemView />}
+            
+            {view === 'SALES' && (
+                <AccessTerminal 
+                    setView={setView} 
+                    onBuy={handlePayment} 
+                    onOpenDoc={setActiveDoc} 
+                    user={user} 
+                    openLogin={() => { setLoginMode('login'); setIsLoginOpen(true); }} 
+                />
+            )}
+            {view === 'BOOK' && <BookView onBuy={handlePayment} />}
+            {view === 'PROFILE' && <ProfileView user={user} />}
+            {view === 'ADMIN' && <AdminView />}
+            {view === 'HOW_IT_WORKS' && <HowItWorksView />}
+            {view === 'DEVELOPERS' && <DeveloperView />}
+            {view === 'PILOT_PROGRAMS' && <PilotProgramView onOpenDoc={setActiveDoc} setView={setView} />}
+            {view === 'PHOENIX_BOT' && <PhoenixBotView />}
+            {view === 'INSTITUTIONAL' && <InstitutionalView />}
+            {view === 'PILOT_PHOENIX' && <Pilot_Program />}
+          </main>
+
+          <Footer 
+            setView={setView} 
+            onOpenDoc={setActiveDoc} 
+            openLogin={(mode) => { setLoginMode(mode); setIsLoginOpen(true); }} 
+            user={user} 
+          />
+      </div>
+      
+      {/* MODALS */}
+      {/* NEW LINE - THE PDF BRIDGE */}
+      <DocumentModal 
+        isOpen={activeDoc !== null && docData.fileUrl !== ''} 
+        onClose={() => setActiveDoc(null)} 
+        title={docData.title} 
+        fileUrl={docData.fileUrl} 
+      />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} user={user} initialMode={loginMode} />
+      <ChatAssistant />
+      
+      <div className="fixed bottom-8 left-8 z-[90]">
+         <button onClick={() => setActiveDoc('WHITEPAPER')} className="flex items-center gap-2 px-4 py-2 bg-black/80 border border-white/10 rounded-lg text-white/50 text-xs font-mono uppercase tracking-widest hover:text-[#00F3FF] hover:border-[#00F3FF] transition-all shadow-lg backdrop-blur-sm">
+            <BookOpen size={14} /> WHITE PAPER
+         </button>
+      </div>
+    </div>
+  );
+};
+
+const App: React.FC = () => <ErrorBoundary><AppContent /></ErrorBoundary>;
+
+export default App;

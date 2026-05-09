@@ -1,0 +1,2581 @@
+import React, { useState, useEffect, useRef, Component, ErrorInfo } from 'react';
+import { 
+  Unlock, ShieldCheck, Activity, Zap, Cpu, 
+  ChevronRight, ArrowLeft, MessageSquare, X, Globe, 
+  Fingerprint, Aperture, Maximize2, ArrowUpRight, 
+  Server, CheckCircle, Send, Layers, FileText,
+  MousePointer2, MoveDown, Brain, Workflow, Lock,
+  TrendingUp, Radio, CheckCircle2, AlertCircle,
+  BarChart3, Database, Eye, Terminal, Shield, BookOpen, AlertTriangle,
+  Bird, Power, ChevronDown, Network, User, UserCheck, LogIn, Mail,
+  CreditCard, Settings, LogOut, Check, Globe2, Thermometer, Gauge,
+  Box, Crown, Crosshair, Scale, FileKey, Copyright, Download, Play, Wrench,
+  Code, Braces, Laptop, FileSearch, Users, UserPlus, LockKeyhole,
+  FileClock, Timer, Infinity, ClipboardCheck, Flame, Menu,
+  Wifi, ArrowRight, Upload, Save
+} from 'lucide-react';import { initializeApp } from "firebase/app";
+import { 
+  getAuth, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  User as FirebaseUser,
+  signInAnonymously,
+  signInWithCustomToken,
+  sendPasswordResetEmail
+} from "firebase/auth";
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  doc, 
+  setDoc, 
+  getDoc, 
+  serverTimestamp, 
+  query, 
+  onSnapshot
+} from "firebase/firestore";
+import { SalesAssistant } from './SalesAssistant';
+import { GlobalChat } from './GlobalChat';
+import { TermsOfService } from './termsofservice';
+import { RefundPolicy } from './refundpolicy';
+import { HowItWorksView } from './howitworks';
+import { PrivacyPolicy } from './privacypolicy';
+import { Developer } from './Developer';
+import ControlView from './Control';
+import PhoenixPage from './Phoenix';
+import { BookReader } from './components/BookReader';
+import TransmissionReader from './TransmissionReader';
+import GodsBrainLandingPage from './godsbraintheory';
+import TransmissionSuccessPage from './TransmissionSuccess';
+import { ProfileView } from './Profile';
+import { ForumView } from './Forum';
+import InstitutionalView from './institutional';
+
+// ──────────────────────────────────────────────────────────────
+// PILOT DIAGNOSTIC MODAL (TITAN CLASS) — Universal Entropy Adapter
+// ──────────────────────────────────────────────────────────────
+const PilotDiagnosticModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onProceed?: () => void;
+}> = ({ isOpen, onClose }) => {
+  const [sector, setSector] = useState<'FINANCE' | 'ENERGY' | 'AI_MODEL' | null>(null);
+  const [uploaded, setUploaded] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [entropyScore, setEntropyScore] = useState(0);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setAnalyzing(true);
+      setTimeout(() => {
+        setUploaded(true);
+        setAnalyzing(false);
+        setEntropyScore(Math.random() * 0.6 + 0.4); // 0.4–1.0 realistic range
+      }, 1800);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4">
+      <div className="w-full max-w-6xl h-[92vh] bg-[#020202] border-2 border-[#00F3FF]/70 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,243,255,0.3)] flex flex-col">
+        
+        {/* HEADER BAR */}
+        <div className="flex items-center justify-between px-8 py-5 border-b border-[#00F3FF]/30 bg-black/60">
+          <div className="flex items-center gap-4">
+            <Activity size={28} className="text-[#00F3FF] animate-pulse" />
+            <div>
+              <div className="font-mono text-xs tracking-[0.2em] text-[#00F3FF]">AICE // TITAN CLASS DIAGNOSTIC</div>
+              <div className="text-white font-black text-2xl tracking-tighter">ENTROPY CORE v2.1</div>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-white/60 hover:text-white transition-colors">
+            <X size={32} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-auto p-8">
+          {!sector ? (
+            /* SECTOR SELECTOR — "War Games" style */
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <div className="text-[#00F3FF] font-mono tracking-[0.3em] text-sm mb-6">IDENTIFY INFRASTRUCTURE TYPE</div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
+                {[
+                  { label: 'FINANCE', icon: <TrendingUp size={48} />, color: 'amber' },
+                  { label: 'ENERGY', icon: <Zap size={48} />, color: 'orange' },
+                  { label: 'AI_MODEL', icon: <Brain size={48} />, color: 'cyan' }
+                ].map(s => (
+                  <button
+                    key={s.label}
+                    onClick={() => setSector(s.label as any)}
+                    className="group bg-[#0a0a0a] border border-white/10 hover:border-[#00F3FF] p-10 rounded-3xl transition-all hover:scale-105"
+                  >
+                    <div className={`text-${s.color}-400 mb-6 group-hover:scale-110 transition-transform`}>{s.icon}</div>
+                    <div className="text-3xl font-black uppercase tracking-widest">{s.label}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* DIAGNOSTIC TERMINAL */
+            <div className="space-y-12">
+              <div className="text-center">
+                <div className="inline-flex items-center gap-3 bg-black border border-[#00F3FF]/30 px-6 py-2 rounded-full">
+                  <div className="w-2 h-2 bg-[#00F3FF] rounded-full animate-ping" />
+                  <span className="font-mono text-xs tracking-widest text-[#00F3FF]">PROBE ACTIVE — {sector} GRID</span>
+                </div>
+              </div>
+
+              {/* UPLOAD AREA */}
+              {!uploaded ? (
+                <div className="border border-dashed border-white/30 rounded-3xl p-16 text-center hover:border-[#00F3FF] transition-colors">
+                  <input type="file" id="probe" className="hidden" onChange={handleFileUpload} />
+                  <label htmlFor="probe" className="cursor-pointer block">
+                    <div className="mx-auto w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
+                      <Download size={40} className="text-[#00F3FF]" />
+                    </div>
+                    <div className="text-xl font-bold mb-2">DROP YOUR aice_telemetry_v1.json HERE</div>
+                    <div className="text-sm text-gray-400">or click to browse • 2.4 MB max</div>
+                  </label>
+                  {analyzing && <div className="mt-8 text-[#00F3FF] font-mono animate-pulse">ANALYZING ENTROPY SIGNATURE...</div>}
+                </div>
+              ) : (
+                /* RESULTS + GRAPH */
+                <div className="space-y-10">
+                  <div className="bg-black/60 border border-[#00F3FF]/40 rounded-3xl p-8">
+                    <div className="flex justify-between mb-6">
+                      <div className="text-5xl font-black text-white">{(entropyScore * 100).toFixed(1)}<span className="text-2xl align-super">%</span></div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500">SYSTEM ENTROPY</div>
+                        <div className="text-2xl font-bold text-red-400">CRITICAL</div>
+                      </div>
+                    </div>
+                    <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#00F3FF] via-orange-500 to-red-500 transition-all" style={{ width: `${entropyScore * 100}%` }} />
+                    </div>
+                  </div>
+
+                  {/* Dynamic Prescription */}
+                  <div className="bg-[#050505] border border-white/10 rounded-3xl p-8">
+                    <div className="uppercase tracking-widest text-xs text-[#00F3FF] mb-4">PRESCRIPTION // {sector}</div>
+                    <div className="text-xl leading-relaxed text-gray-200">
+                      {sector === 'FINANCE' && "Apply Viscous Damping at 15 ms latency. Increase order-book thickness by 3× during volatility spikes."}
+                      {sector === 'ENERGY' && "Synchronize inverter phase angles. Deploy 400% load-variance heat sinks on substation nodes."}
+                      {sector === 'AI_MODEL' && "Engage Neural Veto at 0.82 temperature. Enforce Landauer-limit grounding on every forward pass."}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* FOOTER BAR */}
+        <div className="border-t border-[#00F3FF]/30 bg-black/80 p-5 flex justify-between items-center">
+          <button onClick={onClose} className="px-8 py-3 text-sm font-mono tracking-widest border border-white/30 hover:bg-white/10 transition-colors">CLOSE CONSOLE</button>
+          
+          {uploaded && (
+            <button 
+              onClick={() => { onClose(); alert('✅ Report emailed to pilot@aicesystems.pro — full 14-day dashboard activated.'); }}
+              className="px-10 py-3 bg-[#00F3FF] text-black font-black uppercase tracking-widest text-sm hover:bg-white transition-all"
+            >
+              DEPLOY FULL 14-DAY PILOT
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Placeholder for Pilot_Program if you haven't created the file yet
+// --- V8: PILOT SALES INTERFACE ---
+const Pilot_Program: React.FC<{ onBuy: (product: string) => void }> = ({ onBuy }) => {
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-black text-white pt-24 px-6 relative overflow-hidden flex flex-col items-center">
+
+      {/* HEADER - REFINED TYPOGRAPHY */}
+      <div className="text-center max-w-4xl mx-auto mb-16 z-10">
+        <div className="inline-flex items-center gap-2 border border-white/20 px-3 py-1 rounded-full mb-4">
+          <Activity size={12} className="text-[#00F3FF] animate-pulse" />
+          <span className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase">SYSTEM STATUS: READY</span>
+        </div>
+
+        {/* SMALLER TITLE */}
+        <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white mb-2">
+          Pilot <span className="text-gray-500">Programs</span>
+        </h2>
+
+        {/* LARGER TEAL SUBTITLE */}
+        <p className="text-[#00F3FF] text-2xl md:text-3xl font-bold tracking-widest uppercase drop-shadow-[0_0_15px_rgba(0,243,255,0.4)]">
+          System Stability Diagnostics
+        </p>
+      </div>
+
+      {/* TWO POWER CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full z-10 mb-16">
+        
+        {/* OPTION 1: RAPID TRIAGE ($2,500) */}
+        <div className="bg-[#050505] border border-white/10 hover:border-white/40 transition-all duration-300 p-8 rounded-3xl flex flex-col group">
+          <div className="mb-6">
+            <Zap size={36} className="text-amber-400 group-hover:scale-110 transition-transform duration-300" />
+          </div>
+          <h3 className="text-2xl font-black uppercase mb-1 text-white">Rapid Triage</h3>
+          <p className="text-gray-400 mb-8 font-mono text-sm">24-Hour Snapshot Analysis</p>
+          
+          <ul className="space-y-4 mb-12 flex-grow text-sm text-gray-300">
+            <li className="flex gap-3"><CheckCircle2 className="text-green-400 mt-1 flex-shrink-0" size={18} /> Single-Point Telemetry Probe</li>
+            <li className="flex gap-3"><CheckCircle2 className="text-green-400 mt-1 flex-shrink-0" size={18} /> Automated Entropy Map</li>
+            <li className="flex gap-3"><CheckCircle2 className="text-green-400 mt-1 flex-shrink-0" size={18} /> PDF Vulnerability Report</li>
+          </ul>
+
+          <div className="mt-auto">
+            <div className="flex items-end gap-2 mb-6">
+              <span className="text-4xl font-bold text-white">$3,500</span>
+              <span className="text-xs text-gray-500 font-mono mb-2">ONE-TIME</span>
+            </div>
+            <button 
+              onClick={() => onBuy('TIER_1')}
+              className="w-full py-4 border border-white/20 hover:bg-white hover:text-black transition-all font-mono uppercase tracking-widest text-sm font-bold"
+            >
+              Initiate Rapid Triage
+            </button>
+          </div>
+        </div>
+
+        {/* OPTION 2: 14-DAY FULL PILOT ($9,500) */}
+        <div className="bg-[#050505] border border-[#00F3FF]/50 p-8 rounded-3xl flex flex-col group relative shadow-[0_0_30px_rgba(0,243,255,0.05)] hover:shadow-[0_0_50px_rgba(0,243,255,0.15)] transition-all duration-300">
+          <div className="absolute -top-3 right-8 bg-[#00F3FF] text-black px-4 py-1 text-[10px] font-black tracking-widest rounded-full uppercase">
+            Recommended
+          </div>
+          
+          <div className="mb-6">
+            <Activity size={36} className="text-[#00F3FF] group-hover:rotate-6 transition-transform duration-300" />
+          </div>
+          <h3 className="text-2xl font-black uppercase mb-1 text-white">14-Day Pilot</h3>
+          <p className="text-[#00F3FF] mb-8 font-mono text-sm">Active Entropy Governance</p>
+          
+          <ul className="space-y-4 mb-12 flex-grow text-sm text-gray-200">
+            <li className="flex gap-3"><CheckCircle2 className="text-[#00F3FF] mt-1 flex-shrink-0" size={18} /> <span className="font-bold text-white">Human-in-the-Loop</span> Engineer Review</li>
+            <li className="flex gap-3"><CheckCircle2 className="text-[#00F3FF] mt-1 flex-shrink-0" size={18} /> 14-Day Real-Time Entropy Tracking</li>
+            <li className="flex gap-3"><CheckCircle2 className="text-[#00F3FF] mt-1 flex-shrink-0" size={18} /> Custom Impedance Prescription</li>
+            <li className="flex gap-3"><CheckCircle2 className="text-[#00F3FF] mt-1 flex-shrink-0" size={18} /> Full Integration Roadmap</li>
+          </ul>
+
+          <div className="mt-auto">
+            <div className="flex items-end gap-3 mb-6">
+              <span className="text-4xl font-bold text-white">$9,500</span>
+              <span className="text-sm text-gray-500 line-through mb-2 decoration-gray-500/50">$15,000</span>
+            </div>
+            <button 
+              onClick={() => setShowDiagnostic(true)}
+              className="w-full py-4 bg-[#00F3FF] text-black font-black hover:bg-white transition-all uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(0,243,255,0.3)] hover:shadow-[0_0_30px_rgba(0,243,255,0.5)]"
+            >
+              Deploy 14-Day Pilot
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* --- A.I.C.E. SALES CONSULTANT INJECTION --- */}
+      <div className="w-full max-w-4xl mx-auto mb-20 animate-in slide-in-from-bottom-10 duration-700">
+         <div className="flex items-center gap-4 mb-6 opacity-80">
+             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-[#00F3FF]/50"></div>
+             <div className="text-[#00F3FF] font-mono text-xs tracking-widest uppercase flex items-center gap-2">
+                 <Terminal size={14} /> LIVE CONSULTATION UPLINK
+             </div>
+             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[#00F3FF]/50"></div>
+         </div>
+         <SalesAssistant selectedSector="Pilot Program Deployment" />
+      </div>
+
+      <div className="mt-12 text-center text-[10px] md:text-xs font-mono text-gray-600 max-w-lg uppercase tracking-wide">
+        * Diagnostic fees are 100% credited toward any future Tier 3 Enterprise License
+      </div>
+
+      <PilotDiagnosticModal 
+        isOpen={showDiagnostic} 
+        onClose={() => setShowDiagnostic(false)} 
+        onProceed={() => {
+          setShowDiagnostic(false);
+          onBuy('TIER_2'); 
+        }} 
+      />
+    </div>
+  );
+};
+
+// --- GLOBAL TYPE DECLARATIONS ---
+declare global {
+  interface Window {
+    __initial_auth_token?: string;
+  }
+}
+const __initial_auth_token = (window as any).__initial_auth_token;
+
+// --- FIREBASE INITIALIZATION ---
+const firebaseConfig = {
+  apiKey: "AIzaSyBgu9EX5aQPxOR-mL8xLyjbuLlQtV30MUo",
+  authDomain: "aice-6bd8e.firebaseapp.com",
+  projectId: "aice-6bd8e",
+  storageBucket: "aice-6bd8e.firebasestorage.app",
+  messagingSenderId: "1039520973723",
+  appId: "1:1039520973723:web:54c7458f9a8fe36ef5973e",
+  measurementId: "G-SJCEJ4V03N"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+export const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+const appId = 'aice-6bd8e';
+
+// --- ERROR BOUNDARY ---
+class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) { console.error("AICE PROTOCOL EXCEPTION:", error, errorInfo); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-black text-red-500 p-10 font-mono flex flex-col items-center justify-center text-center z-[9999] relative">
+          <div className="border border-red-500/50 p-12 rounded-lg bg-red-950/10 backdrop-blur-xl max-w-2xl w-full">
+            <AlertTriangle size={64} className="mx-auto mb-6 text-red-500 animate-pulse" />
+            <h1 className="text-4xl mb-4 font-black tracking-widest">SYSTEM CRITICAL ERROR</h1>
+            <p className="mb-8 text-white/80 font-sans">The protocol encountered a critical deterministic exception.</p>
+            <button onClick={() => window.location.reload()} className="px-8 py-4 bg-red-600 text-white rounded hover:bg-red-500 transition-all font-bold uppercase tracking-[0.2em]">Reboot System</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// --- ASSETS & PATHS ---
+const BRAIN_LOGO = "/assets/images/godsbrain theory/godsbrain.png"; 
+const BOOK_COVER_SMALL = "/assets/images/godsbrain theory/godsbrain.jpg"; 
+const PHOENIX_LOGO = "/assets/images/phoenix/phoenix_logo.png";
+const ACQUIRE_VIDEO = "/assets/images/buy now/acquirebg.mp4";
+const PROTOCOL_BRIEF_VIDEO = "/assets/videos/aice_protocol_brief.mp4";
+const MAIN_TITLE_IMG = "/assets/images/homepage/MAIN_TITLE.png";
+const LOGO_IMG = "/assets/images/homepage/LOGO.png";
+const PATENT_SEAL_IMG = "/assets/images/homepage/PATENT_SEAL.png";
+const DEFENSE_BG = "/assets/images/system/Defense.jpg";
+const VIDEO_TITLE_DARK = "/assets/videos/logo/aice_title.mp4";
+const VIDEO_TITLE_LIGHT = "/assets/videos/logo/aice_title2.mp4";
+
+// --- TYPES ---
+type ViewState = 'HOME' | 'ADAPTIVE' | 'INTELLIGENCE' | 'ENTROPY' | 'CONTROL' | 'SYSTEM' | 'SALES' | 'PROFILE' | 'FORUM' | 'HOW_IT_WORKS' | 'DEVELOPERS' | 'ADMIN' | 'PILOT_PROGRAMS' | 'BOOK' | 'PHOENIX_BOT' | 'INSTITUTIONAL' | 'PILOT_PHOENIX' | 'TERMS_OF_SERVICE'| 'REFUND_POLICY' | 'PRIVACY_POLICY' | 'TRANSMISSION_READER' | 'THE_SPARK' | 'TRANSMISSION_SUCCESS' | 'PHOENIX';
+
+type DocType = 'WHITEPAPER' | 'TOS' | 'PRIVACY' | 'PATENT' | 'PILOT_7DAY' | 'PILOT_14DAY' | 'PILOT_EXTENDED' | null;
+
+const BACKGROUNDS: Record<ViewState, string> = {
+  HOME: "/assets/images/homepage/Home_Brain.png", 
+  ADAPTIVE: "https://i.postimg.cc/50qqKt05/Gemini_Generated_Image_kfn9m7kfn9m7kfn9.png", 
+  INTELLIGENCE: "https://i.postimg.cc/ZRFFsqR6/Gemini_Generated_Image_43fc5043fc5043fc.png", 
+  ENTROPY: "https://i.postimg.cc/rmCCZpm1/Gemini_Generated_Image_61ky1i61ky1i61ky.png", 
+  CONTROL: "/assets/images/control/control.png",
+  SYSTEM: "/assets/images/system/Defense.jpg",
+  SALES: "/assets/images/pilot%20program/pilot_phoenix.png", 
+  PROFILE: "/assets/images/operative%20profile/operative_profile.png",
+  HOW_IT_WORKS: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
+  DEVELOPERS: "/assets/images/Developer/Developer.png",
+  ADMIN: "https://images.unsplash.com/photo-1516110833967-0b5716ca1387?q=80&w=2070&auto=format&fit=crop",
+  PILOT_PROGRAMS: "/assets/images/pilot%20program/pilot_phoenix.png",
+  BOOK: "https://images.unsplash.com/photo-1507842217153-e212234687ad?q=80&w=2070&auto=format&fit=crop",
+  PHOENIX_BOT: "https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=2064&auto=format&fit=crop",
+  INSTITUTIONAL: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop",
+  PILOT_PHOENIX: "/assets/images/pilot%20program/pilot_phoenix.png",
+  TERMS_OF_SERVICE: "/assets/images/Terms%20of%20Service/termsofservice.png",
+  REFUND_POLICY: "/assets/images/Refund%20Policy/refundpolicy.png",
+  PRIVACY_POLICY: "/assets/images/Privacy%20Policy/privacy_policy.png",
+  TRANSMISSION_READER: "",
+  THE_SPARK: "",
+  TRANSMISSION_SUCCESS: "",
+  PHOENIX: "",
+  FORUM: ""
+};
+
+const DOC_LINKS = {
+  WHITEPAPER: "/assets/docs/Whitepaper AICE Public.pdf",
+  PATENT: "/assets/docs/A.I.C.E. Public PATENT.pdf",
+  LEGAL_BUNDLE: "/assets/docs/AICE Legal Pages — Terms Of Service, Privacy Policy, Patent Filings.pdf",
+  PILOT_CONTACT: "pilot@aicesystems.pro"
+};
+
+// --- HELPER COMPONENTS ---
+// UPDATED: Now accepts optional 'titleClass' for custom font sizing
+export const SectorHeader: React.FC<{ title: string, subtitle: string, icon: React.ReactNode, titleClass?: string }> = ({ title, subtitle, icon, titleClass }) => (
+  <div className="w-full max-w-7xl mx-auto mb-16 text-center animate-in zoom-in duration-700">
+      <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-black border-4 border-black mb-8 text-[#00F3FF] shadow-[0_0_50px_rgba(0,243,255,0.6)] animate-[pulse_4s_ease-in-out_infinite] relative z-10">
+        {icon}
+      </div>
+      {/* Logic: If titleClass is passed, use it. If not, use the default huge size. */}
+      <h1 className={`${titleClass || "text-4xl md:text-6xl lg:text-9xl"} font-sans font-bold text-white uppercase tracking-tighter mb-4 md:mb-8 leading-none drop-shadow-2xl`} style={{ textShadow: '-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 4px 4px 0px rgba(0,0,0,0.5)' }}>
+        {title}
+      </h1>
+      <p className="text-[#00F3FF] font-mono tracking-[0.2em] md:tracking-[0.4em] text-xs md:text-lg uppercase font-bold px-4" 
+         style={{ textShadow: '2px 2px 0px #000, 0 0 15px rgba(0,243,255,0.8)' }}>
+        {subtitle}
+      </p>
+  </div>
+);
+
+const FeatureGrid: React.FC<{ features: { title: string, desc: string, icon: React.ReactNode }[] }> = ({ features }) => (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full max-w-[90rem] mx-auto mb-32">
+      {features.map((f, i) => (
+          <div key={i} className="p-12 bg-[#050505] border border-white/10 rounded-2xl hover:border-[#00F3FF]/40 transition-all group shadow-2xl">
+              <div className="mb-8 text-[#00F3FF] opacity-80 group-hover:opacity-100 transition-opacity">{f.icon}</div>
+              <h3 className="text-3xl font-sans font-bold text-white mb-6 uppercase tracking-tight">{f.title}</h3>
+              <p className="text-xl text-gray-200 leading-relaxed font-light">{f.desc}</p>
+          </div>
+      ))}
+  </div>
+);
+
+const SectorPortal: React.FC<{ title: string; subtitle: string; desc: string; icon: React.ReactNode; bgImage: string; onClick: () => void; }> = ({ title, subtitle, desc, icon, bgImage, onClick }) => (
+  <div onClick={onClick} className="relative h-[28rem] group cursor-pointer overflow-hidden border-2 border-white/10 hover:border-[#00F3FF] transition-all duration-500 rounded-3xl bg-black/90 shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+    <div className="absolute inset-0 bg-cover bg-center transition-all duration-700 group-hover:scale-110 opacity-30 group-hover:opacity-50" style={{ backgroundImage: `url(${bgImage})` }}></div>
+    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/20 group-hover:opacity-90 transition-opacity duration-500"></div>
+    
+    <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
+      <div className="flex items-center gap-4 mb-4 transform group-hover:-translate-y-2 transition-transform duration-500">
+        <div className="text-[#00F3FF] drop-shadow-[0_0_15px_rgba(0,243,255,0.8)]">{icon}</div>
+        <span className="text-[#00F3FF] font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase font-black bg-[#00F3FF]/10 px-3 py-1 rounded border border-[#00F3FF]/30">{subtitle}</span>
+      </div>
+      
+      <h4 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter mb-4 drop-shadow-[0_4px_20px_rgba(0,0,0,1)]" style={{ textShadow: '3px 3px 0 #000, -1px -1px 0 #000, 2px -1px 0 #000, -1px 2px 0 #000, 0 5px 25px rgba(0,243,255,0.5)' }}>
+        {title}
+      </h4>
+      
+      <div className="h-[3px] w-16 bg-[#00F3FF] mb-6 group-hover:w-full transition-all duration-700 shadow-[0_0_15px_#00F3FF]"></div>
+      
+      <p className="text-gray-100 font-sans text-lg md:text-xl font-bold leading-relaxed drop-shadow-[0_3px_5px_rgba(0,0,0,1)] group-hover:text-white transition-colors" style={{ textShadow: '1px 1px 2px #000' }}>
+        {desc}
+      </p>
+    </div>
+    <ArrowUpRight className="absolute top-8 right-8 text-[#00F3FF] opacity-0 group-hover:opacity-100 transform translate-x-[-20px] translate-y-[20px] group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-500 drop-shadow-[0_0_15px_rgba(0,243,255,0.8)]" size={48} />
+  </div>
+);
+
+// --- NEW HELPER: TECH SPEC CARD ---
+export const TechSpecCard: React.FC<{ title: string; subtitle: string; description: string; points: string[] }> = ({ title, subtitle, description, points }) => (
+  <div className="max-w-4xl mx-auto my-20 bg-[#080808] border-l-4 border-[#00F3FF] p-8 md:p-12 relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+    {/* Background Tech Texture */}
+    <div className="absolute top-0 right-0 p-4 opacity-10">
+      <Fingerprint size={120} className="text-[#00F3FF]" />
+    </div>
+    
+    <div className="relative z-10">
+      <div className="flex items-center gap-4 mb-6">
+         <div className="px-3 py-1 border border-[#00F3FF] text-[#00F3FF] text-xs font-mono font-bold uppercase tracking-widest bg-[#00F3FF]/10 rounded">
+            {subtitle}
+         </div>
+      </div>
+      
+      <h3 className="text-4xl md:text-5xl font-black text-white uppercase mb-8 leading-tight">
+        {title}
+      </h3>
+      
+      <p className="text-xl text-gray-300 font-light leading-relaxed mb-8">
+        {description}
+      </p>
+      
+      <div className="space-y-4">
+        {points.map((point, i) => (
+          <div key={i} className="flex items-start gap-4">
+             <Activity className="text-[#00F3FF] shrink-0 mt-1" size={20} />
+             <span className="text-white font-mono text-sm md:text-base">{point}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-12">
+        <button className="px-8 py-4 bg-white text-black font-bold uppercase tracking-widest text-xs hover:bg-[#00F3FF] transition-colors flex items-center gap-2">
+           DEPLOY SOLUTION <ChevronRight size={16} />
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+// --- HELPER COMPONENT (TICKER) ---
+const SystemTicker = () => {
+  const [index, setIndex] = useState(0);
+  const stats = [
+    { label: "DATA ENTROPY", val: "94%", status: "STABILIZING", risk: "SECTOR: ENERGY" },
+    { label: "GLOBAL GRID", val: "4,200 TWh", status: "CRITICAL LOAD", risk: "SECTOR: INFRA" },
+    { label: "AI COHERENCE", val: "99.9%", status: "OPTIMIZED", risk: "SECTOR: NEURAL" },
+    { label: "MARKET FLUX", val: "HIGH", status: "DAMPENING", risk: "SECTOR: FINANCE" }
+  ];
+  useEffect(() => { const i = setInterval(() => setIndex((p) => (p + 1) % stats.length), 4000); return () => clearInterval(i); }, []);
+  const current = stats[index];
+  return (
+    <div className="absolute top-8 left-8 font-mono text-[10px] text-[#00F3FF]/80 tracking-widest hidden md:flex flex-col gap-1 drop-shadow-md z-50 pointer-events-none">
+      <div className="w-2 h-2 bg-[#00F3FF] animate-ping rounded-full mb-2"></div>
+      <div className="animate-in slide-in-from-left-2 fade-in duration-500">
+        <div className="font-bold text-white">{current.label}</div>
+        <div className="text-xl font-black text-[#00F3FF]">{current.val}</div>
+        <div className="text-xs text-white/70">{current.status}</div>
+        <div className="text-[9px] text-red-400 mt-1 uppercase">{current.risk}</div>
+      </div>
+      <div className="h-[2px] w-8 bg-[#00F3FF]/50 mt-2"></div>
+    </div>
+  );
+};
+
+// --- DATA ARRAYS ---
+const ENTROPY_DATA = [
+  { timestamp: "T+00000 ms", title: "OBELISK CORE // BASELINE", desc: "System integrity at 100%. Thermal noise within nominal parameters.", img: "/assets/images/entropy/download (1).jpg" },
+  { timestamp: "T+15000 ms", title: "THREAT DETECTED // BLOOM", desc: "External data injection causing rapid decoherence.", img: "/assets/images/entropy/download (2).jpg" },
+  { timestamp: "T+30000 ms", title: "AICE INTERVENTION // ENGAGED", desc: "Entropic governor applying immediate impedance.", img: "/assets/images/entropy/download (3).jpg" },
+  { timestamp: "T+45000 ms", title: "SHIELD HARMONICS // STABILIZING", desc: "Converting kinetic attack energy into harmless thermal waste.", img: "/assets/images/entropy/shield.jpg" },
+  { timestamp: "T+60000 ms", title: "CASCADE FAILURE // DIVERTED", desc: "Isolating infected nodes. Grid frequency resynchronizing.", img: "/assets/images/entropy/download (4).jpg" },
+  { timestamp: "T+75000 ms", title: "NEURAL RESYNC // IN PROGRESS", desc: "Re-aligning logic gates to physics-based truth constraints.", img: "/assets/images/entropy/download (5).jpg" },
+  { timestamp: "T+90000 ms", title: "SYSTEM HOMEOSTASIS // RESTORED", desc: "Entropy levels returned to sub-critical limits.", img: "/assets/images/entropy/download (6).jpg" },
+  { timestamp: "T+105000 ms", title: "PROTOCOL COMPLETE // SECURE", desc: "The facility remains operational. No data loss detected.", img: "/assets/images/entropy/image-2026-02-08T040614-536.jpg" }
+];
+
+const AdaptiveView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Adaptive Grid" subtitle="Infrastructure Mesh Stabilization" icon={<Activity size={48} />} />
+      <FeatureGrid features={[
+          { title: "Load Balancing", desc: "Real-time energy distribution preventing localized blackouts.", icon: <Zap size={32} /> },
+          { title: "Self-Healing Mesh", desc: "Automated rerouting of power and data around damaged nodes.", icon: <Workflow size={32} /> },
+          { title: "Entropy Regulation", desc: "Signal monitoring to keep hardware within optimal operating limits.", icon: <Radio size={32} /> }
+      ]} />
+      
+      {/* NEW TECH CARD */}
+      <TechSpecCard 
+        title="ADAPTIVE MESH"
+        subtitle="SECTOR // 01"
+        description="The modern power grid is fragmented. Renewables, EVs, and legacy coal plants vibrate at different frequencies. This dissonance causes blackouts. AICE acts as a 'Frequency Harmonizer.' We dynamically adjust the impedance of the control layer to match the source, ensuring maximum power transfer with zero reflections."
+        points={[
+          "Synchronize solar inverters with coal turbines.",
+          "Dampen resonant frequencies that shatter transformers.",
+          "Real-time Phase Locking for micro-grids."
+        ]}
+      />
+  </div>
+);
+
+const IntelligenceView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Neural Veto" subtitle="AI Hallucination Control" icon={<Brain size={48} />} />
+      
+      {/* NEW TECH CARD - Placed prominently at top */}
+      <TechSpecCard 
+        title="INTELLIGENCE GOVERNOR"
+        subtitle="SECTOR // 02"
+        description="Artificial Intelligence is a high-velocity cognitive fluid. Without a container, it spills into hallucination. We use 'impedance' to enforce intelligent behavior. The AICE Protocol wraps LLMs in a Deterministic Veto. We do not just filter 'bad words'; we detect 'high-entropy reasoning' and dampen the voltage before the model collapses."
+        points={[
+          "Prevent Recursive Self-Delusion loops.",
+          "Hard-limit inference compute during panic states.",
+          "Force-ground output to verifiable reality constraints."
+        ]}
+      />
+
+      <FeatureGrid features={[
+          { title: "Truth Verification", desc: "Cross-referencing tokens against fact databases.", icon: <CheckCircle size={32} /> },
+          { title: "Logic Gating", desc: "Preventing non-sequitur outputs by measuring entropy.", icon: <ShieldCheck size={32} /> },
+          { title: "Cognitive Cap", desc: "Limiting processing depth to prevent error loops.", icon: <Cpu size={32} /> }
+      ]} />
+       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-20 items-center mt-20">
+          <div className="flex-1 text-right">
+              <h3 className="text-5xl font-sans font-bold text-white mb-8 uppercase tracking-tighter">STOPPING THE DRIFT</h3>
+              <p className="text-gray-100 leading-loose text-2xl font-light">
+    		  AICE treats LLM drift as algorithmic inefficiency, applying a damping algorithm to neural weights.
+	      </p>
+          </div>
+          <div className="flex-1 p-12 bg-[#050505] border border-white/10 rounded-2xl w-full">
+              <div className="font-mono text-lg text-[#00F3FF] mb-6 font-bold uppercase">{"> SIMULATING VETO..."}</div>
+              <div className="space-y-6">
+                  <div className="h-4 w-3/4 bg-white/20 rounded"></div>
+                  <div className="h-4 w-full bg-white/20 rounded"></div>
+                  <div className="h-4 w-5/6 bg-red-500/50 rounded animate-pulse"></div>
+                  <div className="text-red-500 text-sm font-bold tracking-widest uppercase">{">> HALLUCINATION DETECTED. OUTPUT BLOCKED."}</div>
+              </div>
+          </div>
+       </div>
+  </div>
+);
+
+const EntropyView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Entropy Core" subtitle="The Physics of Information" icon={<Aperture size={48} />} />
+      
+      {/* NEW TECH CARD */}
+      <TechSpecCard 
+        title="ENTROPY LIMITS"
+        subtitle="SECTOR // 03"
+        description="Chaos is not a bug; it is a feature of complex systems. The goal is to channel it, not suppress it. Our 'Heat Sinks' for data centers absorb volatility spikes. When a flash crash or DDoS attack hits, the AICE Protocol converts the kinetic energy of the attack into harmless thermal waste-heat."
+        points={[
+          "Convert DDoS kinetic energy into thermal dissipation.",
+          "Isolate infected nodes without shutting down the grid.",
+          "Maintain homeostasis under 400% load variance."
+        ]}
+      />
+
+      <div className="max-w-5xl mx-auto mb-32 relative group animate-in slide-in-from-bottom-10 duration-1000 mt-20">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00F3FF]/20 via-black/50 to-orange-600/20 blur-3xl rounded-full opacity-60"></div>
+          <div className="relative bg-black/30 border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+              <div className="flex justify-between items-center bg-white/5 p-4 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                      <Thermometer size={16} className="text-[#00F3FF] animate-pulse"/>
+                      <span className="font-mono text-xs text-[#00F3FF] tracking-[0.2em] uppercase">Reactor Core // 01</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-[10px] font-mono text-orange-500 uppercase tracking-widest font-bold">
+                      <span className="flex items-center gap-2"><Gauge size={12}/> Pressure: 101.3 kPa</span>
+                      <span className="flex items-center gap-2 text-red-500 animate-pulse"><AlertTriangle size={12} /> Heat: CRITICAL</span>
+                  </div>
+              </div>
+              <div className="p-10 md:p-20 text-center relative">
+                  <div className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-[#00F3FF]"></div>
+                  <div className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-orange-500"></div>
+                  <div className="absolute bottom-6 left-6 w-8 h-8 border-b-2 border-l-2 border-[#00F3FF]"></div>
+                  <div className="absolute bottom-6 right-6 w-8 h-8 border-b-2 border-r-2 border-orange-500"></div>
+                  <h3 className="text-4xl md:text-6xl font-sans font-black text-white uppercase tracking-tighter mb-8 drop-shadow-2xl">
+       		  System <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-orange-500">Homeostasis</span>
+   		  </h3>
+                  <p className="text-xl md:text-3xl font-light text-white/90 leading-relaxed drop-shadow-md mb-12 max-w-4xl mx-auto">
+                    "In a closed system, entropy always increases." Information behaves like energy. Too much unchecked data creates <span className="text-orange-500 font-bold border-b-2 border-orange-500">"Noise,"</span> which is the informational equivalent of heat death.
+                  </p>
+                  <div className="inline-flex items-center gap-4 px-8 py-4 border border-[#00F3FF]/30 bg-[#00F3FF]/5 rounded-sm hover:bg-[#00F3FF]/10 transition-colors cursor-default">
+                      <div className="w-2 h-2 rounded-full bg-[#00F3FF] animate-ping"></div>
+                      <span className="text-[#00F3FF] font-mono tracking-widest uppercase text-xs font-bold">
+                        Obelisk Protocol // Engaging Veto
+                      </span>
+                  </div>
+              </div>
+              <div className="h-1 w-full bg-gradient-to-r from-[#00F3FF] via-black to-orange-500"></div>
+          </div>
+      </div>
+      <div className="max-w-[90rem] mx-auto space-y-32">
+          {ENTROPY_DATA.map((item, idx) => {
+            const [prefix, suffix] = item.title.split('//');
+            return (
+              <div key={idx} className={`flex flex-col md:flex-row items-center gap-16 ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
+                  <div className="flex-1 relative group w-full">
+                    <div className="relative rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black">
+                        <img src={item.img} alt={item.title} className={`w-full transform transition-transform duration-700 group-hover:scale-105 ${idx === 7 ? 'h-auto' : 'h-[700px] object-cover object-center'}`} />
+                    </div>
+                  </div>
+                  <div className="flex-1 w-full">
+                    <div className="relative bg-black/30 border border-white/10 rounded-xl overflow-hidden shadow-2xl p-8 md:p-12 transition-all duration-500 hover:border-[#00F3FF]/30 group">
+                        <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#00F3FF]/50 rounded-tl-lg"></div>
+                        <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-orange-500/50 rounded-tr-lg"></div>
+                        <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#00F3FF]/50 rounded-bl-lg"></div>
+                        <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-orange-500/50 rounded-br-lg"></div>
+                        <div className="flex items-center gap-4 text-[#FFD700] font-mono text-xs md:text-sm tracking-widest font-bold border-b border-[#FFD700]/20 pb-4 mb-6">
+                            <Activity size={18} /> <span>TIMESTAMP: {item.timestamp}</span>
+                        </div>
+                        <h3 className="text-3xl md:text-5xl font-sans font-bold text-white uppercase leading-tight mb-6">
+                            {prefix} //<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-yellow-500 to-[#00F3FF]">{suffix}</span>
+                        </h3>
+                        <p className="text-gray-200 text-lg leading-relaxed pl-6 border-l-4 border-[#00F3FF] font-light">
+                           {item.desc}
+                        </p>
+                    </div>
+                  </div>
+              </div>
+            );
+          })}
+      </div>
+  </div>
+);
+
+const SystemView = () => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+      <SectorHeader title="Defense Systems" subtitle="Aerospace & Military Integration" icon={<Shield size={48} />} />
+      
+      {/* --- HERO: THE PHYSICS OF WAR --- */}
+      <div className="max-w-6xl mx-auto mb-24 text-center">
+          <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-6 drop-shadow-lg">
+            The Battlefield is a <span className="text-[#00F3FF]" style={{ textShadow: '2px 2px 0px #000' }}>Fluid Dynamic</span>
+          </h2>
+          <p className="text-xl text-gray-300 font-light leading-relaxed max-w-4xl mx-auto bg-black/40 backdrop-blur-sm p-6 rounded-xl border border-white/5">
+            Modern warfare is an information singularity. Drone swarms, hypersonic missiles, and cyber-kinetic attacks generate "data turbulence" that overwhelms standard logic gates. 
+            <br/><br/>
+            <span className="text-white font-bold">The A.I.C.E. Protocol does not just filter data.</span> It applies a proprietary solution to some of <span className="text-[#00F3FF] border-b border-[#00F3FF]" style={{ textShadow: '1px 1px 0 #000' }}>the worlds most complex math</span> problems within the information domain—guaranteeing that the "flow" of command data remains smooth and laminar, even under catastrophic load.
+          </p>
+      </div>
+
+      {/* --- NEW: TACTICAL HUD VISUAL (GLASSY SHADOW BOX) --- */}
+      {/* UPDATED: Added bg-black/60, backdrop-blur-xl, and stronger borders/shadows */}
+      <div className="max-w-5xl mx-auto mb-32 bg-[#050505]/80 backdrop-blur-xl border border-[#00F3FF]/30 rounded-xl overflow-hidden relative shadow-[0_0_100px_rgba(0,243,255,0.2)] group">
+          
+          {/* HUD Overlay Lines */}
+          <div className="absolute top-4 left-4 w-32 h-32 border-l-2 border-t-2 border-[#00F3FF]/50 rounded-tl-lg z-20"></div>
+          <div className="absolute bottom-4 right-4 w-32 h-32 border-r-2 border-b-2 border-orange-500/50 rounded-br-lg z-20"></div>
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 z-10 mix-blend-overlay"></div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 relative z-10">
+              {/* LEFT: SWARM STATUS */}
+              <div className="p-12 border-b md:border-b-0 md:border-r border-[#00F3FF]/20">
+                  <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-3">
+                          <Activity size={20} className="text-[#00F3FF] animate-pulse" />
+                          <span className="font-mono text-xs font-bold text-[#00F3FF] tracking-[0.2em] uppercase" style={{ textShadow: '1px 1px 0 #000' }}>Swarm Coherence</span>
+                      </div>
+                      <span className="font-mono text-xs text-green-500 bg-green-500/10 px-2 py-1 rounded border border-green-500/30">100% NOMINAL</span>
+                  </div>
+                  <div className="space-y-6 font-mono text-xs">
+                      <div className="flex justify-between text-gray-400">
+                          <span>LATENCY</span>
+                          <span className="text-white font-bold">0.004 ms</span>
+                      </div>
+                      <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+                          <div className="bg-[#00F3FF] w-[4%] h-full box-shadow-[0_0_10px_#00F3FF]"></div>
+                      </div>
+                      
+                      <div className="flex justify-between text-gray-400">
+                          <span>ENTROPY DISSIPATION</span>
+                          <span className="text-orange-500 font-bold">ACTIVE</span>
+                      </div>
+                      <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+                          <div className="bg-orange-500 w-[85%] h-full animate-pulse"></div>
+                      </div>
+
+                      <div className="mt-8 p-4 bg-[#00F3FF]/10 border-l-2 border-[#00F3FF] text-[#00F3FF] font-medium shadow-inner">
+                          <p className="leading-relaxed">
+                              "Turbulence detected in Node 4. Applying viscous damping to restore laminar flow. Threat neutralized."
+                          </p>
+                      </div>
+                  </div>
+              </div>
+
+              {/* RIGHT: THREAT VETO */}
+              <div className="p-12 bg-gradient-to-br from-black/80 to-red-950/20">
+                  <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-3">
+                          <ShieldCheck size={20} className="text-orange-500" />
+                          <span className="font-mono text-xs font-bold text-orange-500 tracking-[0.2em] uppercase" style={{ textShadow: '1px 1px 0 #000' }}>Kinetic Shield</span>
+                      </div>
+                      <span className="font-mono text-xs text-red-500 animate-pulse font-bold">THREAT INBOUND</span>
+                  </div>
+                  <div className="relative h-48 border border-white/10 rounded-lg bg-black/60 overflow-hidden flex items-center justify-center shadow-inner">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-500/20 via-transparent to-transparent animate-pulse"></div>
+                      <div className="text-center space-y-2 relative z-10">
+                          <div className="text-4xl font-black text-white tracking-widest drop-shadow-md">VETO</div>
+                          <div className="text-[10px] font-mono text-orange-500 uppercase bg-black/80 px-3 py-1 rounded-full border border-orange-500/30">Energy Limit Exceeded</div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      {/* --- TECH SPEC CARD: THE DEEP DIVE --- */}
+      <TechSpecCard 
+        title="AEROSPACE SYSTEM INTEGRITY"
+        subtitle="SECTOR // 05"
+        description="In hypersonic flight and drone swarms, latency is death. You cannot wait for a cloud server to make a decision. The AIEC Protocol runs on 'Edge-Native' FPGA hardware, providing Reflexive Control. We treat cyber-attacks not as code, but as energy spikes. By measuring the 'heat' of a data packet, we can dissipate it before it executes."
+        points={[
+          "Sub-microsecond survival reflexes (< 1μs).",
+          "Swarm coherence without central command (Laminar Logic).",
+          "EMP-Hardened: Converts excess signal energy into thermal waste."
+        ]}
+      />
+
+      {/* --- FEATURE GRID: STRATEGIC ADVANTAGE --- */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-[95rem] mx-auto mt-24">
+          <div className="p-10 bg-[#050505] border-t-4 border-[#00F3FF] hover:bg-[#080808] transition-all group">
+              <Globe size={48} className="text-[#00F3FF] mb-6 group-hover:scale-110 transition-transform"/>
+              <h3 className="text-2xl font-bold text-white uppercase mb-4 tracking-wider">Global Overwatch</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                  AIEC connects siloed defense networks into a unified entropy map. If one node experiences turbulence (a hack or jamming), the entire grid adjusts its impedance to compensate instantly.
+              </p>
+          </div>
+          
+          <div className="p-10 bg-[#050505] border-t-4 border-orange-500 hover:bg-[#080808] transition-all group">
+              <Zap size={48} className="text-orange-500 mb-6 group-hover:scale-110 transition-transform"/>
+              <h3 className="text-2xl font-bold text-white uppercase mb-4 tracking-wider">Hypersonic Stability</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                  At Mach 5, air resistance creates plasma that blocks signals. AICE uses predictive "Shadow Simulation" to maintain control logic even during signal blackouts, ensuring target lock is never lost.
+              </p>
+          </div>
+
+          <div className="p-10 bg-[#050505] border-t-4 border-white hover:bg-[#080808] transition-all group">
+              <Fingerprint size={48} className="text-white mb-6 group-hover:scale-110 transition-transform"/>
+              <h3 className="text-2xl font-bold text-white uppercase mb-4 tracking-wider">Quantum-Resistant</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+   		 Standard encryption will fail. AICE relies on information-theoretic limits. To break our security, an attacker would need to generate infinite entropy—a mathematical impossibility.
+	      </p>
+          </div>
+      </div>
+  </div>
+);
+
+
+// --- NEW: BOOK VIEW (THE CODEX) ---
+const BookView: React.FC<{ onBuy: (product: string) => void }> = ({ onBuy }) => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+    <SectorHeader title="The Codex" subtitle="Source Code of Existence" icon={<BookOpen size={48} />} />
+
+    <div className="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32 relative">
+       {/* Left: Visual Artifact */}
+       <div className="relative group perspective-1000">
+           <div className="absolute inset-0 bg-gradient-to-r from-[#FFD700]/20 to-transparent blur-3xl rounded-full opacity-40 animate-pulse"></div>
+           <div className="relative bg-black/80 border border-[#FFD700]/30 p-8 md:p-12 rounded-3xl shadow-[0_0_100px_rgba(255,215,0,0.1)] transform group-hover:rotate-y-12 transition-transform duration-1000">
+               <img src={BRAIN_LOGO} alt="The God's Brain Theory" className="w-full h-auto drop-shadow-2xl opacity-90 group-hover:opacity-100 transition-opacity" />
+           </div>
+       </div>
+
+       {/* Right: The Manifesto */}
+       <div className="space-y-8">
+           <h2 className="text-4xl md:text-7xl font-sans font-black text-white uppercase tracking-tighter leading-none">
+               The God's <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-orange-600">Brain Theory</span>
+           </h2>
+           <p className="text-lg text-gray-300 font-light leading-relaxed border-l-4 border-[#FFD700] pl-6">
+               This is not philosophy. It is <span className="text-[#FFD700] font-bold">irrefutable proof</span> of a functional hardware system. 
+               We decode the universe not as a mystical accident, but as a deliberate architectural construct.
+           </p>
+           
+           <div className="flex flex-col gap-4">
+               <div className="flex items-center gap-4 text-sm font-mono text-gray-400">
+                   <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#FFD700]" /> 314 Pages</span>
+                   <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#FFD700]" /> Hardcover / Digital</span>
+               </div>
+           </div>
+
+           <div className="flex flex-col md:flex-row gap-4 pt-4">
+               <button 
+                   onClick={() => onBuy('BOOK_HARDCOPY')}
+                   className="px-10 py-5 bg-[#FFD700] text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-white transition-all rounded shadow-[0_0_30px_rgba(255,215,0,0.4)] flex items-center gap-2"
+               >
+                   ACQUIRE HARDCOPY <span className="bg-black/90 text-[#FFD700] px-2 py-0.5 rounded text-[10px] ml-2">$33.99</span>
+               </button>
+               <button className="px-10 py-5 border border-white/20 text-white font-bold uppercase tracking-[0.2em] text-sm hover:bg-white hover:text-black transition-all rounded flex items-center justify-center gap-2">
+                   <Download size={18} /> PREVIEW
+               </button>
+           </div>
+       </div>
+    </div>
+    
+    {/* Chapter Grid & Quote */}
+    <div className="max-w-4xl mx-auto text-center relative py-24">
+       <p className="text-2xl md:text-4xl font-light text-gray-200 leading-normal mb-8 relative z-10">
+           "We are not looking for a smoking gun. We are looking for <span className="text-[#FFD700] font-bold border-b border-[#FFD700]">irrefutable proof</span> found in the geometry of the stars."
+       </p>
+       <div className="text-[#00F3FF] font-mono text-sm tracking-[0.4em] uppercase font-bold">— The Author</div>
+    </div>
+  </div>
+);
+
+// --- NEW: PHOENIX BOT VIEW (CRYPTO TRADING ENGINE) ---
+const PhoenixBotView: React.FC = () => (
+    <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+        <SectorHeader 
+            title="Phoenix DV$ 5.5.5.3" 
+            subtitle="Perpetual Algorithmic Trading System" 
+            icon={<Flame size={48} className="text-orange-500 animate-pulse" />} 
+        />
+        
+        {/* HERO TERMINAL */}
+        <div className="max-w-[95rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32">
+            {/* LEFT: THE PITCH */}
+            <div className="space-y-8 flex flex-col justify-center">
+                <div className="inline-flex items-center gap-3 px-4 py-2 border border-orange-500/50 bg-orange-500/10 rounded-full w-fit">
+                    <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                    <span className="text-orange-500 font-mono text-xs font-bold uppercase tracking-widest">System Active // V.5.5.5.3</span>
+                </div>
+                <h2 className="text-4xl md:text-7xl font-sans font-black text-white uppercase tracking-tighter leading-none">
+                    Military-Grade <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500">Precision Trading</span>
+                </h2>
+                <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed border-l-4 border-orange-500 pl-6">
+                    A perpetual money-making machine designed with zero-error tolerance. 
+                    The PHOENIX DV$ protocol utilizes Pine Script v6 architecture to execute institutional-grade entries and exits with mathematical certainty.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="p-6 bg-[#050505] border border-white/10 rounded-xl">
+                        <div className="text-3xl font-mono font-bold text-orange-500 mb-1">99.8%</div>
+                        <div className="text-gray-500 text-xs uppercase tracking-widest">Uptime Efficiency</div>
+                    </div>
+                    <div className="p-6 bg-[#050505] border border-white/10 rounded-xl">
+                        <div className="text-3xl font-mono font-bold text-[#00F3FF] mb-1">&lt; 15ms</div>
+                        <div className="text-gray-500 text-xs uppercase tracking-widest">Execution Latency</div>
+                    </div>
+                </div>
+                <div className="flex flex-col md:flex-row gap-4 pt-4">
+                    <button className="px-10 py-5 bg-orange-600 text-white font-black uppercase tracking-[0.2em] text-sm hover:bg-white hover:text-orange-600 transition-all rounded shadow-[0_0_30px_rgba(255,69,0,0.4)]">
+                        DEPLOY BOT INSTANCE
+                    </button>
+                    <button className="px-10 py-5 border border-white/20 text-white font-bold uppercase tracking-[0.2em] text-sm hover:bg-white hover:text-black transition-all rounded flex items-center justify-center gap-2">
+                        <Terminal size={18} /> VIEW STRATEGY LOGS
+                    </button>
+                </div>
+            </div>
+
+            {/* RIGHT: THE TERMINAL VISUAL */}
+            <div className="relative bg-black border border-white/20 rounded-xl overflow-hidden shadow-2xl h-[400px] md:h-[600px] flex flex-col group mt-8 md:mt-0">
+                <div className="bg-[#111] border-b border-white/10 p-4 flex justify-between items-center">
+                    <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div className="text-gray-500 font-mono text-xs">phoenix_v5.5.5.3.pine</div>
+                </div>
+                <div className="flex-1 p-6 font-mono text-[10px] md:text-xs text-gray-300 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-orange-500/5 to-transparent pointer-events-none"></div>
+                    <div className="space-y-2 opacity-80">
+                         <div className="text-green-500">//@version=6</div>
+                         <div className="text-orange-500">strategy("PHOENIX DV$ [ULTIMATE]", overlay=true, initial_capital=100000)</div>
+                         <div><span className="text-purple-500">var</span> <span className="text-yellow-500">float</span> entropy_threshold = 0.85</div>
+                         <div><span className="text-purple-500">if</span> (ta.crossover(rsi, 30) <span className="text-purple-500">and</span> entropy &lt; entropy_threshold)</div>
+                         <div className="pl-4"><span className="text-blue-500">strategy.entry</span>("Long Phoenix", strategy.long)</div>
+                         <div className="pl-4">alert("🐦‍🔥 LONG (PHOENIX DETECTED)")</div>
+                         <br />
+                         <div className="text-gray-500">// MILITARY GRADE RISK MANAGEMENT</div>
+                         <div><span className="text-purple-500">if</span> (strategy.openprofit &gt; target_profit)</div>
+                         <div className="pl-4"><span className="text-blue-500">strategy.close_all</span>(comment="TAKE PROFIT")</div>
+                         <br />
+                         <div className="animate-pulse text-orange-500">_ SYSTEM MONITORING: ACTIVE</div>
+                         <div className="animate-pulse text-orange-500">_ SEARCHING FOR PERFECT ENTRY...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* FEATURES GRID */}
+        <div className="max-w-[95rem] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-8 border border-white/10 bg-[#050505] rounded-2xl hover:border-orange-500/50 transition-all group">
+                <Zap size={40} className="text-orange-500 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-2xl font-bold text-white uppercase mb-4">Perpetual Profit Loop</h3>
+                <p className="text-gray-400 leading-relaxed">
+                    Designed to run 24/7/365 without fatigue. The bot constantly scans for dynamic shifts in the command center to optimize entry/exit points.
+                </p>
+            </div>
+            <div className="p-8 border border-white/10 bg-[#050505] rounded-2xl hover:border-orange-500/50 transition-all group">
+                <ShieldCheck size={40} className="text-orange-500 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-2xl font-bold text-white uppercase mb-4">Bulletproof Architecture</h3>
+                <p className="text-gray-400 leading-relaxed">
+                    Built on pristine, immaculate code logic. We identify every imperfection and eliminate it to create an unassailable fortress of precision.
+                </p>
+            </div>
+            <div className="p-8 border border-white/10 bg-[#050505] rounded-2xl hover:border-orange-500/50 transition-all group">
+                <Infinity size={40} className="text-orange-500 mb-6 group-hover:scale-110 transition-transform" />
+                <h3 className="text-2xl font-bold text-white uppercase mb-4">Infinite Scalability</h3>
+                <p className="text-gray-400 leading-relaxed">
+                    Whether trading $100 or $100M, the AICE logic remains consistent. The "God Mode" of algorithmic finance.
+                </p>
+            </div>
+        </div>
+    </div>
+);
+
+// --- CHAT ASSISTANT ---
+const ChatAssistant: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+      <div className="fixed bottom-2 right-2 z-[90]">
+          <button onClick={() => setIsOpen(!isOpen)} className="w-12 h-12 bg-black border border-[#00F3FF] rounded-full flex items-center justify-center text-[#00F3FF] shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+              <MessageSquare size={20} />
+          </button>
+      </div>
+  );
+};
+
+// --- NEW: ACCESS TERMINAL (ASP INTERFACE v4.0 - CALIBRATED) ---
+// --- UPDATED ACCESS TERMINAL (TITAN CLASS v4.1) ---
+const AccessTerminal: React.FC<{ 
+    setView: (v: ViewState) => void, 
+    onBuy: (product: string) => void, 
+    onOpenDoc: (type: DocType) => void,
+    user: FirebaseUser | null,
+    openLogin: () => void 
+}> = ({ setView, onBuy, onOpenDoc, user, openLogin }) => {
+  
+  const [accessState, setAccessState] = useState<'LOCKED' | 'GRANTED'>('LOCKED');
+  
+  // Form State
+  const [sector, setSector] = useState<string>("");
+  const [isOtherSector, setIsOtherSector] = useState(false);
+  const [customSector, setCustomSector] = useState("");
+  const [subSector, setSubSector] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false);
+  const [legalAccepted, setLegalAccepted] = useState(false);
+
+  // Scroll reset
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  // Validation Logic
+  const isSectorValid = isOtherSector ? customSector.trim().length > 0 : sector !== "";
+  const isFormComplete = isSectorValid && subSector !== "" && companyName.trim().length > 0;
+  const statusColor = (user && isFormComplete) ? "text-green-500" : "text-red-500";
+  const statusMessage = !user 
+    ? "STATUS: UNAUTHENTICATED // LOGIN REQUIRED" 
+    : (!isFormComplete ? "STATUS: AWAITING INPUT" : "STATUS: VERIFIED // READY");
+
+  const handleManualOverride = () => {
+    if (!user) { openLogin(); return; }
+    if (!isFormComplete) { alert("ERROR: ALL FIELDS REQUIRED FOR OVERRIDE"); return; }
+    if (termsChecked) {
+        setAccessState('GRANTED');
+        // Faster scroll with less offset
+        setTimeout(() => document.getElementById('pricing-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+  };
+
+  const handleInitiateDiagnostic = () => {
+     if (!user) { openLogin(); return; }
+     if (!isFormComplete) { alert("ERROR: IDENTIFY INFRASTRUCTURE TOPOLOGY FIRST"); return; }
+     
+     setShowDiagnosticModal(true);
+  };
+
+  // Secure Input Wrapper
+  const handleInteraction = (e: React.MouseEvent) => {
+      if (!user) {
+          e.preventDefault();
+          e.stopPropagation();
+          openLogin();
+      }
+  };
+
+  const SECTOR_OPTIONS = [
+    "AI LABS // LLM TRAINING", "FINANCE // HFT & LIQUIDITY", "ENERGY // GRID STABILIZATION",
+    "DEFENSE // AUTONOMOUS SYSTEMS", "AEROSPACE // TELEMETRY", "NUCLEAR // REACTOR SAFETY",
+    "BIO-TECH // GENOMIC SEQUENCING", "TELECOM // 6G MESH NETWORKS", "QUANTUM // ERROR CORRECTION",
+    "LOGISTICS // GLOBAL SUPPLY CHAIN", "MARITIME // AUTONOMOUS SHIPPING", "AUTOMOTIVE // SELF-DRIVING FLEETS",
+    "INDUSTRIAL // SCADA AUTOMATION", "SMART CITIES // IOT INFRASTRUCTURE", "CRYPTOGRAPHY // BLOCKCHAIN VALIDATION",
+    "METEOROLOGY // CLIMATE MODELING", "CYBERSECURITY // THREAT VECTORS", "SOCIAL // ALGORITHMIC FEEDS",
+    "GAMING // SERVER MESHING", "GOV // DIGITAL ID SYSTEMS", "SPACE // ORBITAL MECHANICS",
+    "AGRI-TECH // AUTOMATED FARMING", "HEALTHCARE // ROBOTIC SURGERY", "E-COMMERCE // HIGH-LOAD TRANSACTIONS",
+    "RESEARCH // PARTICLE PHYSICS"
+  ];
+
+  const SUB_SECTOR_OPTIONS = [
+      "ALL SECTORS[CEO MODE]", "CORE ARCHITECTURE", "NETWORK PERIPHERY",
+      "DATA PIPELINE / ETL", "USER INTERFACE / FRONTEND", "SECURITY LAYER / FIREWALL"
+  ];
+
+  return (
+    <div className="relative z-10 pt-6 pb-24 px-4 min-h-screen flex flex-col items-center justify-start">
+      
+      {/* HEADER SECTION */}
+      <div className="mb-8 w-full max-w-7xl flex flex-col items-center justify-center gap-6 animate-in slide-in-from-top-4 duration-700 text-center">
+         <div className="p-3 bg-black border border-[#00F3FF] shadow-[0_0_20px_rgba(0,243,255,0.3)] rounded-xl mb-2">
+            <ShieldCheck size={40} className="text-[#00F3FF]" />
+         </div>
+         <div className="flex flex-col items-center">
+            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter leading-none" 
+                style={{ textShadow: '0 4px 8px rgba(0,0,0,1)' }}>
+              INTEGRATE ADAPTIVE
+            </h1>
+            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter leading-none mt-2"
+                style={{ textShadow: '0 4px 8px rgba(0,0,0,1)' }}>
+              INTELLIGENCE PROTOCOL <span className="text-[#00F3FF]">(A.I.C.E.)</span>
+            </h1>
+         </div>
+      </div>
+
+      {/* --- THE MAIN INTERFACE --- */}
+      <div className={`w-full max-w-[95rem] mb-12 relative animate-in slide-in-from-bottom-4 duration-500 ${accessState === 'GRANTED' ? 'hidden' : 'block'}`}>
+        
+        <div className="absolute inset-0 bg-[#00F3FF]/5 blur-[80px] rounded-full opacity-30"></div>
+        
+        <div className="relative border-4 border-[#00F3FF] bg-[#020202] p-6 md:p-10 rounded-[2rem] shadow-[0_0_50px_rgba(0,243,255,0.25)] overflow-hidden">
+            
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 border-b-2 border-[#00F3FF]/20 pb-6 gap-6">
+              <div className="flex items-center gap-4">
+                 <div className="p-3 rounded-xl bg-[#00F3FF]/10 text-[#00F3FF] border border-[#00F3FF]/50 shadow-[0_0_15px_rgba(0,243,255,0.4)] animate-pulse">
+                    <Activity size={32} strokeWidth={2.5} />
+                 </div>
+                 <div>
+                    <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-tighter mb-1">
+                       PRE-DEPLOYMENT VERIFICATION
+                    </h3>
+                    <div className="flex items-center gap-3">
+                       <div className={`w-2 h-2 rounded-full ${user && isFormComplete ? 'bg-green-500' : 'bg-red-500'} animate-pulse`}></div>
+                       <p className={`font-mono text-[10px] md:text-xs tracking-widest uppercase font-bold ${statusColor}`}>
+                          {statusMessage}
+                       </p>
+                    </div>
+                 </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                {/* LEFT: CONFIGURATION FORM */}
+                <div className="space-y-6 relative">
+                    {!user && (
+                        <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center border border-red-500/30 rounded-xl cursor-pointer hover:bg-black/50 transition-colors" onClick={openLogin}>
+                            <LockKeyhole size={48} className="text-red-500 mb-4 animate-bounce" />
+                            <h4 className="text-2xl font-black text-white uppercase tracking-widest">Secure Uplink Required</h4>
+                            <p className="text-red-500 font-mono text-sm uppercase mt-2">Click to Authenticate</p>
+                        </div>
+                    )}
+
+                    <div className="space-y-1">
+                        <label className="text-[#00F3FF] font-mono text-[10px] font-bold tracking-widest uppercase flex items-center gap-2">
+                           <Crosshair size={12} /> 01 // Target Sector (Infrastructure)
+                        </label>
+                        <select 
+                             value={isOtherSector ? "OTHER" : sector} 
+                             onChange={(e) => {
+                                 const val = e.target.value;
+                                 if (val === "OTHER") { setIsOtherSector(true); setSector(""); } 
+                                 else { setIsOtherSector(false); setSector(val); }
+                             }}
+                             className="bg-black text-[#00F3FF] text-base font-bold uppercase tracking-wider p-3 rounded-lg border border-white/30 focus:border-[#00F3FF] outline-none cursor-pointer w-full appearance-none hover:bg-white/5 transition-colors font-mono disabled:opacity-30"
+                             disabled={!user}
+                        >
+                           <option value="" disabled className="text-gray-600">-- SELECT INFRASTRUCTURE --</option>
+                           {SECTOR_OPTIONS.map((opt, i) => (<option key={i} value={opt} className="bg-black text-[#00F3FF] font-mono font-bold py-2">{opt}</option>))}
+                           <option value="OTHER" className="bg-black text-white font-mono font-bold py-2 border-t border-white/20">-- OTHER (MANUAL ENTRY) --</option>
+                        </select>
+                        {isOtherSector && (
+                            <input type="text" placeholder="ENTER SPECIFIC INFRASTRUCTURE TYPE..." value={customSector} onChange={(e) => setCustomSector(e.target.value)} className="w-full bg-[#00F3FF]/5 border-l-4 border-[#00F3FF] text-white p-3 font-mono text-sm outline-none animate-in fade-in slide-in-from-top-2" />
+                        )}
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-[#00F3FF] font-mono text-[10px] font-bold tracking-widest uppercase flex items-center gap-2"><Layers size={12} /> 02 // Sub-Sector Topology</label>
+                        <select value={subSector} onChange={(e) => setSubSector(e.target.value)} className="bg-black text-[#00F3FF] text-base font-bold uppercase tracking-wider p-3 rounded-lg border border-white/30 focus:border-[#00F3FF] outline-none cursor-pointer w-full appearance-none hover:bg-white/5 transition-colors font-mono disabled:opacity-30" disabled={!user}>
+                           <option value="" disabled className="text-gray-600">-- SELECT SUB-SYSTEM --</option>
+                           {SUB_SECTOR_OPTIONS.map((opt, i) => (<option key={i} value={opt} className="bg-black text-[#00F3FF] font-mono font-bold py-2">{opt}</option>))}
+                        </select>
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-[#00F3FF] font-mono text-[10px] font-bold tracking-widest uppercase flex items-center gap-2"><Globe2 size={12} /> 03 // Entity Identification</label>
+                        <input type="text" placeholder="ENTER COMPANY / ORGANIZATION NAME" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="bg-black text-white placeholder-gray-600 text-base font-bold uppercase tracking-wider p-3 rounded-lg border border-white/30 focus:border-[#00F3FF] outline-none w-full hover:bg-white/5 transition-colors font-mono disabled:opacity-30" disabled={!user} />
+                    </div>
+                    
+                    {/* --- SALES ASSISTANT --- */}
+                    <div className="pt-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <SalesAssistant selectedSector={isOtherSector ? customSector : sector} />
+                    </div>
+                </div>
+
+                {/* RIGHT: ACTION COMMANDS */}
+                <div className="flex flex-col justify-center gap-6 border-l-0 lg:border-l-2 border-white/10 lg:pl-10 relative h-full">
+                    <button 
+                         onClick={handleInitiateDiagnostic}
+                         onMouseDown={handleInteraction}
+                         disabled={!isFormComplete}
+                         className={`group w-full py-6 bg-[#00F3FF] text-black font-black uppercase tracking-widest text-lg md:text-xl hover:bg-white transition-all rounded-xl shadow-[0_0_40px_rgba(0,243,255,0.4)] flex items-center justify-center gap-3 hover:scale-[1.01] ${!isFormComplete ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                    >
+                       <ClipboardCheck size={28} strokeWidth={2.5} /> 
+                       INITIATE DIAGNOSTIC <span className="bg-black/20 px-3 py-1 rounded text-sm opacity-80">$15k</span>
+                    </button>
+                    
+                    <div className="flex items-center gap-4 w-full opacity-50">
+                        <div className="h-[1px] bg-white/20 flex-1"></div>
+                        <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest font-bold">COMMAND OVERRIDE</span>
+                        <div className="h-[1px] bg-white/20 flex-1"></div>
+                    </div>
+
+                    <div className="space-y-4 bg-white/5 p-5 rounded-2xl border border-white/10 relative">
+                        {!isFormComplete && (<div className="absolute inset-0 bg-black/40 z-10 cursor-not-allowed rounded-2xl"></div>)}
+
+                        <button 
+                            onClick={handleManualOverride}
+                            onMouseDown={handleInteraction}
+                            disabled={!isFormComplete || !termsChecked}
+                            className={`w-full py-4 border-2 border-white/20 text-gray-300 font-bold uppercase tracking-[0.2em] text-base transition-all rounded-xl flex items-center justify-center gap-3 ${termsChecked && isFormComplete ? 'border-orange-500 text-orange-500 bg-orange-500/10 hover:bg-orange-500 hover:text-white shadow-[0_0_30px_rgba(255,69,0,0.3)]' : 'cursor-not-allowed opacity-60'}`}
+                        >
+                           {termsChecked ? <Unlock size={20}/> : <Lock size={20}/>} MANUAL OVERRIDE
+                        </button>
+
+                        <div 
+                          onClick={() => isFormComplete && setTermsChecked(!termsChecked)}
+                          className={`border p-3 rounded-xl cursor-pointer transition-all ${termsChecked ? 'border-orange-500 bg-orange-500/5' : 'border-white/10 hover:border-white/30'}`}
+                        >
+                            <div className="flex gap-3 items-start">
+                                <div className={`w-5 h-5 border rounded flex items-center justify-center shrink-0 mt-0.5 transition-colors ${termsChecked ? 'bg-orange-500 border-orange-500' : 'border-gray-500'}`}>
+                                   {termsChecked && <Check size={14} className="text-black" />}
+                                </div>
+                                <p className="text-gray-400 text-xs leading-tight font-mono">
+                                    <span className="text-white font-bold">BINDING AGREEMENT:</span> I acknowledge that bypassing the Pilot Diagnostic voids stability guarantees.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+      </div>
+
+      {/* --- GRANTED STATE: PRODUCT GRID (UPDATED FONTS) --- */}
+      {accessState === 'GRANTED' && (
+        <div id="pricing-grid" className="animate-in slide-in-from-bottom-12 duration-700 w-full flex flex-col items-center">
+            
+            <div className="mb-8 text-center">
+                 <div className="inline-flex items-center gap-3 text-[#00F3FF] border border-[#00F3FF]/30 bg-[#00F3FF]/10 px-6 py-2 rounded-full mb-4">
+                    <div className="w-2 h-2 bg-[#00F3FF] rounded-full animate-pulse shadow-[0_0_10px_#00F3FF]"></div>
+                    <span className="font-mono text-xs font-bold uppercase tracking-widest">Sector Unlocked: {isOtherSector ? customSector : sector}</span>
+                 </div>
+                 <h2 className="text-white text-2xl md:text-3xl uppercase tracking-[0.2em] font-black">Select Infrastructure Tier</h2>
+            </div>
+
+            {/* MANDATORY COMPLIANCE LOCK */}
+            <div className={`w-full max-w-4xl mx-auto mb-10 p-6 border-2 rounded-xl transition-all duration-500 flex items-start gap-4 cursor-pointer ${legalAccepted ? 'border-[#00FF66] bg-[#00FF66]/5' : 'border-red-500/50 bg-red-500/5 hover:border-red-500'}`} onClick={() => setLegalAccepted(!legalAccepted)}>
+                <div className={`w-6 h-6 border-2 rounded flex items-center justify-center shrink-0 mt-0.5 transition-colors ${legalAccepted ? 'bg-[#00FF66] border-[#00FF66]' : 'border-red-500'}`}>
+                    {legalAccepted && <Check size={16} className="text-black font-black" />}
+                </div>
+                <div className="flex-1">
+                    <p className={`text-sm font-bold tracking-widest uppercase mb-1 ${legalAccepted ? 'text-[#00FF66]' : 'text-red-500'}`}>
+                        MANDATORY GOVERNANCE ACKNOWLEDGMENT
+                    </p>
+                    <p className="text-xs text-gray-400 font-mono leading-relaxed">
+                        By proceeding with this acquisition, I explicitly agree to the <button onClick={(e) => { e.stopPropagation(); setView('TERMS_OF_SERVICE'); }} className="text-white hover:text-[#00F3FF] underline decoration-[#00F3FF] decoration-2">Terms of Service</button>, acknowledge the strict <button onClick={(e) => { e.stopPropagation(); setView('REFUND_POLICY'); }} className="text-white hover:text-[#00F3FF] underline decoration-[#00F3FF] decoration-2">Refund Policy</button>, and consent to the <button onClick={(e) => { e.stopPropagation(); setView('PRIVACY_POLICY'); }} className="text-white hover:text-[#00F3FF] underline decoration-[#00F3FF] decoration-2">Privacy Policy</button>.
+                    </p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-[95rem] w-full items-start mb-32">
+                
+                {/* CLASS 3: COMMERCIAL / EDGE (LEVEL 4 CLEARANCE) */}
+                <div className="p-8 border border-white/10 bg-black/60 rounded-[2rem] flex flex-col transition-all duration-500 h-full shadow-2xl group hover:bg-[#1a1a1a] hover:border-gray-500 hover:shadow-[0_0_30px_rgba(100,100,100,0.1)] hover:scale-[1.02]">
+                    <div className="text-gray-500 font-mono text-xs mb-2">LEVEL 4 CLEARANCE</div>
+                    <h3 className="text-2xl font-mono font-bold mb-4 uppercase text-white tracking-widest group-hover:text-[#00F3FF] transition-colors">CLASS 3: COMMERCIAL</h3>
+                    <div className="text-5xl font-black text-white mb-4">$15k<span className="text-lg font-medium text-white/40">/mo</span></div>
+                    <p className="text-gray-400 text-sm mb-6 h-auto group-hover:text-gray-200 transition-colors">Localized or non-lethal data architectures (e.g., Rendering Farms, Edge AI).</p>
+                    <ul className="space-y-4 mb-8 text-sm text-gray-300 font-sans font-medium">
+                        {["Entropy Veto (Local)", "Latency Governor (Standard)", "Hallucination Dampening", "Single-Tenant Impedance", "Standard API Uplink"].map((f, j) => (
+                            <li key={j} className="flex items-start gap-3 group-hover:text-white transition-colors"><CheckCircle2 size={16} className="text-[#00F3FF] shrink-0 mt-[2px]" /> {f}</li>
+                        ))}
+                    </ul>
+                    <div className="mt-auto"><button onClick={() => onBuy('CLASS_3')} disabled={!legalAccepted} className={`w-full py-4 font-bold uppercase tracking-widest text-xs transition-all rounded-xl ${legalAccepted ? 'bg-white/5 border border-white/10 hover:bg-white hover:text-black' : 'bg-gray-800 text-gray-500 cursor-not-allowed grayscale'}`}>AUTHORIZE LEVEL 4</button></div>
+                </div>
+
+                {/* CLASS 2: ENTERPRISE OPERATIONS (LEVEL 3 CLEARANCE) */}
+                <div className="p-8 border border-white/20 bg-black/60 rounded-[2rem] flex flex-col transition-all duration-500 h-full shadow-2xl group hover:bg-[#1a1a1a] hover:border-[#00F3FF]/50 hover:shadow-[0_0_30px_rgba(0,243,255,0.1)] hover:scale-[1.02]">
+                    <div className="text-[#00F3FF]/70 font-mono text-xs mb-2">LEVEL 3 CLEARANCE</div>
+                    <h3 className="text-2xl font-mono font-bold mb-4 uppercase text-white tracking-widest group-hover:text-[#00F3FF] transition-colors">CLASS 2: ENTERPRISE</h3>
+                    <div className="text-5xl font-black text-white mb-4">$50k<span className="text-lg font-medium text-white/40">/mo</span></div>
+                    <p className="text-gray-400 text-sm mb-6 h-auto group-hover:text-gray-200 transition-colors">Massive commercial networks (e.g., Cloud Data Centers, Autonomous Fleets).</p>
+                    <ul className="space-y-4 mb-8 text-sm text-gray-300 font-sans font-medium">
+                        {["Entropy Veto (Regional Cluster)", "Multi-Node Orchestration", "Regional Load Balancing", "Custom Variance Heuristics", "4-Hour Response SLA"].map((f, j) => (
+                            <li key={j} className="flex items-start gap-3 group-hover:text-white transition-colors"><CheckCircle2 size={16} className="text-[#00F3FF] shrink-0 mt-[2px]" /> {f}</li>
+                        ))}
+                    </ul>
+                    <div className="mt-auto"><button onClick={() => onBuy('CLASS_2')} disabled={!legalAccepted} className={`w-full py-4 font-bold uppercase tracking-widest text-xs transition-all rounded-xl ${legalAccepted ? 'bg-white/10 border border-[#00F3FF]/30 text-white hover:bg-[#00F3FF] hover:text-black' : 'bg-gray-800 text-gray-500 cursor-not-allowed grayscale'}`}>AUTHORIZE LEVEL 3</button></div>
+                </div>
+
+                {/* CLASS 1: SYSTEMIC / FINANCIAL (LEVEL 2 CLEARANCE) */}
+                <div className="relative p-8 border border-[#00F3FF]/50 bg-black/80 rounded-[2rem] flex flex-col shadow-[0_0_50px_rgba(0,243,255,0.15)] z-10 h-full transition-all duration-500 hover:bg-black hover:border-[#00F3FF] hover:shadow-[0_0_60px_rgba(0,243,255,0.4)] hover:scale-[1.02] group">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00F3FF] text-black text-xs font-black uppercase tracking-[0.2em] px-4 py-1 rounded-full shadow-lg">Recommended</div>
+                    <div className="text-[#00F3FF] font-mono text-xs mb-2">LEVEL 2 CLEARANCE</div>
+                    <h3 className="text-2xl font-mono font-bold mb-4 uppercase text-[#00F3FF] tracking-widest group-hover:text-white transition-colors">CLASS 1: SYSTEMIC</h3>
+                    <div className="text-5xl font-black text-white mb-4">$150k<span className="text-lg font-medium text-white/40">/mo</span></div>
+                    <p className="text-gray-400 text-sm mb-6 h-auto group-hover:text-gray-200 transition-colors">High-velocity networks (e.g., Forex, HFT, Tier-1 AI Training).</p>
+                    <ul className="space-y-4 mb-8 text-sm text-white font-sans font-medium">
+                        {["Viscous Order Book Damping", "Latency Governor (Aggressive)", "Flash-Crash Isolation", "Advanced Forensic Logging", "API Priority Access"].map((f, j) => (
+                            <li key={j} className="flex items-start gap-3 group-hover:text-white transition-colors"><CheckCircle2 size={16} className="text-[#00F3FF] shrink-0 mt-[2px]" /> {f}</li>
+                        ))}
+                    </ul>
+                    <div className="mt-auto"><button onClick={() => onBuy('CLASS_1')} disabled={!legalAccepted} className={`w-full py-4 font-bold uppercase tracking-widest text-xs transition-all rounded-xl shadow-lg ${legalAccepted ? 'bg-[#00F3FF] text-black hover:bg-white' : 'bg-gray-800 text-gray-500 cursor-not-allowed grayscale'}`}>AUTHORIZE LEVEL 2</button></div>
+                </div>
+
+                {/* CLASS S: SOVEREIGN (LEVEL 1 CLEARANCE) */}
+                <div className="relative p-8 border-4 border-[#00F3FF] bg-black/90 backdrop-blur-xl rounded-[2rem] flex flex-col shadow-[0_0_80px_rgba(0,243,255,0.2)] xl:scale-105 z-20 h-full overflow-hidden group transition-all duration-500 hover:bg-[#050505] hover:border-white hover:shadow-[0_0_100px_rgba(255,255,255,0.2)] hover:scale-[1.05] xl:hover:scale-[1.08]">
+                    <div className="absolute top-6 right-6"><Crown size={28} className="text-[#00F3FF] animate-pulse drop-shadow-[0_0_10px_#00F3FF] group-hover:text-white transition-colors" /></div>
+                    <div className="text-white font-mono text-xs mb-2 font-bold tracking-widest">LEVEL 1 CLEARANCE</div>
+                    <h3 className="text-3xl font-mono font-black mb-4 uppercase text-white tracking-[0.2em] drop-shadow-[0_0_10px_rgba(0,243,255,0.8)] group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all">CLASS S: SOVEREIGN</h3>
+                    <div className="text-5xl font-black text-[#00F3FF] mb-4 drop-shadow-[0_0_15px_rgba(0,243,255,0.5)] group-hover:text-white transition-colors">$250k<span className="text-2xl font-medium text-white/60">+</span></div>
+                    <p className="text-white/60 text-sm mb-6 h-auto group-hover:text-gray-300 transition-colors">Extreme liability, life-critical (e.g., Nuclear, Power Grids, Air Traffic).</p>
+                    <ul className="space-y-3 mb-8 text-sm text-white/80 font-mono font-medium relative z-10">
+                        {["Entropy Veto (Global Mesh)", "Shadow Simulation (t+1)", "Dedicated FPGA Interposer", "EMP-Hardened Logic Gates", "Global Kill-Switch Auth"].map((f, j) => (
+                            <li key={j} className="flex items-start gap-3 group-hover:text-white transition-colors"><Check size={14} className="text-black bg-[#00F3FF] group-hover:bg-white rounded-full p-0.5 shrink-0 mt-[2px] transition-colors" /> <span>{f}</span></li>
+                        ))}
+                    </ul>
+                    <div className="mt-auto relative z-10"><button onClick={() => onBuy('CLASS_S')} disabled={!legalAccepted} className={`w-full py-4 border-2 transition-all rounded-xl font-black uppercase tracking-[0.2em] text-xs ${legalAccepted ? 'bg-[#00F3FF] border-white text-black hover:bg-white' : 'bg-gray-800 border-gray-600 text-gray-500 cursor-not-allowed grayscale'}`}>INITIATE UPLINK</button></div>
+                </div>
+            </div>
+        </div>
+      )}
+
+      {/* DIAGNOSTIC MODAL */}
+      <PilotDiagnosticModal 
+          isOpen={showDiagnosticModal} 
+          onClose={() => setShowDiagnosticModal(false)}
+          onProceed={() => { setShowDiagnosticModal(false); setAccessState('GRANTED'); }}
+      />
+    </div>
+  );
+};
+
+// --- NEW PILOT PROGRAMS VIEW ---
+const PilotProgramView: React.FC<{ onOpenDoc: (type: DocType) => void, setView: (v: ViewState) => void }> = ({ onOpenDoc, setView }) => (
+  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+    <SectorHeader title="Pilot Programs" subtitle="System Stability Diagnostics" icon={<ClipboardCheck size={48} />} />
+    <div className="max-w-[90rem] mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* TIER 1 */}
+        <div className="bg-[#050505] border border-white/10 rounded-3xl p-8 flex flex-col relative group hover:border-[#00F3FF] transition-all duration-500 hover:-translate-y-2">
+            <h3 className="text-2xl font-black text-white uppercase tracking-wide mb-2">Rapid Triage</h3>
+            <div className="text-4xl font-mono font-bold text-[#00F3FF] mb-6">$5,000</div>
+            <p className="text-gray-400 text-sm mb-8 leading-relaxed">A binary assessment of your system's instability risk.</p>
+            <div className="mt-auto"><button onClick={() => onOpenDoc('PILOT_7DAY')} className="w-full py-4 border border-white/20 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all rounded-lg">View S.O.W.</button></div>
+        </div>
+        {/* TIER 2 */}
+        <div className="bg-[#050505] border-2 border-orange-500 rounded-3xl p-8 flex flex-col relative group transform scale-105 z-10">
+            <h3 className="text-2xl font-black text-white uppercase tracking-wide mb-2">Standard Diagnostic</h3>
+            <div className="text-4xl font-mono font-bold text-orange-500 mb-6">$15,000</div>
+            <p className="text-gray-300 text-sm mb-8 leading-relaxed">The core A.I.C.E. product. Identify exactly where your system fails.</p>
+            <div className="mt-auto"><button onClick={() => setView('PILOT_PHOENIX')} className="w-full py-4 bg-orange-500 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all rounded-lg">Initiate Diagnostic</button></div>
+        </div>
+        {/* TIER 3 */}
+        <div className="bg-[#050505] border border-white/10 rounded-3xl p-8 flex flex-col relative group hover:border-[#00F3FF] transition-all duration-500 hover:-translate-y-2">
+            <h3 className="text-2xl font-black text-white uppercase tracking-wide mb-2">Extended Validation</h3>
+            <div className="text-4xl font-mono font-bold text-white mb-6">Custom</div>
+            <p className="text-gray-400 text-sm mb-8 leading-relaxed">Mission-critical integration. Live fire validation.</p>
+            <div className="mt-auto"><button onClick={() => onOpenDoc('PILOT_EXTENDED')} className="w-full py-4 border border-white/20 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all rounded-lg">View S.O.W.</button></div>
+        </div>
+    </div>
+  </div>
+);
+
+// --- AUTHENTICATION & ADMIN ---
+
+const LoginModal: React.FC<{ isOpen: boolean, onClose: () => void, user: FirebaseUser | null, initialMode?: 'register' | 'login' }> = ({ isOpen, onClose, user, initialMode = 'login' }) => {
+  const [isRegistering, setIsRegistering] = useState(initialMode === 'register');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); 
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => { 
+      setIsRegistering(initialMode === 'register'); 
+      setError(""); 
+      setSuccessMsg("");
+  }, [initialMode, isOpen]);
+
+  const logUserAccess = async (user: FirebaseUser) => {
+    try {
+      const userRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+      await setDoc(userRef, { email: user.email, lastLogin: serverTimestamp(), uid: user.uid, displayName: user.displayName || 'Operative', role: 'user' }, { merge: true });
+    } catch (e) { console.error(e); }
+  };
+
+  const mapAuthError = (errCode: string) => {
+      if (errCode.includes('password')) return "ACCESS DENIED: INVALID CREDENTIALS";
+      if (errCode.includes('email')) return "ERROR: INVALID EMAIL FORMAT";
+      if (errCode.includes('not-found')) return "USER NOT FOUND";
+      if (errCode.includes('in-use')) return "ID ALREADY REGISTERED";
+      return "SYSTEM ERROR: TRY AGAIN";
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true); setError("");
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      await logUserAccess(result.user);
+      onClose();
+    } catch (err: any) { setError(mapAuthError(err.message)); } finally { setLoading(false); }
+  };
+
+  const handleEmailAuth = async () => {
+    setLoading(true); setError(""); setSuccessMsg("");
+    
+    if (isRegistering && password !== confirmPassword) {
+        setError("SECURITY ALERT: PASSWORDS DO NOT MATCH");
+        setLoading(false);
+        return;
+    }
+    
+    if (password.length < 6) {
+        setError("SECURITY ALERT: PASSWORD TOO WEAK (MIN 6 CHARS)");
+        setLoading(false);
+        return;
+    }
+
+    try {
+      let result;
+      if (isRegistering) result = await createUserWithEmailAndPassword(auth, email, password);
+      else result = await signInWithEmailAndPassword(auth, email, password);
+      await logUserAccess(result.user);
+      onClose();
+    } catch (err: any) { setError(mapAuthError(err.message)); } finally { setLoading(false); }
+  };
+
+  const handleResetPassword = async () => {
+      if (!email) { setError("ENTER ID (EMAIL) TO RESET"); return; }
+      try {
+          await sendPasswordResetEmail(auth, email);
+          setSuccessMsg("RESET LINK TRANSMITTED TO INBOX");
+          setError("");
+      } catch (err: any) { setError(mapAuthError(err.message)); }
+  };
+
+  if (!isOpen) return null;
+  if (user) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4">
+      <div className="w-full max-w-md bg-[#050505] border border-[#00F3FF] shadow-[0_0_100px_rgba(0,243,255,0.15)] rounded-2xl relative overflow-hidden p-8 animate-in zoom-in duration-300">
+        <button onClick={onClose} className="absolute top-4 right-4 text-white/30 hover:text-[#00F3FF]"><X /></button>
+        
+        <div className="text-center mb-8">
+            <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-[#00F3FF]/10 border border-[#00F3FF] mb-4 shadow-[0_0_20px_rgba(0,243,255,0.3)]">
+                <ShieldCheck size={32} className="text-[#00F3FF]" />
+            </div>
+            <h2 className="text-2xl font-bold text-white uppercase tracking-widest mb-1">{isRegistering ? 'New Operative' : 'Identity Verification'}</h2>
+            <p className="text-xs text-[#00F3FF] font-mono tracking-wider">A.I.C.E. SECURITY PROTOCOL v2.0</p>
+        </div>
+
+        {error && <div className="bg-red-500/10 border border-red-500/50 p-3 mb-6 text-red-500 text-xs font-mono flex items-center gap-2 animate-pulse"><AlertTriangle size={12}/> {error}</div>}
+        {successMsg && <div className="bg-green-500/10 border border-green-500/50 p-3 mb-6 text-green-500 text-xs font-mono flex items-center gap-2"><CheckCircle2 size={12}/> {successMsg}</div>}
+
+        <div className="space-y-4">
+            <button onClick={handleGoogleLogin} disabled={loading} className="w-full py-3 bg-white text-black font-bold uppercase tracking-wider rounded flex items-center justify-center gap-3 hover:bg-gray-200 transition-colors">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="G" />
+                {loading ? 'Scanning...' : 'Sign in with Google'}
+            </button>
+            <div className="flex items-center gap-4 my-4"><div className="h-[1px] bg-white/10 flex-1"></div><span className="text-white/30 text-[10px] uppercase">OR ENCRYPTED KEY</span><div className="h-[1px] bg-white/10 flex-1"></div></div>
+
+            <div className="space-y-3">
+                <div className="relative">
+                    <Mail className="absolute left-3 top-3 text-white/30" size={18} />
+                    <input type="email" placeholder="OPERATIVE ID (EMAIL)" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-black border border-white/20 rounded p-3 pl-10 text-white text-sm outline-none focus:border-[#00F3FF] font-mono transition-colors" />
+                </div>
+                
+                {/* PASSWORD FIELD WITH TOGGLE */}
+                <div className="relative">
+                    <LockKeyhole className="absolute left-3 top-3 text-white/30" size={18} />
+                    <input 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="ACCESS CODE (PASSWORD)" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        className="w-full bg-black border border-white/20 rounded p-3 pl-10 pr-10 text-white text-sm outline-none focus:border-[#00F3FF] font-mono transition-colors" 
+                    />
+                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3 text-white/30 hover:text-white">
+                        {showPassword ? <Eye size={18} /> : <Eye className="opacity-50" size={18} />}
+                    </button>
+                </div>
+                
+                {isRegistering && (
+                    <div className="relative animate-in slide-in-from-top-2 fade-in">
+                        <LockKeyhole className="absolute left-3 top-3 text-[#00F3FF]" size={18} />
+                        <input 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="CONFIRM ACCESS CODE" 
+                            value={confirmPassword} 
+                            onChange={(e) => setConfirmPassword(e.target.value)} 
+                            className="w-full bg-black border border-[#00F3FF]/50 rounded p-3 pl-10 text-white text-sm outline-none focus:border-[#00F3FF] font-mono shadow-[0_0_10px_rgba(0,243,255,0.1)]" 
+                        />
+                    </div>
+                )}
+            </div>
+
+            {!isRegistering && (
+                <div className="flex justify-end">
+                    <button onClick={handleResetPassword} className="text-[10px] text-white/50 hover:text-[#00F3FF] uppercase tracking-wider transition-colors">
+                        Forgot Access Code?
+                    </button>
+                </div>
+            )}
+
+            <button onClick={handleEmailAuth} disabled={loading} className="w-full py-4 bg-[#00F3FF]/10 border border-[#00F3FF] text-[#00F3FF] font-black uppercase tracking-[0.2em] rounded hover:bg-[#00F3FF] hover:text-black transition-all shadow-[0_0_20px_rgba(0,243,255,0.1)] mt-2">
+                {loading ? 'AUTHENTICATING...' : (isRegistering ? 'INITIALIZE ACCOUNT' : 'VERIFY IDENTITY')}
+            </button>
+        </div>
+
+        <div className="mt-6 text-center">
+            <button onClick={() => { setIsRegistering(!isRegistering); setError(""); setSuccessMsg(""); }} className="text-white/40 text-xs hover:text-[#00F3FF] underline decoration-dotted underline-offset-4">
+                {isRegistering ? 'Return to Login Interface' : 'Request New Clearance Level'}
+            </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- ADMIN DASHBOARD ---
+const AdminView: React.FC = () => {
+    const [users, setUsers] = useState<any[]>([]);
+    
+    // Fetch all users (Simulated Admin Access for this demo)
+    useEffect(() => {
+        // NOTE: In a real app, strict Firestore Rules would prevent this read unless user.role === 'admin'
+        // For this demo, we assume the viewer has permission.
+        const usersRef = collection(db, 'artifacts', appId, 'users'); 
+        setUsers([
+            { uid: 'mock-1', email: 'admin@aice.network', role: 'COMMANDER', lastLogin: 'NOW' },
+            { uid: 'mock-2', email: 'operative.x@grid.com', role: 'USER', lastLogin: '2 HRS AGO' },
+            { uid: 'mock-3', email: 'system.monitor@vps.net', role: 'BOT', lastLogin: 'ACTIVE' },
+        ]);
+    }, []);
+
+    return (
+        <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
+            <SectorHeader title="System Control" subtitle="Administrator Command Deck" icon={<Database size={48} />} />
+            
+            <div className="max-w-7xl mx-auto">
+                <div className="bg-[#050505] border border-[#00F3FF]/30 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,243,255,0.1)]">
+                    <div className="p-6 border-b border-white/10 bg-white/5 flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <Users className="text-[#00F3FF]" />
+                            <h3 className="text-xl font-bold text-white uppercase tracking-widest">Personnel Database</h3>
+                        </div>
+                        <div className="flex gap-2">
+                             <button className="p-2 bg-[#00F3FF]/20 text-[#00F3FF] rounded hover:bg-[#00F3FF] hover:text-black transition-colors"><UserPlus size={18} /></button>
+                             <button className="p-2 bg-red-500/20 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors"><Lock size={18} /></button>
+                        </div>
+                    </div>
+                    
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-black text-white/50 text-xs font-mono uppercase tracking-widest border-b border-white/10">
+                                    <th className="p-6">Operative ID</th>
+                                    <th className="p-6">Clearance Role</th>
+                                    <th className="p-6">Last Uplink</th>
+                                    <th className="p-6">Status</th>
+                                    <th className="p-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-sm font-mono text-gray-300">
+                                {users.map((u, i) => (
+                                    <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                        <td className="p-6 font-bold text-white">{u.email}</td>
+                                        <td className="p-6"><span className="bg-[#00F3FF]/10 text-[#00F3FF] px-2 py-1 rounded text-[10px] border border-[#00F3FF]/30">{u.role}</span></td>
+                                        <td className="p-6">{typeof u.lastLogin === 'string' ? u.lastLogin : 'Just now'}</td>
+                                        <td className="p-6"><span className="text-green-500">● ONLINE</span></td>
+                                        <td className="p-6 text-right">
+                                            <button className="text-white/50 hover:text-white underline decoration-dotted">Edit</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+// --- UPDATED HOME VIEW: DYNAMIC VIEWPORT SCALING & MASSIVE IP LOCK ---
+const HomeView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
+  // State for the Image Pop-Out Modal
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+  return (
+    <div className="hero-container relative z-20 min-h-[100svh] flex flex-col w-full"> 
+      
+      {/* --- HERO CONTENT WRAPPER --- */}
+      <div className="flex-grow flex flex-col items-center justify-center relative z-20 px-6 py-20 md:py-0">
+        
+        {/* 1. ENHANCED TITLE CONTAINER */}
+        <div className="relative w-full max-w-full px-4 mt-12 md:mt-0 flex justify-center items-center group cursor-default">
+            {/* THE IMAGE */}
+            <img 
+              src={MAIN_TITLE_IMG} 
+              alt="AICE PROTOCOL" 
+              className="relative z-10 w-auto h-auto max-w-full max-h-[40vh] md:max-h-[70vh] object-contain drop-shadow-[0_0_35px_rgba(0,0,0,0.9)] filter brightness-110 hover:scale-105 transition-transform duration-700 ease-out" 
+            />
+        </div>
+
+        {/* Tagline */}
+        <div className="flex flex-col items-center gap-6 my-8 md:my-12 relative z-10">
+          <p className="font-mono text-lg md:text-3xl tracking-[0.2em] uppercase font-black max-w-6xl mx-auto px-4 animate-pulse leading-tight text-[#00F3FF] drop-shadow-[0_0_15px_rgba(0,243,255,0.8)] text-center bg-black py-3 rounded-lg border-y border-[#00F3FF]/20 shadow-lg">
+              UNIVERSAL SOLUTION FOR THE SINGULARITY
+          </p>
+          <div className="h-[2px] w-40 md:w-64 bg-gradient-to-r from-transparent via-[#00F3FF] to-transparent opacity-70 shadow-[0_0_10px_#00F3FF]"></div>
+          
+          <div className="max-w-5xl mx-auto bg-black/80 backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] transform hover:scale-[1.02] transition-transform duration-500">
+              <p className="font-sans text-lg md:text-3xl tracking-widest uppercase leading-relaxed font-bold text-white drop-shadow-md text-center">
+                  PREVENTING THE GLOBAL CRASH THROUGH <br className="hidden md:block" /> 
+                  <span className="text-[#00F3FF] border-b-4 border-[#00F3FF] pb-1" style={{ textShadow: '0 0 20px rgba(0,243,255,0.5)' }}>IMMUTABLE PROTECTION</span>.
+              </p>
+          </div>
+        </div>
+
+        {/* --- BUTTONS: CENTERED ON ARCHITECTURAL VECTORS --- */}
+        <div className="flex flex-col items-center justify-center w-full relative z-10 md:pl-[38rem] transition-all duration-500"> 
+          <button 
+              onClick={() => setView('SALES')} 
+              className="relative inline-flex h-20 overflow-hidden rounded-full p-[2px] group focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 shadow-[0_0_50px_rgba(0,243,255,0.6)] hover:shadow-[0_0_80px_rgba(0,243,255,0.9)] hover:-translate-y-2 transition-all duration-300"
+          >
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#000000_0%,#00F3FF_50%,#000000_100%)]" />
+            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-black px-12 py-2 text-xl font-black text-[#00F3FF] backdrop-blur-3xl uppercase tracking-[0.25em] gap-4 border border-[#00F3FF]/30 group-hover:bg-black/80 group-hover:text-white transition-all">
+                <Cpu size={28} className="animate-pulse" />
+                INITIATE PROTOCOL
+            </span>
+          </button>
+        </div>
+      </div>
+{/* --- COMPLIANCE & BUSINESS MANDATE BYPASS --- */}
+      <div className="w-full max-w-[95rem] mx-auto px-6 relative z-30 mt-20 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+          <div className="bg-[#050505]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.9)] flex flex-col lg:flex-row group hover:border-[#00F3FF]/40 hover:shadow-[0_0_100px_rgba(0,243,255,0.15)] transition-all duration-700 relative">
+              
+              {/* Subtle Grid Background for System Aesthetic */}
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+
+              {/* WHAT WE DO (CORE OPERATION) */}
+              <div className="w-full lg:w-1/2 p-12 md:p-20 border-b lg:border-b-0 lg:border-r border-white/10 relative overflow-hidden flex flex-col justify-center bg-gradient-to-br from-black via-black to-[#00F3FF]/5">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#00F3FF] via-[#00F3FF]/50 to-transparent shadow-[0_0_15px_#00F3FF]"></div>
+                  
+                  <h3 className="text-sm md:text-base font-mono text-[#00F3FF] uppercase tracking-[0.2em] font-bold mb-8 flex items-center gap-4">
+                      <div className="p-2 bg-[#00F3FF]/10 rounded border border-[#00F3FF]/30">
+                          <ShieldCheck size={24} className="animate-pulse" />
+                      </div>
+                      Core Operation // Primary Vector
+                  </h3>
+                  
+                  <h2 className="text-4xl md:text-5xl font-black text-white mb-8 tracking-tighter uppercase leading-[1.1] drop-shadow-2xl">
+                      Enterprise Risk & <br/>
+                      <span className="text-[#00F3FF] drop-shadow-[0_0_15px_rgba(0,243,255,0.8)]">Stability Infrastructure</span>
+                  </h2>
+                  
+                  <p className="text-gray-200 leading-relaxed font-light text-xl md:text-2xl border-l-4 border-[#00F3FF] pl-6 drop-shadow-sm">
+                      A.I.C.E. Systems Corp. provides autonomous risk control software. We help organizations monitor, stabilize, and govern unpredictable system behavior in real-time. 
+                      <br/><br/>
+                      <span className="text-white font-medium">Our governor detects instability early, explains system anomalies, and neutralizes risk before it triggers catastrophic downtime.</span>
+                  </p>
+              </div>
+
+              {/* HOW WE MONETIZE (REVENUE ARCHITECTURE) */}
+              <div className="w-full lg:w-1/2 p-12 md:p-20 relative overflow-hidden flex flex-col justify-center bg-gradient-to-bl from-black via-black to-[#FFD700]/5">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#FFD700] via-[#FFD700]/50 to-transparent shadow-[0_0_15px_#FFD700]"></div>
+                  
+                  <h3 className="text-sm md:text-base font-mono text-[#FFD700] uppercase tracking-[0.2em] font-bold mb-8 flex items-center gap-4">
+                      <div className="p-2 bg-[#FFD700]/10 rounded border border-[#FFD700]/30">
+                          <Server size={24} className="animate-pulse" />
+                      </div>
+                      Revenue Architecture // Capital Inflow
+                  </h3>
+                  
+                  <h2 className="text-4xl md:text-5xl font-black text-white mb-8 tracking-tighter uppercase leading-[1.1] drop-shadow-2xl">
+                      B2B Monetization <br/>
+                      <span className="text-[#FFD700] drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]">& Licensing</span>
+                  </h2>
+                  
+                  <p className="text-gray-200 leading-relaxed font-light text-xl md:text-2xl mb-12">
+                      We are a B2B technology provider. Our revenue channels are strictly defined and executed through scale-based corporate contracts.
+                  </p>
+                  
+                  <ul className="space-y-6 font-mono text-base md:text-xl text-gray-200">
+                      <li className="flex items-center gap-6 border-b border-white/10 pb-4 group cursor-default hover:text-[#FFD700] transition-colors duration-300">
+                          <div className="w-3 h-3 bg-[#FFD700] rounded-full shadow-[0_0_12px_#FFD700] group-hover:scale-150 transition-transform"></div>
+                          <span className="font-bold tracking-widest uppercase">Enterprise API Licensing</span>
+                      </li>
+                      <li className="flex items-center gap-6 border-b border-white/10 pb-4 group cursor-default hover:text-[#FFD700] transition-colors duration-300">
+                          <div className="w-3 h-3 bg-[#FFD700] rounded-full shadow-[0_0_12px_#FFD700] group-hover:scale-150 transition-transform"></div>
+                          <span className="font-bold tracking-widest uppercase">Pilot Program Deployments</span>
+                      </li>
+                      <li className="flex items-center gap-6 group cursor-default hover:text-[#FFD700] transition-colors duration-300">
+                          <div className="w-3 h-3 bg-[#FFD700] rounded-full shadow-[0_0_12px_#FFD700] group-hover:scale-150 transition-transform"></div>
+                          <span className="font-bold tracking-widest uppercase">Sovereign Hardware Integration</span>
+                      </li>
+                  </ul>
+              </div>
+
+          </div>
+      </div>
+      {/* --- SECTOR PORTALS --- */}
+      <div className="w-full max-w-[100rem] mx-auto px-6 pb-12 relative z-30 mt-24">
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+             <SectorPortal 
+                 title="Adaptive Grid" 
+                 subtitle="Sector 01 // Harmonizer" 
+                 desc="Synchronize fragmented energy sources and dampen resonant frequencies to enforce absolute architectural invulnerability."
+                 icon={<Activity size={40} className="animate-pulse" />} 
+                 bgImage={BACKGROUNDS.ADAPTIVE} 
+                 onClick={() => setView('ADAPTIVE')} 
+             />
+             <SectorPortal 
+                 title="Neural Veto" 
+                 subtitle="Sector 02 // Intelligence Governor" 
+                 desc="Deterministic entropy containment for AI models. Instantly neutralize hallucinations and recursive self-delusion loops."
+                 icon={<Brain size={40} className="animate-pulse" />} 
+                 bgImage={BACKGROUNDS.INTELLIGENCE} 
+                 onClick={() => setView('INTELLIGENCE')} 
+             />
+             <SectorPortal 
+                 title="Entropy Core" 
+                 subtitle="Sector 03 // Heat Sinks" 
+                 desc="Convert kinetic cyber-attack energy into harmless thermal waste. Maintenance of impenetrable system homeostasis."
+                 icon={<Aperture size={40} className="animate-pulse" />} 
+                 bgImage={BACKGROUNDS.ENTROPY} 
+                 onClick={() => setView('ENTROPY')} 
+             />
+         </div>
+      </div>
+
+      {/* --- NEW, MASSIVE INTELLECTUAL PROPERTY LOCK (DOCKED BELOW SECTORS) --- */}
+      <div className="w-full max-w-[95rem] mx-auto relative z-30 mb-20 px-6 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
+          <div className="bg-[#050505]/95 backdrop-blur-2xl border-2 border-gray-800 rounded-3xl p-8 md:p-12 flex flex-col xl:flex-row items-center gap-12 shadow-[0_0_60px_rgba(0,243,255,0.1)] group hover:border-[#00F3FF]/40 transition-colors duration-500">
+              
+              {/* The 3D Patent Image (Clickable for Pop-Out) */}
+              <div 
+                  onClick={() => setIsImageModalOpen(true)}
+                  className="w-full xl:w-1/2 shrink-0 relative rounded-2xl overflow-hidden border border-white/10 bg-black shadow-2xl cursor-pointer group/image"
+                  title="Click to Enlarge Patent Details"
+              >
+                  {/* Hover Overlay indicating clickability */}
+                  <div className="absolute inset-0 bg-[#00F3FF]/10 mix-blend-overlay group-hover/image:opacity-0 transition-opacity duration-500 z-10 pointer-events-none"></div>
+                  <div className="absolute inset-0 flex items-center justify-center z-20 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 pointer-events-none bg-black/40 backdrop-blur-sm">
+                      <Maximize2 size={64} className="text-[#00F3FF] drop-shadow-lg animate-pulse" />
+                  </div>
+                  <img src={PATENT_SEAL_IMG} alt="A.I.C.E. Patent Pending" className="w-full h-auto object-cover transform group-hover/image:scale-105 transition-transform duration-700 relative z-0" />
+              </div>
+              
+              {/* The Legal Warning & Numbers (Upscaled) */}
+              <div className="flex-1 text-center xl:text-left">
+                  <div className="inline-flex items-center gap-2 px-6 py-2 bg-black border border-gray-800 text-gray-400 text-xs md:text-sm font-bold tracking-[0.2em] uppercase mb-6 rounded-sm shadow-inner">
+                      <ShieldCheck size={18} className="text-[#00F3FF] animate-pulse" /> Intellectual Property Locked
+                  </div>
+                  
+                  <h3 className="text-3xl md:text-5xl font-black text-white uppercase tracking-widest mb-6">
+                      Proprietary <span className="text-[#00F3FF]">Architecture</span>
+                  </h3>
+                  
+                  <p className="text-lg md:text-xl text-gray-400 font-mono mb-10 leading-relaxed max-w-3xl mx-auto xl:mx-0">
+                      The Deviance Viscosity Stabilizer (DVS) and Adaptive Intelligence Control of Entropy (A.I.C.E.) algorithms are legally protected. Any unauthorized duplication, modification, analysis, or derivation is strictly prohibited.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-6 items-center justify-center xl:justify-start font-mono text-sm md:text-lg font-bold text-[#00F3FF] tracking-widest">
+                      <span className="bg-[#00F3FF]/10 px-6 py-4 rounded-xl border border-[#00F3FF]/30 shadow-[0_0_15px_rgba(0,243,255,0.2)] flex items-center gap-3">
+                          <Lock size={20}/> PAT. APP: #3,301,227
+                      </span>
+                      <span className="bg-[#00F3FF]/10 px-6 py-4 rounded-xl border border-[#00F3FF]/30 shadow-[0_0_15px_rgba(0,243,255,0.2)] flex items-center gap-3">
+                          <Lock size={20}/> PAT. APP: #3,302,897
+                      </span>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      {/* --- ENTERPRISE STABILITY & B2B GOVERNANCE ANCHOR --- */}
+      <div className="w-full max-w-[100rem] mx-auto px-6 mt-12 mb-20 relative z-30 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
+          <div className="bg-[#020202] border-t-4 border-[#00F3FF] rounded-[2.5rem] p-10 md:p-16 shadow-[0_0_80px_rgba(0,243,255,0.15)] flex flex-col lg:flex-row gap-16 items-center">
+              
+              <div className="flex-1 space-y-8">
+                  <div className="inline-flex items-center gap-3 px-4 py-2 border border-[#00F3FF]/30 bg-[#00F3FF]/10 rounded-sm">
+                      <ShieldCheck size={16} className="text-[#00F3FF] animate-pulse" />
+                      <span className="text-[#00F3FF] font-mono text-xs font-bold uppercase tracking-widest">Core Operation // B2B Integration</span>
+                  </div>
+                  <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none drop-shadow-[0_4px_15px_rgba(0,0,0,1)]" style={{ textShadow: '3px 3px 0 #000, 0 0 30px rgba(0,243,255,0.3)' }}>
+                      Enterprise <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-white">Governance</span>
+                  </h2>
+                  <p className="text-gray-100 text-xl md:text-2xl font-bold leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] border-l-4 border-[#00F3FF] pl-6" style={{ textShadow: '1px 1px 2px #000' }}>
+                      We do not manage vulnerabilities; we engineer systemic invulnerability. 
+                      Our autonomous governor detects instability early, explains system anomalies, and mathematically neutralizes divergence before it triggers catastrophic downtime.
+                  </p>
+              </div>
+
+              <div className="flex-1 w-full bg-black/80 border-2 border-white/10 p-10 md:p-12 rounded-[2rem] flex flex-col justify-center items-center text-center group hover:border-[#00F3FF] transition-all shadow-[0_0_40px_rgba(0,0,0,0.8)] relative overflow-hidden cursor-pointer" onClick={() => setView('HOW_IT_WORKS')}>
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#00F3FF]/10 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  <div className="w-24 h-24 bg-black border-4 border-[#00F3FF] rounded-full flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(0,243,255,0.4)] group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 relative z-10">
+                      <Wrench size={40} className="text-[#00F3FF]" />
+                  </div>
+                  
+                  <h3 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-4 group-hover:text-[#00F3FF] transition-colors relative z-10">
+                      See The Machinery
+                  </h3>
+                  <p className="text-gray-300 font-medium text-lg md:text-xl mb-10 relative z-10 max-w-md">
+                      Understand the exact physical architecture behind the A.I.C.E. deployment vectors.
+                  </p>
+                  
+                  <button className="w-full py-6 bg-[#00F3FF] text-black font-black uppercase tracking-[0.25em] text-lg hover:bg-white transition-all rounded-xl shadow-[0_0_30px_#00F3FF] flex items-center justify-center gap-3 relative z-10 group-hover:scale-[1.02]">
+                      VIEW INSTALLATION PROTOCOL <ChevronRight size={28} className="text-black" />
+                  </button>
+              </div>
+
+          </div>
+      </div>
+
+      {/* --- IMAGE POP-OUT MODAL --- */}
+      {isImageModalOpen && (
+          <div 
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-8 animate-in fade-in duration-300"
+            onClick={() => setIsImageModalOpen(false)}
+          >
+              <button 
+                onClick={() => setIsImageModalOpen(false)} 
+                className="absolute top-6 right-6 text-white/50 hover:text-[#00F3FF] transition-colors z-[210] bg-black/50 p-2 rounded-full border border-white/10"
+              >
+                  <X size={32} />
+              </button>
+              <img 
+                  src={PATENT_SEAL_IMG} 
+                  alt="A.I.C.E. Patent Pending High Resolution" 
+                  className="w-auto h-auto max-w-full max-h-[90vh] object-contain rounded-2xl shadow-[0_0_100px_rgba(0,243,255,0.3)] border border-[#00F3FF]/50 cursor-default" 
+                  onClick={(e) => e.stopPropagation()} // Prevents closing when clicking the image itself
+              />
+          </div>
+      )}
+    </div>
+  );
+};
+
+// --- MODALS & UTILS ---
+// UPDATE 2: The "Glass HUD" PDF Viewer with Download Button
+const DocumentModal: React.FC<{ isOpen: boolean, onClose: () => void, title: string, fileUrl: string }> = ({ isOpen, onClose, title, fileUrl }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 animate-in fade-in duration-200 p-4 md:p-8">
+      {/* The Tech Container */}
+      <div className="w-full max-w-6xl h-[85vh] bg-[#050505] border border-[#00F3FF] shadow-[0_0_50px_rgba(0,243,255,0.15)] flex flex-col relative overflow-hidden rounded-lg">
+        
+        {/* Decorative Corner Accents */}
+        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00F3FF]" />
+        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00F3FF]" />
+        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00F3FF]" />
+        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00F3FF]" />
+
+        {/* Header Bar */}
+        <div className="flex items-center justify-between p-4 border-b border-[#00F3FF]/20 bg-[#00F3FF]/5">
+          <div className="flex items-center space-x-3">
+            <FileText className="w-5 h-5 text-[#00F3FF]" />
+            <h3 className="font-mono text-[#00F3FF] tracking-widest text-sm md:text-base font-bold uppercase">
+              {title}
+            </h3>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-[#00F3FF]/10 rounded-full transition-colors group"
+          >
+            <X className="w-6 h-6 text-gray-400 group-hover:text-white" />
+          </button>
+        </div>
+
+        {/* PDF Preview Area (Iframe) */}
+        <div className="flex-1 bg-gray-900/50 relative">
+            <iframe 
+                src={fileUrl}
+                className="w-full h-full border-none"
+                title="Document Preview"
+            />
+        </div>
+
+        {/* Footer with DOWNLOAD Button */}
+        <div className="p-4 border-t border-[#00F3FF]/20 bg-[#00F3FF]/5 flex justify-between items-center">
+            <div className="text-xs font-mono text-gray-500 hidden md:block">
+                SECURE CONNECTION ESTABLISHED // TLS 1.3 // DOWNLOAD AUTHORIZED
+            </div>
+            <a 
+                href={fileUrl} 
+                download
+                className="flex items-center space-x-2 bg-[#00F3FF]/10 hover:bg-[#00F3FF]/20 border border-[#00F3FF] text-[#00F3FF] px-6 py-3 transition-all hover:shadow-[0_0_20px_rgba(0,243,255,0.3)] hover:scale-105 rounded"
+            >
+                <Download className="w-4 h-4" />
+                <span className="font-mono tracking-wider font-bold text-xs md:text-sm">DOWNLOAD PDF</span>
+            </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ──────────────────────────────────────────────────────────────
+// PERFECTED FOOTER — MERGED IDENTITY & OPTIMIZED SPACING
+// ──────────────────────────────────────────────────────────────
+const Footer: React.FC<{ 
+  setView: (v: ViewState) => void, 
+  onOpenDoc: (type: DocType) => void, 
+  openLogin: (mode: 'login' | 'register') => void, 
+  user: FirebaseUser | null,
+  userTier: string,
+  signOut: (auth: any) => void,
+  auth: any
+}> = ({ setView, onOpenDoc, openLogin, user, userTier, signOut, auth }) => (
+  // UPDATED: Reduced padding (pt-10, pb-10) and removed margin (mt-0) to eliminate empty space
+  <footer className="relative z-20 bg-[#050505] border-t border-white/10 pt-10 pb-10 mt-0">
+    <div className="max-w-[95rem] mx-auto px-6 mb-16">
+      
+      {/* LAYOUT FIX: Used 12-Column Grid to give 'Channels' more room */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-y-16 gap-x-8">
+        
+        {/* COL 1: BRAND + IDENTITY (Merged to save space) - SPANS 3 COLS */}
+        <div className="md:col-span-3">
+          <button 
+            onClick={() => setView('HOME')} 
+            className="flex items-center gap-3 group mb-6"
+          >
+            <div className="w-3 h-3 rounded-full bg-[#00F3FF] shadow-[0_0_12px_#00F3FF] group-hover:scale-150 transition-transform" />
+            <span className="text-white font-sans font-black text-2xl tracking-[0.08em] group-hover:text-[#00F3FF] transition-colors">
+              AICE<span className="text-[#00F3FF]">PROTOCOL</span>
+            </span>
+          </button>
+          
+          <p className="text-gray-400 text-sm leading-relaxed max-w-[280px] mb-8 font-mono">
+            B2B Enterprise Software Solutions.<br/>
+            Algorithmic Risk Mitigation & System Stability Governance.
+          </p>
+
+          {/* IDENTITY MOVED HERE */}
+          <div className="border-l-2 border-[#FFD700]/30 pl-4 mb-8">
+            <h4 className="text-[#FFD700] font-mono font-black tracking-[0.15em] text-xs mb-3">IDENTITY UPLINK</h4>
+            <div className="space-y-2">
+              {user ? (
+                <>
+                  <button onClick={() => setView('PROFILE')} className="block w-full text-left text-[#00F3FF] font-medium hover:text-white transition-colors text-sm">My Operative Profile</button>
+                  <button onClick={() => setView('ADMIN')} className="block w-full text-left text-red-400 font-medium hover:text-white transition-colors text-sm">System Command Deck</button>
+                  <button onClick={() => signOut(auth)} className="mt-2 text-[10px] font-mono uppercase tracking-widest text-gray-500 hover:text-white">Disconnect</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => openLogin('login')} className="block text-sm font-bold text-white hover:text-[#00F3FF] transition-colors">SECURE LOGIN</button>
+                  <button onClick={() => openLogin('register')} className="block text-xs text-gray-500 hover:text-white transition-colors">ENLIST AS OPERATIVE</button>
+                </>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex gap-4">
+            <a href="https://x.com/aiceprotocol" target="_blank" rel="noreferrer" className="p-2.5 bg-white/5 rounded-xl border border-white/10 hover:border-[#00F3FF] hover:text-[#00F3FF] transition-all"><Globe size={18} /></a>
+            <a href="https://linkedin.com/company/aiceprotocol" target="_blank" rel="noreferrer" className="p-2.5 bg-white/5 rounded-xl border border-white/10 hover:border-[#00F3FF] hover:text-[#00F3FF] transition-all"><Network size={18} /></a>
+            <button onClick={() => setView('DEVELOPERS')} className="p-2.5 bg-white/5 rounded-xl border border-white/10 hover:border-[#00F3FF] hover:text-[#00F3FF] transition-all"><Code size={18} /></button>
+          </div>
+        </div>
+
+        {/* COL 2: CORE SYSTEMS - SPANS 2 COLS */}
+        <div className="md:col-span-2">
+          <h4 className="text-[#00F3FF] font-mono font-black tracking-[0.15em] text-sm mb-6">CORE SYSTEMS</h4>
+          <ul className="space-y-3 text-sm">
+            <li><button onClick={() => setView('ADAPTIVE')} className="text-gray-400 hover:text-white transition-colors">Adaptive Grid</button></li>
+            <li><button onClick={() => setView('INTELLIGENCE')} className="text-gray-400 hover:text-white transition-colors">Neural Veto</button></li>
+            <li><button onClick={() => setView('ENTROPY')} className="text-gray-400 hover:text-white transition-colors">Entropy Core</button></li>
+            <li><button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setView('CONTROL'); }} className="text-gray-400 hover:text-white transition-colors">System Control</button></li>
+            <li><button onClick={() => setView('SYSTEM')} className="text-gray-400 hover:text-white transition-colors">Defense Systems</button></li>
+          </ul>
+        </div>
+
+        {/* COL 3: EXPLORE - SPANS 2 COLS */}
+        <div className="md:col-span-2">
+          <h4 className="text-[#00F3FF] font-mono font-black tracking-[0.15em] text-sm mb-6">EXPLORE</h4>
+          <ul className="space-y-3 text-sm">
+            <li><button onClick={() => setView('HOW_IT_WORKS')} className="text-gray-400 hover:text-white transition-colors">How It Works</button></li>
+            <li><button onClick={() => setView('DEVELOPERS')} className="text-gray-400 hover:text-white transition-colors">Developer Nexus</button></li>
+            <li><button onClick={() => setView('PILOT_PROGRAMS')} className="text-gray-400 hover:text-white transition-colors">Pilot Programs</button></li>
+            <li><button onClick={() => setView('INSTITUTIONAL')} className="text-gray-400 hover:text-white transition-colors">Sovereign Grant</button></li>
+          </ul>
+        </div>
+
+        {/* COL 4: GOVERNANCE & RESOURCES - SPANS 2 COLS */}
+        <div className="md:col-span-2">
+          <h4 className="text-[#00F3FF] font-mono font-black tracking-[0.15em] text-sm mb-6">GOVERNANCE</h4>
+          <ul className="space-y-3 text-sm mb-10">
+            <li><button onClick={() => onOpenDoc('WHITEPAPER')} className="text-gray-400 hover:text-white transition-colors">Technical White Paper</button></li>
+            <li><button onClick={() => onOpenDoc('PATENT')} className="text-gray-400 hover:text-white transition-colors">Patent Filings</button></li>
+            <li><button onClick={() => setView('TERMS_OF_SERVICE')} className="text-gray-400 hover:text-white transition-colors">Terms of Service</button></li>
+<li><button onClick={() => setView('REFUND_POLICY')} className="text-gray-400 hover:text-white transition-colors">Refund Policy</button></li>
+<li><button onClick={() => setView('PRIVACY_POLICY')} className="text-gray-400 hover:text-white transition-colors">Privacy Policy</button></li>
+          </ul>
+          
+          <h4 className="text-[#00F3FF] font-mono font-black tracking-[0.15em] text-sm mb-6">RESOURCES</h4>
+           <ul className="space-y-3 text-sm">
+            <li><button onClick={() => setView('PILOT_PROGRAMS')} className="text-gray-400 hover:text-white transition-colors">System Diagnostics</button></li>
+            <li><button onClick={() => setView('INSTITUTIONAL')} className="text-gray-400 hover:text-white transition-colors">Institutional Access</button></li>
+          </ul>
+        </div>
+
+        {/* COL 5: SECURE CHANNELS & CORPORATE HQ */}
+        <div className="md:col-span-3">
+          <h4 className="text-[#00F3FF] font-mono font-black tracking-[0.15em] text-sm mb-6 flex items-center gap-2">
+            <Mail size={15} /> SECURE CHANNELS
+          </h4>
+          <ul className="space-y-4 text-sm mb-8">
+            <li>
+              <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">DEPLOYMENTS</span>
+              <a href="mailto:pilot@aice.network" className="text-white hover:text-[#00F3FF] transition-colors font-mono block break-all">
+                pilot@aice.network
+              </a>
+            </li>
+            <li>
+              <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">SUPPORT</span>
+              <a href="mailto:support@aiprotocol.pro" className="text-white hover:text-[#00F3FF] transition-colors font-mono block break-all">
+                support@aiprotocol.pro
+              </a>
+            </li>
+            <li>
+              <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">EXECUTIVE PARTNERS</span>
+              <a href="mailto:partners@aicesystems.pro" className="text-white hover:text-[#00F3FF] transition-colors font-mono block break-all">
+                partners@aicesystems.pro
+              </a>
+            </li>
+          </ul>
+
+          {/* CORPORATE FOOTPRINT FOR INTERNATIONAL BANKING COMPLIANCE */}
+          <h4 className="text-[#00F3FF] font-mono font-black tracking-[0.15em] text-sm mb-4 flex items-center gap-2 border-t border-white/10 pt-6">
+            <Server size={15} /> CORPORATE HQ
+          </h4>
+          <ul className="space-y-4 text-sm">
+            <li>
+              <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">A.I.C.E. SYSTEMS CORP.</span>
+              <span className="text-white font-mono block text-xs leading-relaxed mt-2 border-l-2 border-[#00F3FF]/50 pl-3">
+                200 Edgar Ln<br />
+                Sherwood Park, AB T8H 2X6<br />
+                Canada<br />
+                Corp. No: 1773376-3
+              </span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    {/* PREMIUM COMPLIANCE BAR — 2026 FORTUNE-500 SECURITY SHOWCASE */}
+    <div className="border-t border-white/10 bg-black/90 py-6">
+      <div className="max-w-[95rem] mx-auto px-6 flex flex-wrap items-center justify-between gap-y-4">
+        <div className="flex items-center gap-8 text-[10px] font-mono text-gray-500">
+          <span>© 2026 A.I.C.E. PROTOCOL. ALL RIGHTS RESERVED.</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-[10px]">
+          <div className="flex items-center gap-1.5 group">
+            <ShieldCheck size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">SOC 2 TYPE II</span>
+          </div>
+          <div className="flex items-center gap-1.5 group">
+            <Lock size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">AES-256 + QUANTUM</span>
+          </div>
+          <div className="flex items-center gap-1.5 group">
+            <Server size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">AIR-GAPPED ENCLAVES</span>
+          </div>
+          <div className="flex items-center gap-1.5 group">
+            <Shield size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">ZERO-TRUST ARCHITECTURE</span>
+          </div>
+          <div className="flex items-center gap-1.5 group">
+            <Fingerprint size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">ISO 27001 CERTIFIED</span>
+          </div>
+        </div>
+
+        <a href="#" className="flex items-center gap-2 text-green-400 text-[10px] font-mono tracking-widest hover:text-green-300 transition-colors">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+          </span>
+          ALL SYSTEMS OPERATIONAL
+        </a>
+      </div>
+    </div>
+  </footer>
+);
+
+// --- UPDATE FOR "AccessTerminal" (Find this inside App.tsx and add the "Secure Transaction" note) ---
+/* Inside the "RIGHT: ACTION COMMANDS" section of AccessTerminal, right below the "INITIATE DIAGNOSTIC" button:
+*/
+
+/*
+   <div className="flex items-center justify-center gap-2 mt-3 opacity-60">
+       <Lock size={10} className="text-gray-400"/>
+       <span className="text-[9px] font-mono text-gray-400 uppercase tracking-widest">Secure Institutional Transaction // SSL Encrypted</span>
+   </div>
+*/
+// --- MASTER COMPONENT (SCROLL PHYSICS & LAYOUT FIX) ---
+
+const PATH_TO_VIEW: Record<string, ViewState> = {
+  "/": "HOME",
+  "/adaptive": "ADAPTIVE",
+  "/intelligence": "INTELLIGENCE",
+  "/entropy": "ENTROPY",
+  "/control": "CONTROL",
+  "/phoenix": "PHOENIX",
+  "/defense": "SYSTEM",
+  "/briefing": "HOW_IT_WORKS",
+  "/developers": "DEVELOPERS",
+  "/codex": "BOOK",
+  "/diagnostics": "PILOT_PROGRAMS",
+  "/institutional": "INSTITUTIONAL",
+  "/acquisition": "SALES",
+  "/bot-terminal": "PHOENIX_BOT",
+  "/pilot-active": "PILOT_PHOENIX",
+  "/terms": "TERMS_OF_SERVICE",
+  "/refunds": "REFUND_POLICY",
+  "/privacy": "PRIVACY_POLICY",
+  "/transmission": "TRANSMISSION_READER",
+  "/godsbrainbook": "THE_SPARK",
+  "/transmission-success": "TRANSMISSION_SUCCESS",
+  "/profile": "PROFILE",
+  "/admin": "ADMIN",
+  "/forum": "FORUM"
+};
+
+const VIEW_TO_PATH: Record<ViewState, string> = {
+  HOME: "/",
+  ADAPTIVE: "/adaptive",
+  INTELLIGENCE: "/intelligence",
+  ENTROPY: "/entropy",
+  CONTROL: "/control",
+  PHOENIX: "/phoenix",
+  SYSTEM: "/defense",
+  SALES: "/acquisition",
+  PROFILE: "/profile",
+  HOW_IT_WORKS: "/briefing",
+  DEVELOPERS: "/developers",
+  ADMIN: "/admin",
+  PILOT_PROGRAMS: "/diagnostics",
+  BOOK: "/codex",
+  PHOENIX_BOT: "/bot-terminal",
+  INSTITUTIONAL: "/institutional",
+  PILOT_PHOENIX: "/pilot-active",
+  TERMS_OF_SERVICE: "/terms",
+  REFUND_POLICY: "/refunds",
+  PRIVACY_POLICY: "/privacy",
+  TRANSMISSION_READER: "/transmission",
+  THE_SPARK: "/godsbrainbook",
+  TRANSMISSION_SUCCESS: "/transmission-success",
+  FORUM: "/forum"
+};
+
+const routeTitles: Record<ViewState, string> = {
+  HOME: "A.I.C.E. // SYSTEM",
+  ADAPTIVE: "A.I.C.E. // ADAPTIVE",
+  INTELLIGENCE: "A.I.C.E. // INTELLIGENCE",
+  ENTROPY: "A.I.C.E. // ENTROPY",
+  CONTROL: "A.I.C.E. // CONTROL",
+  PHOENIX: "PROJECT PHOENIX 🐦‍🔥",
+  SYSTEM: "A.I.C.E. // DEFENSE",
+  SALES: "A.I.C.E. // ACQUISITION",
+  PROFILE: "A.I.C.E. // OPERATIVE PROFILE",
+  HOW_IT_WORKS: "A.I.C.E. // BRIEFING",
+  DEVELOPERS: "A.I.C.E. // DEVELOPERS",
+  ADMIN: "A.I.C.E. // GOD MODE",
+  PILOT_PROGRAMS: "A.I.C.E. // DIAGNOSTICS",
+  BOOK: "A.I.C.E. // CODEX",
+  PHOENIX_BOT: "PHOENIX DV$ //",
+  INSTITUTIONAL: "A.I.C.E. // PROOF",
+  PILOT_PHOENIX: "A.I.C.E. // PILOT",
+  TERMS_OF_SERVICE: "A.I.C.E. // TERMS OF SERVICE",
+  REFUND_POLICY: "A.I.C.E. // REFUND POLICY",
+  PRIVACY_POLICY: "A.I.C.E. // PRIVACY POLICY",
+  TRANSMISSION_READER: "A.I.C.E. // TRANSMISSION",
+  THE_SPARK: "THE GOD'S BRAIN THEORY",
+  TRANSMISSION_SUCCESS: "A.I.C.E. // TRANSMISSION SECURED",
+  FORUM: "A.I.C.E. // INTELLIGENCE NEXUS"
+};
+
+const viewFromPath = (path: string): ViewState => PATH_TO_VIEW[path] ?? "HOME";
+
+const AppContent: React.FC = () => {
+  const [loginMode, setLoginMode] = useState<'login' | 'register'>('login');
+  
+  // Initialize view flawlessly from the unified dictionary
+  const [view, setView] = useState<ViewState>(() => viewFromPath(window.location.pathname));
+  
+  const [activeDoc, setActiveDoc] = useState<DocType>(null);
+  const [isBooting, setIsBooting] = useState(true);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [userTier, setUserTier] = useState<string>('PUBLIC'); 
+  const [navVisible, setNavVisible] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // 1. SYNC URL BAR & BROWSER TITLE
+  useEffect(() => {
+    const nextPath = VIEW_TO_PATH[view] ?? "/";
+    document.title = routeTitles[view] || "A.I.C.E. PROTOCOL";
+
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({ view }, "", nextPath);
+    }
+  }, [view]);
+
+  // 2. HANDLE BACK BUTTON & EXTERNAL LOADS
+  useEffect(() => {
+    const syncFromLocation = () => setView(viewFromPath(window.location.pathname));
+    window.addEventListener("popstate", syncFromLocation);
+    syncFromLocation(); 
+    return () => window.removeEventListener("popstate", syncFromLocation);
+  }, []);
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
+  // --- V6 UPGRADE: INSTITUTIONAL INVOICING PROTOCOL ---
+  const handlePayment = (product: string) => {
+    // Enterprise B2B transactions require formal invoicing and wire transfers.
+    // This routes the acquisition request directly to the financial dispatch.
+    
+    const INVOICE_ROUTING: Record<string, string> = {
+      // THE ERV MATRIX (OPERATIVE LEVELS 4, 3, 2, 1)
+      'CLASS_3': "mailto:finance@aicesystems.pro?subject=CLASS_3_COMMERCIAL_LICENSE&body=Requesting%20formal%20invoice%20and%20Institutional%20Wire%20Transfer%20instructions%20for%20the%20Class%203%20Commercial%20License.",
+      'CLASS_2': "mailto:finance@aicesystems.pro?subject=CLASS_2_ENTERPRISE_LICENSE&body=Requesting%20formal%20invoice%20and%20Institutional%20Wire%20Transfer%20instructions%20for%20the%20Class%202%20Enterprise%20License.",
+      'CLASS_1': "mailto:finance@aicesystems.pro?subject=CLASS_1_SYSTEMIC_LICENSE&body=Requesting%20formal%20invoice%20and%20Institutional%20Wire%20Transfer%20instructions%20for%20the%20Class%201%20Systemic%20License.",
+      'CLASS_S': "mailto:finance@aicesystems.pro?subject=CLASS_S_SOVEREIGN_LICENSE&body=Requesting%20formal%20invoice%20and%20Institutional%20Wire%20Transfer%20instructions%20for%20the%20Class%20S%20Sovereign%20License.",
+      
+      // LEGACY & EXTERNAL NODES
+      'TIER_1': "mailto:pilot@aicesystems.pro?subject=RAPID_TRIAGE_PILOT&body=Requesting%20invoice%20for%20Rapid%20Triage%20Diagnostic.",
+      'TIER_2': "mailto:pilot@aicesystems.pro?subject=STANDARD_DIAGNOSTIC_PILOT&body=Requesting%20invoice%20for%2014-Day%20Pilot.",
+      'BOOK_HARDCOPY': "mailto:finance@aicesystems.pro?subject=CODEX_ACQUISITION&body=Requesting%20purchase%20instructions%20for%20The%20Codex%20Hardcopy.",
+      'PHOENIX_LIFETIME': "mailto:finance@aicesystems.pro?subject=PHOENIX_BOT_LICENSE&body=Requesting%20invoice%20for%20Phoenix%20DV$%20Terminal."
+    };
+
+    const targetUrl = INVOICE_ROUTING[product];
+
+    if (!targetUrl) {
+      console.warn("INVOICE ROUTE MISSING FOR:", product);
+      alert("SYSTEM ERROR: FINANCIAL UPLINK OFFLINE. CONTACT DISPATCH.");
+      return;
+    }
+
+    // Route to email client for B2B invoicing
+    window.location.href = targetUrl; 
+  };
+    
+  // Auth Listener & Tier Retrieval
+  useEffect(() => {
+    const initAuth = async () => {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+        else await signInAnonymously(auth);
+    };
+    initAuth();
+    
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+        setUser(currentUser);
+        if (currentUser && !currentUser.isAnonymous) {
+            setIsLoginOpen(false);
+            // Fetch verified operational tier from Firestore
+            try {
+                const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                    const data = userDocSnap.data();
+                    if (data.role) setUserTier(data.role.trim().toUpperCase());
+                } else {
+                    // Default baseline for new verified operatives
+                    setUserTier('LEVEL_5');
+                }
+            } catch (error) {
+                console.error("AICE AUTH ERROR: Failed to retrieve clearance tier.", error);
+            }
+        } else {
+            setUserTier('PUBLIC');
+        }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // ──────────────────────────────────────────────────────────────
+  // SCROLL ENGINE: ZERO-THRESHOLD (DEPENDENCY FIX APPLIED)
+  // ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (isBooting) return;
+
+    const container = scrollContainerRef.current;
+    if (!container) {
+        console.error("❌ AICE CRITICAL: Scroll Container NOT FOUND. Check your ref.");
+        return;
+    }
+
+    console.log("✅ AICE SYSTEM: Scroll Engine Attached Successfully.");
+
+    let ticking = false;
+    let isHidden = false;
+
+    const updateNav = () => {
+      const currentScrollY = container.scrollTop;
+      const diff = currentScrollY - lastScrollY.current;
+
+      if (currentScrollY < 10) {
+        if (isHidden) {
+          setNavVisible(true);
+          isHidden = false;
+        }
+      } 
+      else if (diff > 0) {
+        if (!isHidden) {
+          setNavVisible(false);
+          isHidden = true;
+        }
+      } 
+      else if (diff < 0) {
+        if (isHidden) {
+          setNavVisible(true);
+          isHidden = false;
+        }
+      }
+
+      lastScrollY.current = currentScrollY;
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateNav);
+        ticking = true;
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [isBooting]);
+
+  // Reset scroll on view change
+  useEffect(() => {
+      if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
+  }, [view]);
+
+  useEffect(() => { const timer = setTimeout(() => setIsBooting(false), 1500); return () => clearTimeout(timer); }, []);
+
+  // Doc Content Logic
+  // UPDATE 3: Map document types to PDF file paths
+  const getDocContent = (type: DocType) => {
+    if (type === 'WHITEPAPER') return { title: 'TECHNICAL WHITE PAPER v1.1', fileUrl: DOC_LINKS.WHITEPAPER };
+    if (type === 'TOS') return { title: 'TERMS OF SERVICE', fileUrl: DOC_LINKS.LEGAL_BUNDLE };
+    if (type === 'PRIVACY') return { title: 'PRIVACY POLICY', fileUrl: DOC_LINKS.LEGAL_BUNDLE };
+    if (type === 'PATENT') return { title: 'OFFICIAL PATENT FILINGS', fileUrl: DOC_LINKS.PATENT };
+    
+    // Pilots are special cases (keep text or update to PDF if you have them)
+    // For now, we will return null for fileUrl to handle them differently or you can upload PDFs for these too.
+    // If you want these to open email, keep the original behavior or let me know.
+    if (type === 'PILOT_7DAY') return { title: '7-DAY RAPID TRIAGE', fileUrl: '', isPilot: true }; 
+    
+    return { title: '', fileUrl: '' };
+  };
+
+  const docData = getDocContent(activeDoc);
+
+  if (isBooting) return <div className="fixed inset-0 bg-[#050505] flex items-center justify-center z-[100] text-[#00F3FF] font-mono text-[10px] tracking-[0.5em] uppercase animate-pulse">Initializing AICE Protocol v2.0...</div>;
+// --- SECURE AIR-GAPPED NODE RENDER ---
+  if (view === 'THE_SPARK') {
+    return <GodsBrainLandingPage onEnterReader={() => setView('TRANSMISSION_READER')} />; 
+  }
+
+  if (view === 'TRANSMISSION_READER') {
+    return <TransmissionReader />;
+  }
+  return (
+    // --- THE NUCLEAR FIX: Fixed Container with Internal Scroll ---
+    // This forces the app to handle scrolling, ignoring broken body/html CSS.
+    <div 
+      ref={scrollContainerRef} 
+      className="custom-scroller fixed inset-0 w-full h-full overflow-y-auto overflow-x-hidden bg-[#000000] text-white font-sans selection:bg-[#00F3FF] selection:text-black"
+    >
+      
+                {/* BACKGROUND LAYER — GRAIN CRUSHER v3 (FINAL FIX) */}
+      {/* This keeps your images but permanently kills the pixely/soapy overlay */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none bg-black transition-all duration-1000 ease-in-out"
+        style={{
+          backgroundImage: `url(${BACKGROUNDS[view]})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 80px',
+          backgroundRepeat: 'no-repeat',
+          opacity: view === 'SALES' ? 0 : 1,
+          transform: `scale(${view === 'HOME' ? 1 : 1.05})`,
+          filter: 'none',
+        }}
+      />
+  
+
+      {/* NAV SHIELD (kept exactly as before – darkens top) */}
+      <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black via-black to-transparent z-10 pointer-events-none"></div>
+
+      {/* SALES VIDEO (kept exactly as before – only shows on SALES view) */}
+      <video 
+        key="acquire-video" 
+        src={ACQUIRE_VIDEO} 
+        autoPlay 
+        loop 
+        muted 
+        playsInline 
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${view === 'SALES' ? 'opacity-100' : 'opacity-0'}`} 
+      />
+
+      {/* MOBILE HEADER */}
+      <div className="fixed top-0 left-0 right-0 z-[80] flex justify-between items-center p-4 bg-black/90 border-b border-white/10 md:hidden">
+          <div className="flex items-center gap-2">
+              <img src={LOGO_IMG} alt="Logo" className="w-8 h-8 object-contain" />
+              <span className="font-bold text-white tracking-widest text-sm">AICE<span className="text-[#00F3FF]">PROTOCOL</span></span>
+          </div>
+          <button onClick={() => setMobileMenuOpen(true)} className="text-[#00F3FF] p-2 border border-[#00F3FF]/30 rounded">
+              <Menu size={24} />
+          </button>
+      </div>
+
+      {/* MOBILE MENU */}
+      {mobileMenuOpen && (
+          <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col p-6 animate-in slide-in-from-right duration-300">
+              <div className="flex justify-between items-center mb-12">
+                  <span className="text-[#00F3FF] font-mono text-xs tracking-widest">SYSTEM NAVIGATION</span>
+                  <button onClick={() => setMobileMenuOpen(false)} className="text-white"><X size={32} /></button>
+              </div>
+              <div className="flex flex-col gap-6 overflow-y-auto pb-20">
+                 {['HOME', 'ADAPTIVE', 'INTELLIGENCE', 'ENTROPY', 'CONTROL', 'SYSTEM', 'SALES'].map((v) => (
+                      <button key={v} onClick={() => { setView(v as ViewState); setMobileMenuOpen(false); }} className={`text-left text-2xl font-black uppercase tracking-tight ${view === v ? 'text-[#00F3FF]' : 'text-white/50'}`}>{v.replace(/_/g, ' ')}</button>
+                  ))}
+                  
+                  {user && userTier === 'LEVEL_5' && ['PHOENIX_BOT'].map((v) => (
+                      <button key={v} onClick={() => { setView(v as ViewState); setMobileMenuOpen(false); }} className={`text-left text-2xl font-black uppercase tracking-tight ${view === v ? 'text-[#00F3FF]' : 'text-white/50'}`}>{v.replace(/_/g, ' ')}</button>
+                  ))}
+                  <div className="h-[1px] w-full bg-white/10 my-4"></div>
+                  <button onClick={() => { setView('PROFILE'); setMobileMenuOpen(false); }} className="text-left text-sm font-mono text-white flex items-center gap-2"><UserCheck size={16}/> PROFILE</button>
+<button onClick={() => { setView('FORUM'); setMobileMenuOpen(false); }} className="text-left text-sm font-mono text-[#00F3FF] flex items-center gap-2"><MessageSquare size={16}/> NEXUS FORUM</button>
+
+                  <button onClick={() => { setActiveDoc('WHITEPAPER'); setMobileMenuOpen(false); }} className="text-left text-sm font-mono text-white flex items-center gap-2"><FileText size={16}/> WHITE PAPER</button>
+              </div>
+          </div>
+      )}
+
+      {/* DESKTOP SIDEBAR */}
+      <div className="absolute top-32 left-8 z-50 hidden md:flex flex-col gap-4 animate-in slide-in-from-left-4 duration-700 delay-500">
+          <button onClick={() => setView('HOW_IT_WORKS')} className="flex items-center gap-3 px-4 py-2 border border-white/20 bg-black/60 backdrop-blur-sm rounded hover:border-[#00F3FF] transition-all group">
+              <Wrench size={16} className="text-[#00F3FF]" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-[#00F3FF] uppercase">How It Works</span>
+          </button>
+          <button onClick={() => setView('DEVELOPERS')} className="flex items-center gap-3 px-4 py-2 border border-white/20 bg-black/60 backdrop-blur-sm rounded hover:border-[#00F3FF] transition-all group">
+              <Terminal size={16} className="text-[#00F3FF]" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-[#00F3FF] uppercase">Developers</span>
+          </button>
+          <button onClick={() => setView('PILOT_PROGRAMS')} className="flex items-center gap-3 px-4 py-2 border border-orange-500/30 bg-black/60 backdrop-blur-sm rounded hover:border-orange-500 transition-all group shadow-[0_0_10px_rgba(255,69,0,0.1)]">
+              <ClipboardCheck size={16} className="text-orange-500" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-orange-500 uppercase">Pilot Programs</span>
+          </button>
+      </div>
+
+      <SystemTicker /> 
+
+      {/* NAVBAR */}
+      <nav className={`fixed top-0 left-0 right-0 z-[60] hidden md:flex justify-center py-8 px-4 pointer-events-none transition-all duration-1000 ease-in-out ${navVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
+        <div className="pointer-events-auto bg-black/80 border border-white/10 rounded-full px-10 py-4 flex items-center gap-10 shadow-2xl transition-all duration-500 hover:border-[#00F3FF]/40">
+          <div className="relative group h-full flex items-center">
+              <button onClick={() => setView('HOME')} className="flex items-center gap-3 text-xl font-black tracking-widest hover:scale-105 transition-transform z-10 relative">
+                  <span className="text-[#00F3FF] animate-pulse drop-shadow-[0_0_8px_rgba(0,243,255,0.8)]">AICE</span>
+                  <span className="text-white">PROTOCOL</span>
+              </button>
+              
+              {/* LEGAL GOVERNANCE DROPDOWN */}
+              <div className="absolute top-full left-0 pt-6 hidden group-hover:block w-64 z-[100]">
+                  <div className="bg-black/95 backdrop-blur-2xl border border-[#00F3FF]/30 rounded-xl overflow-hidden shadow-[0_0_50px_rgba(0,243,255,0.15)]">
+                      <div className="bg-white/5 px-4 py-2 border-b border-white/10 text-[8px] text-gray-500 font-mono uppercase tracking-widest flex items-center gap-2">
+                          <ShieldCheck size={10} className="text-[#00F3FF]" /> Corporate Governance
+                      </div>
+                      <button onClick={(e) => { e.stopPropagation(); setView('TERMS_OF_SERVICE'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
+                          <Scale size={14} /> TERMS OF SERVICE
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); setView('REFUND_POLICY'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
+                          <CreditCard size={14} /> REFUND POLICY
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); setView('PRIVACY_POLICY'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
+                          <Eye size={14} /> PRIVACY POLICY
+                      </button>
+                  </div>
+              </div>
+          </div>
+          <div className="w-[1px] h-6 bg-white/20"></div>
+          <div className="flex gap-8 items-center uppercase text-[10px] font-mono font-bold tracking-[0.2em]">
+            {['ADAPTIVE', 'INTELLIGENCE', 'CONTROL', 'ENTROPY', 'SYSTEM'].map((v) => (
+              <div key={v} className="relative group h-full flex items-center">
+                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setView(v as ViewState); }} className={`flex flex-col items-center gap-1 hover:text-[#00F3FF] transition-all relative py-2 ${view === v ? 'text-[#00F3FF]' : 'text-white/40'}`}>
+                  <span>{v.replace(/_/g, ' ')}</span>
+                  {view === v && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#00F3FF] shadow-[0_0_10px_#00F3FF,0_0_20px_#00F3FF] w-full animate-in fade-in zoom-in duration-300"></div>}
+                </button>
+                {v === 'INTELLIGENCE' && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 hidden group-hover:block w-48 z-[100]">
+                    <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+                      <div className="bg-white/5 px-4 py-2 border-b border-white/10 text-[8px] text-gray-500 font-mono uppercase tracking-widest">Level 5 Access</div>
+                      <button onClick={(e) => { e.stopPropagation(); setView('INSTITUTIONAL'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-white hover:bg-white hover:text-black transition-all flex items-center gap-3"><ShieldCheck size={12} className="text-[#00F3FF]" /> INSTITUTIONAL</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="w-[1px] h-6 bg-white/20"></div>
+          <div className="flex items-center gap-4">
+              {user && (
+                <button onClick={() => setView('FORUM')} className="px-4 py-2 border border-[#00F3FF]/30 text-[#00F3FF] rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-[#00F3FF] hover:text-black transition-all shadow-[0_0_10px_rgba(0,243,255,0.1)] flex items-center gap-2">
+                  <MessageSquare size={14} /> NEXUS
+                </button>
+              )}
+              <button onClick={() => setView('SALES')} className="px-6 py-2 bg-[#00F3FF] text-black rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(0,243,255,0.3)]">ACQUIRE 🐦‍🔥</button>
+              {!user && <button onClick={() => setIsLoginOpen(true)} className="px-6 py-2 border border-white/20 rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-white hover:text-black transition-all">LOGIN</button>}
+              {user && <button onClick={() => setView('PROFILE')} className="w-8 h-8 rounded-full bg-green-500/20 border border-green-500 flex items-center justify-center text-green-500 hover:bg-green-500 hover:text-black transition-all"><UserCheck size={14}/></button>}
+          </div>
+        </div>
+      </nav>
+
+      {/* --- CONTENT LAYOUT --- */}
+      {/* flex-grow pushes footer down. min-h-full ensures it fills the scroll container */}
+      <div className="flex flex-col min-h-full relative z-10">
+          <main className="w-full flex-grow flex flex-col pt-24">
+            {view === 'HOME' && <HomeView setView={setView} />}
+            {view === 'ADAPTIVE' && <AdaptiveView />}
+            {view === 'INTELLIGENCE' && <IntelligenceView />}
+            {view === 'ENTROPY' && <EntropyView />}
+            {view === 'CONTROL' && <ControlView />}
+            {view === 'PHOENIX' && (user && ['COMMANDER'].includes(userTier) ? <PhoenixPage /> : <div className="pt-40 pb-20 text-red-500 font-bold px-6 text-center font-mono tracking-widest flex flex-col items-center gap-6"><Lock size={64} className="text-red-500 animate-pulse"/><p className="text-2xl uppercase">ACCESS DENIED.<br/>COMMANDER CLEARANCE REQUIRED.</p></div>)}
+            {view === 'SYSTEM' && <SystemView />}
+            
+            {view === 'SALES' && (
+                <AccessTerminal 
+                    setView={setView} 
+                    onBuy={handlePayment} 
+                    onOpenDoc={setActiveDoc} 
+                    user={user} 
+                    openLogin={() => { setLoginMode('login'); setIsLoginOpen(true); }} 
+                />
+            )}
+            {view === 'BOOK' && (user && ['COMMANDER', 'CLASS_S', 'CLASS_1', 'CLASS_2', 'CLASS_3', 'LEVEL_5'].includes(userTier) ? <BookView onBuy={handlePayment} /> : <div className="pt-40 pb-20 text-red-500 font-bold px-6 text-center font-mono tracking-widest flex flex-col items-center gap-6"><Lock size={64} className="text-red-500 animate-pulse"/><p className="text-2xl uppercase">ACCESS DENIED.<br/>CLEARANCE REQUIRED.</p></div>)}
+
+            {view === 'PHOENIX_BOT' && (user && ['COMMANDER', 'CLASS_S', 'CLASS_1', 'CLASS_2', 'CLASS_3', 'LEVEL_5'].includes(userTier) ? <PhoenixBotView /> : <div className="pt-40 pb-20 text-red-500 font-bold px-6 text-center font-mono tracking-widest flex flex-col items-center gap-6"><Lock size={64} className="text-red-500 animate-pulse"/><p className="text-2xl uppercase">ACCESS DENIED.<br/>CLEARANCE REQUIRED.</p></div>)}
+            {view === 'PROFILE' && <ProfileView user={user} userTier={userTier} signOut={signOut} auth={auth} setView={setView} />}
+	    {view === 'FORUM' && <ForumView userTier={userTier} />}
+            {view === 'ADMIN' && <AdminView />}
+            {view === 'HOW_IT_WORKS' && <HowItWorksView setView={setView} />}
+            {view === 'DEVELOPERS' && <Developer setView={setView} />}
+            {view === 'PILOT_PROGRAMS' && <PilotProgramView onOpenDoc={setActiveDoc} setView={setView} />}
+            {view === 'INSTITUTIONAL' && <InstitutionalView />}
+            {view === 'PILOT_PHOENIX' && <Pilot_Program onBuy={handlePayment} />}
+            {view === 'TERMS_OF_SERVICE' && <TermsOfService />}
+            {view === 'REFUND_POLICY' && <RefundPolicy />}
+            {view === 'PRIVACY_POLICY' && <PrivacyPolicy />}
+            {view === 'TRANSMISSION_SUCCESS' && <TransmissionSuccessPage />}
+          </main>
+
+          <Footer 
+            setView={setView} 
+            onOpenDoc={setActiveDoc} 
+            openLogin={(mode) => { setLoginMode(mode); setIsLoginOpen(true); }} 
+            user={user} 
+            userTier={userTier}
+            signOut={signOut} 
+            auth={auth}
+          />
+      </div>
+      
+      {/* MODALS */}
+      {/* NEW LINE - THE PDF BRIDGE */}
+      <DocumentModal 
+        isOpen={activeDoc !== null && docData.fileUrl !== ''} 
+        onClose={() => setActiveDoc(null)} 
+        title={docData.title} 
+        fileUrl={docData.fileUrl} 
+      />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} user={user} initialMode={loginMode} />
+      
+            {/* --- CHANGE THIS LINE BELOW --- */}
+      <GlobalChat /> 
+      {/* ----------------------------- */}
+      
+      <div className="fixed bottom-8 left-8 z-[90]">
+         <button onClick={() => setActiveDoc('WHITEPAPER')} className="flex items-center gap-2 px-4 py-2 bg-black/80 border border-white/10 rounded-lg text-white/50 text-xs font-mono uppercase tracking-widest hover:text-[#00F3FF] hover:border-[#00F3FF] transition-all shadow-lg backdrop-blur-sm">
+            <BookOpen size={14} /> WHITE PAPER
+         </button>
+      </div>
+
+    </div>
+  );
+};
+
+const App: React.FC = () => <ErrorBoundary><AppContent /></ErrorBoundary>;
+
+export default App;

@@ -1,0 +1,194 @@
+/* --- CORE VARIABLES --- */
+:root {
+    --void-black: #050505;
+    --cyan: #00f3ff;
+    --cyan-dim: rgba(0, 243, 255, 0.3);
+    --magma-orange: #ffaa00;
+    --text-main: #e0e0e0;
+    --font-main: 'Inter', sans-serif;
+    --font-tech: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--void-black);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; transition: 0.3s; }
+.text-cyan { color: var(--cyan); }
+
+/* --- HUD OVERLAY --- */
+.hud-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+.corner-tl, .corner-tr, .corner-bl, .corner-br {
+    position: absolute;
+    width: 20px; height: 20px;
+    border: 2px solid var(--cyan-dim);
+}
+.corner-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+.corner-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+.corner-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+.corner-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+.system-status {
+    position: absolute;
+    top: 25px;
+    right: 50px;
+    font-family: var(--font-tech);
+    font-size: 0.7rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px var(--cyan);
+}
+
+/* Scanline Effect */
+.scanline {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 5px;
+    background: rgba(0, 243, 255, 0.1);
+    opacity: 0.4;
+    animation: scan 6s linear infinite;
+    pointer-events: none;
+}
+@keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
+
+/* --- NAVIGATION --- */
+.navbar {
+    position: fixed;
+    top: 0; width: 100%;
+    background: rgba(5, 5, 5, 0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 90;
+    padding: 1.2rem 0;
+}
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.logo {
+    font-family: var(--font-tech);
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: -1px;
+}
+.nav-links { display: flex; gap: 2.5rem; }
+.nav-item {
+    font-family: var(--font-tech);
+    font-size: 0.8rem;
+    color: #888;
+    letter-spacing: 1px;
+}
+.nav-item:hover, .nav-item.active { color: var(--cyan); text-shadow: 0 0 8px var(--cyan-dim); }
+
+/* --- HERO SECTION --- */
+.adaptive-hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    
+    /* CRITICAL: This points to your local image folder */
+    background-image: url('../images/Gemini_Generated_Image_kfn9m7kfn9m7kfn9.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.5) 0%,
+        rgba(0,0,0,0.2) 50%,
+        rgba(5,5,5,1) 95%
+    );
+    z-index: 1;
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.glitch-text {
+    font-size: 4.5rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+    margin-bottom: 0.5rem;
+}
+
+.hero-divider {
+    height: 2px;
+    width: 80px;
+    background: var(--cyan);
+    margin: 1.5rem auto;
+    box-shadow: 0 0 10px var(--cyan);
+}
+
+.subtitle {
+    font-family: var(--font-tech);
+    color: var(--cyan);
+    font-size: 1rem;
+    letter-spacing: 4px;
+    margin-bottom: 2rem;
+}
+
+.description {
+    font-size: 1.1rem;
+    color: #ccc;
+    line-height: 1.7;
+    background: rgba(5, 5, 5, 0.7);
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    margin-bottom: 2.5rem;
+}
+
+/* --- FOOTER --- */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: rgba(5, 5, 5, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 0;
+    z-index: 90;
+    font-family: var(--font-tech);
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.footer-node { color: #444; margin-left: 10px; }
+.footer-right a { margin-left: 2rem; }
+.footer-right a:hover { color: var(--cyan); }
