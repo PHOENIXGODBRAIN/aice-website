@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 
 // Initialize Stripe with your restricted server-side secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-10-16', // Uses latest stable API version
+  apiVersion: '2026-04-22.dahlia', // Uses latest stable API version
 });
 
 export default async function handler(req: any, res: any) {

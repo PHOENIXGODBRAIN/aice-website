@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 
 // 1. Initialize Serverless Keys
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-03-25.dahlia', // Updated to match your exact Stripe SDK version
+  apiVersion: '2026-04-22.dahlia', // Updated to match your exact Stripe SDK version
 });
 
 // 2. Prevent Multiple Firebase Instances in Serverless
