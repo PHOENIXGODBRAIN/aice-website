@@ -237,11 +237,24 @@ export const HowItWorksView: React.FC<{ setView: (v: ViewState) => void }> = ({ 
 
       <div className="text-center mt-20 pb-20 relative">
           <div className="flex justify-center mb-8 relative z-10">
-              <img 
-                  src={AICE_LOGO_IMG} 
-                  alt="AICE SYSTEM" 
-                  className="w-full max-w-3xl h-auto object-contain drop-shadow-[0_0_50px_rgba(0,243,255,0.2)] hover:scale-105 transition-transform duration-700" 
-              />
+              <div className="relative w-full max-w-2xl mx-auto p-2 bg-[#001a1f] border border-[#00F3FF]/40 rounded-2xl shadow-[0_0_40px_rgba(0,243,255,0.3)] group hover:shadow-[0_0_60px_rgba(0,243,255,0.5)] hover:border-[#00F3FF] transition-all duration-700">
+                  {/* Neon Accents */}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-black border border-[#00F3FF] rounded-full flex items-center justify-center gap-2 shadow-[0_0_15px_#00F3FF] z-20">
+                      <div className="w-1.5 h-1.5 bg-[#00F3FF] rounded-full animate-ping"></div>
+                      <span className="text-[#00F3FF] font-mono text-[9px] font-bold tracking-[0.2em] uppercase">Architecture Blueprint</span>
+                  </div>
+                  <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-[#00F3FF]"></div>
+                  <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-[#00F3FF]"></div>
+                  <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-[#00F3FF]"></div>
+                  <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-[#00F3FF]"></div>
+                  
+                  {/* The Image */}
+                  <img 
+                      src="/assets/images/How it Works/How it Works 3.png" 
+                      alt="AICE SYSTEM ARCHITECTURE" 
+                      className="w-full h-auto object-contain rounded-xl relative z-10 opacity-90 group-hover:opacity-100 filter brightness-110 contrast-125" 
+                  />
+              </div>
           </div>
 
           <p className="text-white text-lg mb-8 font-mono uppercase tracking-widest relative z-20 -mt-12 md:-mt-20 bg-black/40 backdrop-blur-sm inline-block px-6 py-2 rounded-full border border-white/10">

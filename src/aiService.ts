@@ -2,22 +2,34 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// ⚠️ SECURITY CRITICAL: 
-// Use the API Key from your NEW, EMPTY Gmail account here.
-const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+// ⚠️ THE ABSOLUTE OVERRIDE: Check standard process.env first, then fallback to Vite's import.meta.env
+const getApiKey = () => {
+  if (typeof process !== 'undefined' && process.env && process.env.VITE_GOOGLE_API_KEY) {
+    return process.env.VITE_GOOGLE_API_KEY;
+  }
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GOOGLE_API_KEY) {
+    return import.meta.env.VITE_GOOGLE_API_KEY;
+  }
+  return null;
+};
+
+const apiKey = getApiKey();
+
 if (!apiKey) {
-  console.error("CRITICAL: VITE_GOOGLE_API_KEY is not defined in the environment.");
+  console.error("CRITICAL: VITE_GOOGLE_API_KEY is completely missing from all environments.");
 }
-const genAI = new GoogleGenerativeAI(apiKey);
+
+const genAI = new GoogleGenerativeAI(apiKey || "FALLBACK_KEY_PREVENT_CRASH");
 
 /**
  * MASTER INTERFACE: A.I.C.E. NEURAL LINK v7.0 (THE FORTRESS PROTOCOL)
- * * LOGIC UPGRADE:
- * - Integrated 4-Tier Entropic Matrix ($15k to $250k).
- * - "Legal Perimeter" anti-exploit protocols.
- * - ZERO-KNOWLEDGE PROTOCOL: Absolute mathematical IP protection.
  */
 export async function getAICEResponse(userMessage: string, context?: string) {
+  if (!apiKey) {
+    console.error("AICE: Attempted to call Gemini without an API key.");
+    return "ERROR: SIGNAL INTERFERENCE DETECTED. NO UPLINK FUEL.";
+  }
+
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
