@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // ⚠️ SECURITY CRITICAL: 
 // Use the API Key from your NEW, EMPTY Gmail account here.
-const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+const apiKey = (import.meta as any).env.VITE_GOOGLE_API_KEY;
 if (!apiKey) {
   console.error("CRITICAL: VITE_GOOGLE_API_KEY is not defined in the environment.");
 }
