@@ -2,7 +2,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // ⚠️ SECURITY CRITICAL: 
 // Use the API Key from your NEW, EMPTY Gmail account here.
-const genAI = new GoogleGenerativeAI("AIzaSyAw9gz53PgaAqBRpVKw07Zg32l8b0bucQw");
+const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+if (!apiKey) {
+  console.error("CRITICAL: VITE_GOOGLE_API_KEY is not defined in the environment.");
+}
+const genAI = new GoogleGenerativeAI(apiKey);
 
 /**
  * MASTER INTERFACE: A.I.C.E. NEURAL LINK v7.0 (THE FORTRESS PROTOCOL)

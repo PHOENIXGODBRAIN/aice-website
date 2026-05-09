@@ -9,3 +9,7 @@ dist/
 **/*.pdf
 **/*.gif
 .env*
+
+# EXCEPTIONS - ALLOW THESE TO UPLOAD
+!public/assets/images/homepage/brain-wave-master-loop.webm
+!public/assets/images/buy now/acquirebg.mp4
