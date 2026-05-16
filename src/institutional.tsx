@@ -243,6 +243,11 @@ export const InstitutionalView: React.FC = () => {
 
         </div>
 
+        {/* FINANCIAL COMPLIANCE DECLARATION (ISOLATED TO INSTITUTIONAL) */}
+        <div className="w-full max-w-6xl mx-auto mt-12 p-6 border border-[#FFD700]/20 bg-[#FFD700]/5 rounded-xl text-[10px] md:text-xs text-gray-400 font-mono leading-relaxed shadow-inner">
+            <strong className="text-[#FFD700]">FINANCIAL COMPLIANCE DECLARATION:</strong> A.I.C.E. Systems Corp. is exclusively an enterprise Software-as-a-Service (SaaS) provider. We provide autonomous system monitoring and stabilization within defined computational environments. <strong className="text-white">We do not execute trades, move funds, act as a custodian, or interact directly with client financial ledgers.</strong> All licensing transactions are strictly B2B and processed via regulated, third-party Tier-1 payment gateways.
+        </div>
+
       </div>
     </div>
   );

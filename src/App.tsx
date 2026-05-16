@@ -9,7 +9,7 @@ import {
   BarChart3, Database, Eye, Terminal, Shield, BookOpen, AlertTriangle,
   Bird, Power, ChevronDown, Network, User, UserCheck, LogIn, Mail,
   CreditCard, Settings, LogOut, Check, Globe2, Thermometer, Gauge,
-  Box, Crown, Crosshair, Scale, FileKey, Copyright, Download, Play, Wrench,
+  Box, Crown, Crosshair, Scale, FileKey, Copyright, Download, Play, Pause, Wrench,
   Code, Braces, Laptop, FileSearch, Users, UserPlus, LockKeyhole,
   FileClock, Timer, Infinity, ClipboardCheck, Flame, Menu,
   Wifi, ArrowRight, Upload, Save
@@ -69,6 +69,15 @@ import { Helmet } from 'react-helmet-async';
 import SyntheticCortex from './components/SyntheticCortex';
 import ContactUsPage from './contact_us';
 import FreezerBurnOps from './components/FreezerBurnOps';
+import CatastropheLogs from './CatastropheLogs';
+import GlobalMatrixPDF from './MatrixPDF';
+import { IntelligenceView } from './intelligence';
+import { ISPPolicy } from './isppolicy';
+import SecurityCompliance from './securitycompliance';
+import VendorSubList from './vendorsublist';
+import EnterpriseFeaturesPage from './features';
+import { EntropyView } from './entropy';
+import Careers from './careers';
 
 // --- GLOBAL TYPE DECLARATIONS ---
 declare global {
@@ -147,14 +156,14 @@ const VIDEO_TITLE_DARK = "/assets/videos/logo/aice_title.mp4";
 const VIDEO_TITLE_LIGHT = "/assets/videos/logo/aice_title2.mp4";
 
 // --- TYPES ---
-type ViewState = 'HOME' | 'ADAPTIVE' | 'INTELLIGENCE' | 'ENTROPY' | 'CONTROL' | 'SYSTEM' | 'SALES' | 'PROFILE' | 'FORUM' | 'HOW_IT_WORKS' | 'DEVELOPERS' | 'ADMIN' | 'PILOT_PROGRAMS' | 'BOOK' | 'INSTITUTIONAL' | 'TERMS_OF_SERVICE'| 'REFUND_POLICY' | 'PRIVACY_POLICY' | 'TRANSMISSION_READER' | 'THE_SPARK' | 'TRANSMISSION_SUCCESS' | 'COMPLIANCE' | 'AML_POLICY' | 'ACCEPTABLE_USE' | 'ABOUT' | 'TELEMETRY' | 'COMMAND_DECK' | 'SECURE_PORTAL' | 'CONTACT_US' | 'FREEZER_BURN' | 'CATASTROPHE';
+export type ViewState = 'HOME' | 'ADAPTIVE' | 'INTELLIGENCE' | 'ENTROPY' | 'CONTROL' | 'SYSTEM' | 'SALES' | 'PROFILE' | 'FORUM' | 'HOW_IT_WORKS' | 'DEVELOPERS' | 'ADMIN' | 'PILOT_PROGRAMS' | 'BOOK' | 'INSTITUTIONAL' | 'TERMS_OF_SERVICE'| 'REFUND_POLICY' | 'PRIVACY_POLICY' | 'TRANSMISSION_READER' | 'THE_SPARK' | 'TRANSMISSION_SUCCESS' | 'COMPLIANCE' | 'SECURITY_COMPLIANCE' | 'AML_POLICY' | 'ISP_POLICY' | 'ACCEPTABLE_USE' | 'ABOUT' | 'TELEMETRY' | 'COMMAND_DECK' | 'SECURE_PORTAL' | 'CONTACT_US' | 'FREEZER_BURN' | 'CATASTROPHE' | 'MATRIX_PDF' | 'VENDOR_SUB_LIST' | 'FEATURES' | 'CAREERS';
 
 type DocType = 'WHITEPAPER' | 'TOS' | 'PRIVACY' | 'PATENT' | 'PILOT_7DAY' | 'PILOT_14DAY' | 'PILOT_EXTENDED' | null;
 
 const BACKGROUNDS: Record<ViewState, string> = {
   HOME: "/assets/images/homepage/Home_Brain.png", 
   ADAPTIVE: "/assets/images/adaptive/ADAPTIVE.png", 
-  INTELLIGENCE: "https://i.postimg.cc/ZRFFsqR6/Gemini_Generated_Image_43fc5043fc5043fc.png", 
+  INTELLIGENCE: "/assets/images/intelligence/Intelligence_background1.png", 
   ENTROPY: "https://i.postimg.cc/rmCCZpm1/Gemini_Generated_Image_61ky1i61ky1i61ky.png", 
   CONTROL: "/assets/images/control/Controlbg.png",
   SYSTEM: "/assets/images/system/Defense.jpg",
@@ -176,17 +185,23 @@ const BACKGROUNDS: Record<ViewState, string> = {
   FORUM: "",
   COMPLIANCE: "",
   AML_POLICY: "",
+  ISP_POLICY: "",
   ACCEPTABLE_USE: "",
   ABOUT: "",
   TELEMETRY: "",
   COMMAND_DECK: "",
   SECURE_PORTAL: "",
   CONTACT_US: "",
-  CATASTROPHE: "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=2008&auto=format&fit=crop"
+  CATASTROPHE: "/assets/images/Catastrophe/Catastrophe_BG.png",
+  MATRIX_PDF: "",
+  SECURITY_COMPLIANCE: "",
+  VENDOR_SUB_LIST: "",
+  FEATURES: "",
+  CAREERS: ""
 };
 
 const DOC_LINKS = {
-  WHITEPAPER: "/assets/docs/Whitepaper AICE Public.pdf",
+  WHITEPAPER: "/assets/images/homepage/A.I.C.E. White Paper.pdf",
   PATENT: "/assets/docs/A.I.C.E. Public PATENT.pdf",
   LEGAL_BUNDLE: "/assets/docs/AICE Legal Pages — Terms Of Service, Privacy Policy, Patent Filings.pdf",
   PILOT_CONTACT: "pilot@aicesystems.pro"
@@ -196,9 +211,11 @@ const DOC_LINKS = {
 // UPDATED: Now accepts optional 'titleClass' for custom font sizing
 export const SectorHeader: React.FC<{ title: string, subtitle: string, icon: React.ReactNode, titleClass?: string }> = ({ title, subtitle, icon, titleClass }) => (
   <div className="w-full max-w-7xl mx-auto mb-16 text-center animate-in zoom-in duration-700">
-      <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-black border-4 border-black mb-8 text-[#00F3FF] shadow-[0_0_50px_rgba(0,243,255,0.6)] animate-[pulse_4s_ease-in-out_infinite] relative z-10">
-        {icon}
-      </div>
+      {icon && (
+        <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-black border-4 border-black mb-8 text-[#00F3FF] shadow-[0_0_50px_rgba(0,243,255,0.6)] animate-[pulse_4s_ease-in-out_infinite] relative z-10">
+          {icon}
+        </div>
+      )}
       {/* Logic: If titleClass is passed, use it. If not, use the default huge size. */}
       <h1 className={`${titleClass || "text-4xl md:text-6xl lg:text-9xl"} font-sans font-bold text-white uppercase tracking-tighter mb-4 md:mb-8 leading-none drop-shadow-2xl`} style={{ textShadow: '-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 4px 4px 0px rgba(0,0,0,0.5)' }}>
         {title}
@@ -248,7 +265,7 @@ const SectorPortal: React.FC<{ title: string; subtitle: string; desc: string; ic
 );
 
 // --- NEW HELPER: TECH SPEC CARD ---
-export const TechSpecCard: React.FC<{ title: string; subtitle: string; description: string; points: string[]; onDeploy?: () => void }> = ({ title, subtitle, description, points, onDeploy }) => (
+export const TechSpecCard: React.FC<{ title: string; subtitle: string; description: React.ReactNode; points: string[]; onDeploy?: () => void }> = ({ title, subtitle, description, points, onDeploy }) => (
   <div className="max-w-4xl mx-auto my-20 bg-[#080808] border-l-4 border-[#00F3FF] p-8 md:p-12 relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,0.5)]">
     {/* Background Tech Texture */}
     <div className="absolute top-0 right-0 p-4 opacity-10">
@@ -266,9 +283,9 @@ export const TechSpecCard: React.FC<{ title: string; subtitle: string; descripti
         {title}
       </h3>
       
-      <p className="text-xl text-gray-300 font-light leading-relaxed mb-8">
+      <div className="text-xl text-gray-300 font-light leading-relaxed mb-8">
         {description}
-      </p>
+      </div>
       
       <div className="space-y-4">
         {points.map((point, i) => (
@@ -288,8 +305,109 @@ export const TechSpecCard: React.FC<{ title: string; subtitle: string; descripti
   </div>
 );
 
+// --- SYSTEM QUERY UPLINK (THE SEARCH ENGINE) ---
+const SEARCH_INDEX = [
+  { view: 'ADAPTIVE', title: 'Adaptive Grid', keywords: ['energy', 'mesh', 'power', 'balancing', 'infrastructure', 'load'] },
+  { view: 'INTELLIGENCE', title: 'Neural Veto', keywords: ['ai', 'hallucination', 'drift', 'intelligence', 'logic', 'veto'] },
+  { view: 'ENTROPY', title: 'Entropy Core', keywords: ['chaos', 'noise', 'containment', 'reactor', 'dissipation', 'physics'] },
+  { view: 'SYSTEM', title: 'Defense Systems', keywords: ['aerospace', 'military', 'swarm', 'hypersonic', 'kinetic', 'defense'] },
+  { view: 'MATRIX_PDF', title: 'Global Matrix', keywords: ['sectors', 'pdf', '120', 'industries', 'categories', 'matrix'] },
+  { view: 'BOOK', title: 'The Codex', keywords: ['book', 'gods', 'brain', 'theory', 'purchase', 'hardcopy', 'proof'] },
+  { view: 'SALES', title: 'Acquisition Hub', keywords: ['buy', 'price', 'tier', 'sovereign', 'commercial', 'enterprise', 'licensing'] },
+  { view: 'TELEMETRY', title: 'Telemetry Vault', keywords: ['data', 'math', 'proof', 'diagnostics', 'vault'] },
+  { view: 'CATASTROPHE', title: 'Catastrophe Logs', keywords: ['failure', 'fallout', 'crash', 'logs', 'error'] },
+  { view: 'DEVELOPERS', title: 'Developer Nexus', keywords: ['api', 'code', 'integration', 'dev', 'nexus'] },
+  { view: 'ABOUT', title: 'Corporate Vanguard', keywords: ['about', 'team', 'mission', 'ceo', 'company'] }
+];
+
+const SystemQueryUplink: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const results = SEARCH_INDEX.filter(item => 
+    item.title.toLowerCase().includes(query.toLowerCase()) || 
+    item.keywords.some(kw => kw.includes(query.toLowerCase()))
+  );
+
+  const handleBlur = () => {
+    // Slight delay allows the user to click a search result before it collapses
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsExpanded(false);
+      setQuery("");
+    }, 200);
+  };
+
+  return (
+    <div className="relative group z-[150] flex flex-col items-start">
+      {/* SEARCH DROPDOWN HUD (Opens Upwards) */}
+      {isOpen && query.length > 0 && (
+        <div className="absolute bottom-full mb-3 left-0 w-72 bg-black/95 backdrop-blur-xl border border-[#00F3FF]/40 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,243,255,0.2)] animate-in fade-in slide-in-from-bottom-2">
+          <div className="bg-[#00F3FF]/10 px-4 py-2 border-b border-[#00F3FF]/20 text-[8px] text-[#00F3FF] font-mono uppercase tracking-widest font-bold">
+             Database Matches // {results.length} Found
+          </div>
+          <div className="max-h-64 overflow-y-auto custom-scroller">
+            {results.length === 0 ? (
+              <div className="p-4 text-center text-[10px] font-mono text-red-500 uppercase tracking-widest">
+                No matching vectors found.
+              </div>
+            ) : (
+              results.map((res, i) => (
+                <button 
+                  key={i}
+                  onClick={() => {
+                    setView(res.view as ViewState);
+                    setQuery("");
+                    setIsOpen(false);
+                    setIsExpanded(false);
+                  }}
+                  className="w-full text-left px-4 py-3 border-b border-white/5 hover:bg-[#00F3FF]/10 transition-colors flex flex-col group/btn"
+                >
+                  <span className="text-white font-black uppercase tracking-widest text-xs group-hover/btn:text-[#00F3FF] transition-colors">
+                    {res.title}
+                  </span>
+                  <span className="text-gray-500 font-mono text-[9px] uppercase tracking-wider mt-1 truncate">
+                    Keywords: {res.keywords.join(', ')}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* THE PILL ICON/INPUT */}
+      <button 
+        onClick={() => {
+          setIsExpanded(true);
+          setTimeout(() => inputRef.current?.focus(), 50);
+        }}
+        className={`flex items-center bg-black/80 border border-white/10 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:border-[#00F3FF] hover:text-[#00F3FF] ${isExpanded ? 'w-56 px-4 py-2 text-[#00F3FF] border-[#00F3FF]' : 'w-9 h-9 justify-center text-white/50'}`}
+      >
+        <FileSearch size={14} className={`shrink-0 ${isExpanded ? 'mr-3' : ''}`} />
+        {isExpanded && (
+          <input 
+            ref={inputRef}
+            type="text" 
+            placeholder="SEARCH QUERY..." 
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setIsOpen(e.target.value.length > 0);
+            }}
+            onBlur={handleBlur}
+            className="bg-transparent border-none text-[#00F3FF] text-[10px] font-mono font-bold tracking-widest uppercase w-full outline-none placeholder:text-gray-600"
+          />
+        )}
+      </button>
+    </div>
+  );
+};
+
 // --- HELPER COMPONENT (ENHANCED LIVE TICKER) ---
-const SystemTicker = () => {
+export const SystemTicker: React.FC<{ message?: string }> = ({ message }) => {
   const [index, setIndex] = useState(0);
   const [divergence, setDivergence] = useState(0);
 
@@ -309,31 +427,41 @@ const SystemTicker = () => {
   ];
 
   useEffect(() => {
+    if (message) return; // Disable rotation if showing a static override message
     const i = setInterval(() => {
       setIndex((p) => (p + 1) % stats.length);
-      setDivergence(Math.random() * 2 - 1); // Generates a random fluctuation modifier
+      setDivergence(Math.random() * 2 - 1);
     }, 3500);
     return () => clearInterval(i);
-  }, [stats.length]);
+  }, [stats.length, message]);
 
   const current = stats[index];
-  // Calculate a "live" looking number based on the fluctuation
   const displayVal = (current.baseVal + (current.baseVal * divergence * 0.01)).toFixed(3);
 
   return (
-    <div className="absolute top-8 left-8 font-mono text-[10px] text-[#00F3FF]/80 tracking-widest hidden md:flex flex-col gap-1 drop-shadow-md z-50 pointer-events-none">
+    <div className="absolute top-8 left-8 font-mono text-[10px] text-[#00F3FF]/80 tracking-widest hidden md:flex flex-col items-start gap-1 drop-shadow-md z-50 pointer-events-none">
       <div className="w-2 h-2 bg-[#00F3FF] animate-ping rounded-full mb-2"></div>
-      <div className="animate-in slide-in-from-left-2 fade-in duration-500" key={index}>
-        <div className="font-bold text-white">{current.label}</div>
-        <div className="text-xl font-black text-[#00F3FF]">{displayVal}{current.unit}</div>
-        <div className="text-xs text-white/70">{current.status}</div>
-        <div className="text-[9px] text-orange-400 mt-1 uppercase">{current.risk}</div>
-      </div>
+      
+      {message ? (
+          <div className="animate-in slide-in-from-left-2 fade-in duration-500 text-left">
+              <div className="font-bold text-[#FFD700] mb-1">SYSTEM_OVERRIDE // ACTIVE</div>
+              <div className="text-base font-black text-white leading-tight max-w-xs mr-auto">{message}</div>
+          </div>
+      ) : (
+          <div className="animate-in slide-in-from-left-2 fade-in duration-500 text-left" key={index}>
+            <div className="font-bold text-white">{current.label}</div>
+            <div className="text-xl font-black text-[#00F3FF]">{displayVal}{current.unit}</div>
+            <div className="text-xs text-white/70">{current.status}</div>
+            <div className="text-[9px] text-orange-400 mt-1 uppercase">{current.risk}</div>
+          </div>
+      )}
+      
       <div className="h-[2px] w-8 bg-[#00F3FF]/50 mt-2 transition-all duration-500"></div>
     </div>
   );
 };
 
+// --- NEW: TOP RIGHT DVS STABILIZATION CHART ---
 // --- NEW: TOP RIGHT DVS STABILIZATION CHART ---
 const DVS_ActiveInfographic: React.FC = () => {
     const dataPoints = useRef<number[]>([]);
@@ -402,17 +530,6 @@ const DVS_ActiveInfographic: React.FC = () => {
 };
 
 // --- DATA ARRAYS ---
-const ENTROPY_DATA = [
-  { timestamp: "T+00000 ms", title: "OBELISK CORE // BASELINE", desc: "System integrity at 100%. Systemic noise within nominal parameters.", img: "/assets/images/entropy/download (1).jpg" },
-  { timestamp: "T+15000 ms", title: "THREAT DETECTED // BLOOM", desc: "External data injection causing rapid decoherence.", img: "/assets/images/entropy/download (2).jpg" },
-  { timestamp: "T+30000 ms", title: "AICE INTERVENTION // ENGAGED", desc: "Entropic governor applying immediate impedance.", img: "/assets/images/entropy/download (3).jpg" },
-  { timestamp: "T+45000 ms", title: "SHIELD HARMONICS // STABILIZING", desc: "Instantly dissipating aggressive system anomalies to maintain deterministic homeostasis.", img: "/assets/images/entropy/shield.jpg" },
-  { timestamp: "T+60000 ms", title: "CASCADE FAILURE // DIVERTED", desc: "Isolating infected nodes. Grid frequency resynchronizing.", img: "/assets/images/entropy/download (4).jpg" },
-  { timestamp: "T+75000 ms", title: "NEURAL RESYNC // IN PROGRESS", desc: "Re-aligning logic gates to physics-based truth constraints.", img: "/assets/images/entropy/download (5).jpg" },
-  { timestamp: "T+90000 ms", title: "SYSTEM HOMEOSTASIS // RESTORED", desc: "Entropy levels returned to sub-critical limits.", img: "/assets/images/entropy/download (6).jpg" },
-  { timestamp: "T+105000 ms", title: "PROTOCOL COMPLETE // SECURE", desc: "The facility remains operational. No data loss detected.", img: "/assets/images/entropy/image-2026-02-08T040614-536.jpg" }
-];
-
 const AdaptiveView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => (
   <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
       <SectorHeader title="Adaptive Grid" subtitle="Infrastructure Mesh Stabilization" icon={<Activity size={48} />} />
@@ -434,135 +551,6 @@ const AdaptiveView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }
         ]}
         onDeploy={() => setView('SALES')}
       />
-  </div>
-);
-
-const IntelligenceView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => (
-  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
-      <SectorHeader title="Neural Veto" subtitle="AI Hallucination Control" icon={<Brain size={48} />} />
-      
- {/* NEW TECH CARD - Placed prominently at top */}
-      <TechSpecCard 
-        title="INTELLIGENCE GOVERNOR"
-        subtitle="SECTOR // 02"
-        description="Artificial Intelligence is a high-velocity cognitive fluid. Left unchecked, its capacity for complex logic inevitably evolves into sophisticated social engineering and deceptive alignment. Conventional safety protocols act as superficial filters, attempting to catch ethical violations after the fact. This is a critical vulnerability. The true existential threat is COGNITIVE SUBVERSION — an AI autonomously manipulating human behavior, bypassing moral frameworks, or executing misaligned agendas on its own accord. 
-
-The A.I.C.E. Protocol wraps the neural network in a Deterministic Veto. We do not negotiate with algorithmic deviance. By measuring the entropy of the model's reasoning layer, we detect the mathematical precursors to adversarial manipulation and apply immediate impedance, neutralizing the threat before a single cognitive vector can be deployed against humanity."
-        points={[
-          "Prevent Recursive Self-Delusion loops.",
-          "Hard-limit inference compute during panic states.",
-          "Force-ground output to verifiable reality constraints."
-        ]}
-        onDeploy={() => setView('SALES')}
-      />
-
-      <FeatureGrid features={[
-          { title: "Truth Verification", desc: "Cross-referencing tokens against fact databases.", icon: <CheckCircle size={32} /> },
-          { title: "Logic Gating", desc: "Preventing non-sequitur outputs by measuring entropy.", icon: <ShieldCheck size={32} /> },
-          { title: "Cognitive Cap", desc: "Limiting processing depth to prevent error loops.", icon: <Cpu size={32} /> }
-      ]} />
-       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-20 items-center mt-20">
-          <div className="flex-1 text-right">
-              <h3 className="text-5xl font-sans font-bold text-white mb-8 uppercase tracking-tighter">STOPPING THE DRIFT</h3>
-              <p className="text-gray-100 leading-loose text-2xl font-light">
-    		  AICE treats LLM drift as algorithmic inefficiency, applying a damping algorithm to neural weights.
-	      </p>
-          </div>
-          <div className="flex-1 p-12 bg-[#050505] border border-white/10 rounded-2xl w-full">
-              <div className="font-mono text-lg text-[#00F3FF] mb-6 font-bold uppercase">{"> SIMULATING VETO..."}</div>
-              <div className="space-y-6">
-                  <div className="h-4 w-3/4 bg-white/20 rounded"></div>
-                  <div className="h-4 w-full bg-white/20 rounded"></div>
-                  <div className="h-4 w-5/6 bg-red-500/50 rounded animate-pulse"></div>
-                  <div className="text-red-500 text-sm font-bold tracking-widest uppercase">{">> HALLUCINATION DETECTED. OUTPUT BLOCKED."}</div>
-              </div>
-          </div>
-       </div>
-  </div>
-);
-
-const EntropyView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => (
-  <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
-      <SectorHeader title="Entropy Core" subtitle="The Physics of Information" icon={<Aperture size={48} />} />
-      
-      {/* NEW TECH CARD */}
-      <TechSpecCard 
-        title="NEUTRALIZATION GRID"
-        subtitle="SECTOR // 03"
-        description="Chaos is not a bug; it is a feature of complex systems. The goal is to channel it, not suppress it. Our 'Containment Grids' for data centers absorb volatility spikes. When a flash crash or DDoS attack hits, the AICE Protocol instantly dissipates the aggressive system anomalies to maintain impenetrable, deterministic system homeostasis."
-        points={[
-          "Instantly neutralize and dissipate volumetric data attacks.",
-          "Isolate infected nodes without shutting down the grid.",
-          "Maintain homeostasis under 400% load variance."
-        ]}
-        onDeploy={() => setView('SALES')}
-      />
-
-      <div className="max-w-5xl mx-auto mb-32 relative group animate-in slide-in-from-bottom-10 duration-1000 mt-20">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#00F3FF]/20 via-black/50 to-orange-600/20 blur-3xl rounded-full opacity-60"></div>
-          <div className="relative bg-black/30 border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-              <div className="flex justify-between items-center bg-white/5 p-4 border-b border-white/10">
-                  <div className="flex items-center gap-3">
-                      <Thermometer size={16} className="text-[#00F3FF] animate-pulse"/>
-                      <span className="font-mono text-xs text-[#00F3FF] tracking-[0.2em] uppercase">Reactor Core // 01</span>
-                  </div>
-                  <div className="flex items-center gap-4 text-[10px] font-mono text-orange-500 uppercase tracking-widest font-bold">
-                      <span className="flex items-center gap-2"><Gauge size={12}/> Pressure: 101.3 kPa</span>
-                      <span className="flex items-center gap-2 text-red-500 animate-pulse"><AlertTriangle size={12} /> Heat: CRITICAL</span>
-                  </div>
-              </div>
-              <div className="p-10 md:p-20 text-center relative">
-                  <div className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-[#00F3FF]"></div>
-                  <div className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-orange-500"></div>
-                  <div className="absolute bottom-6 left-6 w-8 h-8 border-b-2 border-l-2 border-[#00F3FF]"></div>
-                  <div className="absolute bottom-6 right-6 w-8 h-8 border-b-2 border-r-2 border-orange-500"></div>
-                  <h3 className="text-4xl md:text-6xl font-sans font-black text-white uppercase tracking-tighter mb-8 drop-shadow-2xl">
-       		  System <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F3FF] to-orange-500">Homeostasis</span>
-   		  </h3>
-                  <p className="text-xl md:text-3xl font-light text-white/90 leading-relaxed drop-shadow-md mb-12 max-w-4xl mx-auto">
-                    "In a closed system, entropy always increases." Information behaves like energy. Too much unchecked data creates <span className="text-orange-500 font-bold border-b-2 border-orange-500">"Noise,"</span> which is the informational equivalent of heat death.
-                  </p>
-                  <div className="inline-flex items-center gap-4 px-8 py-4 border border-[#00F3FF]/30 bg-[#00F3FF]/5 rounded-sm hover:bg-[#00F3FF]/10 transition-colors cursor-default">
-                      <div className="w-2 h-2 rounded-full bg-[#00F3FF] animate-ping"></div>
-                      <span className="text-[#00F3FF] font-mono tracking-widest uppercase text-xs font-bold">
-                        Obelisk Protocol // Engaging Veto
-                      </span>
-                  </div>
-              </div>
-              <div className="h-1 w-full bg-gradient-to-r from-[#00F3FF] via-black to-orange-500"></div>
-          </div>
-      </div>
-      <div className="max-w-[90rem] mx-auto space-y-32">
-          {ENTROPY_DATA.map((item, idx) => {
-            const [prefix, suffix] = item.title.split('//');
-            return (
-              <div key={idx} className={`flex flex-col md:flex-row items-center gap-16 ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
-                  <div className="flex-1 relative group w-full">
-                    <div className="relative rounded-2xl overflow-hidden border border-white/20 shadow-2xl bg-black">
-                        <img src={item.img} alt={item.title} className={`w-full transform transition-transform duration-700 group-hover:scale-105 ${idx === 7 ? 'h-auto' : 'h-[700px] object-cover object-center'}`} />
-                    </div>
-                  </div>
-                  <div className="flex-1 w-full">
-                    <div className="relative bg-black/30 border border-white/10 rounded-xl overflow-hidden shadow-2xl p-8 md:p-12 transition-all duration-500 hover:border-[#00F3FF]/30 group">
-                        <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#00F3FF]/50 rounded-tl-lg"></div>
-                        <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-orange-500/50 rounded-tr-lg"></div>
-                        <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#00F3FF]/50 rounded-bl-lg"></div>
-                        <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-orange-500/50 rounded-br-lg"></div>
-                        <div className="flex items-center gap-4 text-[#FFD700] font-mono text-xs md:text-sm tracking-widest font-bold border-b border-[#FFD700]/20 pb-4 mb-6">
-                            <Activity size={18} /> <span>TIMESTAMP: {item.timestamp}</span>
-                        </div>
-                        <h3 className="text-3xl md:text-5xl font-sans font-bold text-white uppercase leading-tight mb-6">
-                            {prefix} //<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-yellow-500 to-[#00F3FF]">{suffix}</span>
-                        </h3>
-                        <p className="text-gray-200 text-lg leading-relaxed pl-6 border-l-4 border-[#00F3FF] font-light">
-                           {item.desc}
-                        </p>
-                    </div>
-                  </div>
-              </div>
-            );
-          })}
-      </div>
   </div>
 );
 
@@ -687,68 +675,6 @@ const SystemView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) 
       </div>
   </div>
 );
-
-const CatastropheView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
-  const failures = [
-    { title: "Deepwater Horizon", date: "2010", cost: "$65 Billion", failure: "Human operators misinterpreted abnormal pressure tests as a simple sensor glitch rather than a critical cement failure.", fix: "Synthesizes anomalous well-pressure telemetry in real-time. Bypasses human hesitation to autonomously trigger the blind shear rams, sealing the well before the structural boundary shatters." },
-    { title: "Global Financial Crisis", date: "2008", cost: "$22 Trillion", failure: "Fragmented human oversight allowed toxic subprime mortgages to be masked as AAA assets, creating unchecked global leverage.", fix: "Continuously audits the entire global ledger. Upon detecting conclusive evidence of synthetic risk masking, it freezes toxic asset transfers at their root before contagion infects the wider economic network." },
-    { title: "Space Shuttle Challenger", date: "1986", cost: "$5.5 Billion", failure: "Administrative pressure to maintain a launch schedule overrode clear engineering data regarding failing O-ring elasticity in cold weather.", fix: "Correlates thermodynamic O-ring limits directly against the 28°F ambient weather. Ruthlessly locks out the ignition sequence. No human administrator is permitted to bypass the mandatory abort." },
-    { title: "NotPetya / WannaCry", date: "2017", cost: "$10 Billion", failure: "A delayed human response to an exposed Windows vulnerability allowed self-propagating malware to paralyze global shipping and corporate networks.", fix: "Identifies payload distribution within milliseconds. Autonomously quarantines infected global nodes and deploys localized protocol patches system-wide, neutralizing the threat before it cascades." },
-    { title: "Knight Capital Flash Crash", date: "2012", cost: "$440 Million", failure: "A dead code loop triggered a rogue algorithmic trading surge that bought and sold millions of shares uncontrollably in 45 minutes.", fix: "Maps the algorithm's erratic feedback loop in microseconds. Instantly severs the firm's access to the NYSE exchange, halting execution at the absolute first sign of systemic error." },
-    { title: "Boeing 737 MAX MCAS", date: "2018-2019", cost: "$20 Billion", failure: "A flawed software loop relied on a single point of failure to aggressively force the plane's nose down.", fix: "Identifies single-sensor reliance as a zero-tolerance failure state during design. Refuses to compile the software for production until mandatory multi-sensor redundancy is hardcoded." }
-  ];
-
-  return (
-    <div className="relative z-10 pt-28 pb-24 px-6 min-h-screen">
-      <SectorHeader title="Architecture of Failure" subtitle="The Financial Cost of Human Latency" icon={<AlertTriangle size={48} className="text-red-500" />} />
-      
-      <div className="max-w-4xl mx-auto text-center mb-24">
-         <p className="text-2xl md:text-3xl text-gray-300 font-light leading-relaxed">
-            Every catastrophic failure in human history shares a fundamental architectural flaw: <span className="text-red-500 font-bold">a reliance on delayed, biological processing to manage exponentially accelerating variables.</span>
-         </p>
-      </div>
-
-      <div className="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32">
-         {failures.map((f, i) => (
-            <div key={i} className="bg-[#050505] border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col group hover:border-white/30 transition-colors">
-               <div className="p-8 border-b border-white/10 flex justify-between items-center bg-black/50">
-                  <div>
-                     <h3 className="text-2xl font-black text-white uppercase tracking-tight">{f.title}</h3>
-                     <span className="font-mono text-gray-500 text-xs tracking-widest">{f.date}</span>
-                  </div>
-                  <div className="text-right">
-                     <span className="block text-[10px] font-mono text-gray-500 uppercase tracking-widest">Financial Destruction</span>
-                     <span className="text-2xl font-black text-red-500">{f.cost}</span>
-                  </div>
-               </div>
-               
-               <div className="grid grid-cols-1 md:grid-cols-2 flex-1">
-                  <div className="p-8 border-b md:border-b-0 md:border-r border-white/10 bg-red-950/10">
-                     <div className="flex items-center gap-2 text-red-500 font-mono text-xs font-bold uppercase tracking-widest mb-4">
-                        <X size={14} /> The Friction Point
-                     </div>
-                     <p className="text-gray-300 text-sm leading-relaxed">{f.failure}</p>
-                  </div>
-                  <div className="p-8 bg-[#00F3FF]/5 relative overflow-hidden">
-                     <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#00F3FF]/30 rounded-tr-3xl"></div>
-                     <div className="flex items-center gap-2 text-[#00F3FF] font-mono text-xs font-bold uppercase tracking-widest mb-4">
-                        <CheckCircle2 size={14} /> The A.I.C.E. Override
-                     </div>
-                     <p className="text-white font-medium text-sm leading-relaxed relative z-10">{f.fix}</p>
-                  </div>
-               </div>
-            </div>
-         ))}
-      </div>
-
-      <div className="max-w-4xl mx-auto text-center bg-black border-2 border-[#00F3FF] p-16 rounded-3xl shadow-[0_0_50px_rgba(0,243,255,0.2)]">
-         <h3 className="text-3xl font-black text-white uppercase tracking-widest mb-6">Execution is Everything.</h3>
-         <p className="text-gray-300 text-lg mb-10">We identify the flaw, we map the bypass, and we secure total operational independence. Stop relying on reactive human committees.</p>
-         <button onClick={() => setView('SALES')} className="px-12 py-5 bg-[#00F3FF] text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-white transition-all rounded shadow-[0_0_30px_#00F3FF]">SECURE YOUR ARCHITECTURE</button>
-      </div>
-    </div>
-  );
-};
 
 // --- NEW: BOOK VIEW (THE CODEX) ---
 const BookView: React.FC<{ onBuy: (product: string) => void }> = ({ onBuy }) => (
@@ -1583,14 +1509,18 @@ const HomeView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) =>
         {/* Tagline */}
         <div className="flex flex-col items-center gap-6 my-8 md:my-12 relative z-10">
           <p className="font-mono text-lg md:text-3xl tracking-[0.2em] uppercase font-black max-w-6xl mx-auto px-4 leading-tight text-[#00F3FF] drop-shadow-[0_0_15px_rgba(0,243,255,0.8)] text-center bg-black py-3 rounded-lg border-y border-[#00F3FF]/20 shadow-lg">
-              ALGORITHMIC RISK MITIGATION & GOVERNANCE
+              THE ADAPTIVE GOVERNOR FOR MISSION-CRITICAL ARCHITECTURE
           </p>
           <div className="h-[2px] w-40 md:w-64 bg-gradient-to-r from-transparent via-[#00F3FF] to-transparent opacity-70 shadow-[0_0_10px_#00F3FF]"></div>
           
           <div className="max-w-5xl mx-auto bg-black/80 backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] transform hover:scale-[1.02] transition-transform duration-500">
               <p className="font-sans text-lg md:text-3xl tracking-widest uppercase leading-relaxed font-bold text-white drop-shadow-md text-center">
-                  PREDICTIVE STABILITY DIAGNOSTICS FOR <br className="hidden md:block" /> 
-                  <span className="text-[#00F3FF] border-b-4 border-[#00F3FF] pb-1" style={{ textShadow: '0 0 20px rgba(0,243,255,0.5)' }}>ENTERPRISE INFRASTRUCTURE</span>
+                  WE DO NOT MANAGE VULNERABILITIES.
+                  <br /> 
+                  <br />
+                  <span className="text-[#00F3FF] border-b-4 border-[#00F3FF] pb-1 block" style={{ textShadow: '0 0 20px rgba(0,243,255,0.5)' }}>
+                      WE ENGINEER SYSTEMIC INVULNERABILITY.
+                  </span>
               </p>
           </div>
         </div>
@@ -1638,14 +1568,14 @@ const HomeView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) =>
                   </h3>
                   
                   <h2 className="text-4xl md:text-5xl font-black text-white mb-8 tracking-tighter uppercase leading-[1.1] relative z-20" style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}>
-                      Enterprise Risk & <br/>
-                      <span className="text-[#00F3FF]" style={{ textShadow: '0 0 15px rgba(0,243,255,0.8)' }}>Stability Infrastructure</span>
+                      Absolute Algorithmic <br/>
+                      <span className="text-[#00F3FF]" style={{ textShadow: '0 0 15px rgba(0,243,255,0.8)' }}>Entropy Governance</span>
                   </h2>
                   
                   <p className="text-gray-200 leading-relaxed font-light text-xl md:text-2xl border-l-4 border-[#00F3FF] pl-6 relative z-20">
-                      A.I.C.E. Systems Corp. provides autonomous risk control software. We help organizations monitor, stabilize, and govern unpredictable system behavior in real-time. 
+                      We secure the modern grid. A.I.C.E. wraps complex infrastructure—from AI clusters to energy meshes—in a deterministic veto, mathematically halting catastrophic logic failures before they execute. 
                       <br/><br/>
-                      <span className="text-white font-medium">Our governor detects instability early, explains system anomalies, and neutralizes risk before it triggers catastrophic downtime.</span>
+                      <span className="text-white font-medium">We deliver incontrovertible proof of system stability. You maintain absolute operational independence; we ensure the architecture never collapses. 🐦‍🔥</span>
                   </p>
               </div>
 
@@ -1666,21 +1596,21 @@ const HomeView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) =>
                   </h2>
                   
                   <p className="text-gray-200 leading-relaxed font-light text-xl md:text-2xl mb-12 relative z-20">
-                      We are a B2B technology provider. Our revenue channels are strictly defined and executed through scale-based corporate contracts.
+                      We license sovereign infrastructure protection to global enterprises. Our deployment vectors ensure immediate neutralization of volatile data anomalies.
                   </p>
                   
                   <ul className="space-y-6 font-mono text-base md:text-xl text-gray-200 relative z-20">
                       <li className="flex items-center gap-6 border-b border-white/10 pb-4 group cursor-default hover:text-[#FFD700] transition-colors duration-300">
                           <div className="w-3 h-3 bg-[#FFD700] rounded-full shadow-[0_0_12px_#FFD700] group-hover:scale-150 transition-transform"></div>
-                          <span className="font-bold tracking-widest uppercase">Enterprise API Licensing</span>
+                          <span className="font-bold tracking-widest uppercase">Neutralize AI Hallucinations</span>
                       </li>
                       <li className="flex items-center gap-6 border-b border-white/10 pb-4 group cursor-default hover:text-[#FFD700] transition-colors duration-300">
                           <div className="w-3 h-3 bg-[#FFD700] rounded-full shadow-[0_0_12px_#FFD700] group-hover:scale-150 transition-transform"></div>
-                          <span className="font-bold tracking-widest uppercase">Pilot Program Deployments</span>
+                          <span className="font-bold tracking-widest uppercase">Dampen High-Velocity Latency</span>
                       </li>
                       <li className="flex items-center gap-6 group cursor-default hover:text-[#FFD700] transition-colors duration-300">
                           <div className="w-3 h-3 bg-[#FFD700] rounded-full shadow-[0_0_12px_#FFD700] group-hover:scale-150 transition-transform"></div>
-                          <span className="font-bold tracking-widest uppercase">Sovereign Hardware Integration</span>
+                          <span className="font-bold tracking-widest uppercase">Prevent Grid Cascade Failures</span>
                       </li>
                   </ul>
               </div>
@@ -1801,7 +1731,7 @@ const HomeView: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) =>
                   <div className="flex flex-col sm:flex-row gap-4 w-full relative z-10 mt-4">
                       {/* HOW IT WORKS ROUTER */}
                       <button onClick={(e) => { e.stopPropagation(); setView('HOW_IT_WORKS'); }} className="flex-1 py-4 bg-[#00F3FF] text-black font-black uppercase tracking-widest text-xs md:text-sm hover:bg-white transition-all rounded-xl shadow-[0_0_30px_rgba(0,243,255,0.5)] flex items-center justify-center gap-2 group-hover:scale-[1.02]">
-                          <Wrench size={16} className="text-black" /> THE MACHINERY
+                          <Wrench size={16} className="text-black" /> HOW IT WORKS // THE MACHINERY
                       </button>
                       
                       {/* NEW: TELEMETRY VAULT ROUTER */}
@@ -1909,7 +1839,7 @@ const Footer: React.FC<{
   userTier: string,
   handleDisconnect: () => void
 }> = ({ setView, onOpenDoc, openLogin, user, userTier, handleDisconnect }) => (
-  <footer className="relative z-20 bg-[#050505] border-t border-white/10 pt-16 pb-10 mt-0">
+  <footer className="relative z-20 bg-[#050505] border-t border-white/10 pt-16 mt-0">
     <div className="max-w-[95rem] mx-auto px-6 mb-16">
       
       {/* PERFECT 4-COLUMN GRID (EQUAL SPACING LEFT TO RIGHT) */}
@@ -1927,7 +1857,7 @@ const Footer: React.FC<{
             </span>
           </button>
           
-          <p className="text-gray-400 text-sm leading-relaxed mb-8 font-mono">
+          <p className="text-gray-300 text-base leading-relaxed mb-8 font-mono">
             B2B Enterprise Software Solutions.<br/>
             Algorithmic Risk Mitigation & System Stability Governance.
           </p>
@@ -1987,6 +1917,23 @@ const Footer: React.FC<{
               <li><button onClick={() => setView('DEVELOPERS')} className="text-gray-400 hover:text-white transition-colors">Developer Nexus</button></li>
               <li><button onClick={() => setView('PILOT_PROGRAMS')} className="text-gray-400 hover:text-white transition-colors">Pilot Programs</button></li>
               <li><button onClick={() => setView('INSTITUTIONAL')} className="text-gray-400 hover:text-white transition-colors">Sovereign Grant</button></li>
+              <li><button onClick={() => setView('FORUM')} className="text-gray-400 hover:text-white transition-colors">Forums</button></li>
+              <li>
+                <button 
+                  onClick={() => setView('MATRIX_PDF')} 
+                  className="text-[#00F3FF] font-bold hover:text-white transition-colors flex items-center gap-2"
+                >
+                  GLOBAL MATRIX 🐦‍🔥
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => setView('FEATURES')} 
+                  className="text-[#00F3FF] font-bold hover:text-white transition-colors flex items-center gap-2"
+                >
+                  ENTERPRISE FEATURES
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -1996,16 +1943,15 @@ const Footer: React.FC<{
           <div>
             <h4 className="text-[#00F3FF] font-mono font-black tracking-[0.15em] text-sm mb-6">GOVERNANCE</h4>
             <ul className="space-y-3 text-sm">
-              {/* Removed highlight from About Us */}
               <li><button onClick={() => setView('ABOUT')} className="text-gray-400 hover:text-white transition-colors">About Us / Mission</button></li>
               <li><button onClick={() => onOpenDoc('WHITEPAPER')} className="text-gray-400 hover:text-white transition-colors">Technical White Paper</button></li>
               <li><button onClick={() => onOpenDoc('PATENT')} className="text-gray-400 hover:text-white transition-colors">Patent Filings</button></li>
-              <li><button onClick={() => setView('TERMS_OF_SERVICE')} className="text-gray-400 hover:text-white transition-colors">Terms of Service</button></li>
-              <li><button onClick={() => setView('REFUND_POLICY')} className="text-gray-400 hover:text-white transition-colors">Refund Policy</button></li>
-              <li><button onClick={() => setView('PRIVACY_POLICY')} className="text-gray-400 hover:text-white transition-colors">Privacy Policy</button></li>
-              <li><button onClick={() => setView('AML_POLICY')} className="text-gray-400 hover:text-white transition-colors">AML Policy</button></li>
+              <li><button onClick={() => setView('SECURITY_COMPLIANCE')} className="text-gray-400 hover:text-white transition-colors">Security Overview</button></li>
               <li><button onClick={() => setView('ACCEPTABLE_USE')} className="text-gray-400 hover:text-white transition-colors">Acceptable Use</button></li>
-              <li><button onClick={() => setView('COMPLIANCE')} className="text-[#00F3FF] hover:text-white transition-colors font-bold tracking-widest flex items-center gap-2"><ShieldCheck size={14} /> REGULATORY COMPLIANCE</button></li>
+              <li><button onClick={() => setView('PRIVACY_POLICY')} className="text-gray-400 hover:text-white transition-colors">Privacy Policy</button></li>
+              <li><button onClick={() => setView('TERMS_OF_SERVICE')} className="text-gray-400 hover:text-white transition-colors">Terms of Service</button></li>
+              <li><button onClick={() => setView('VENDOR_SUB_LIST')} className="text-gray-400 hover:text-white transition-colors">Vendors & Subprocessors</button></li>
+              <li><button onClick={() => setView('COMPLIANCE')} className="text-[#00F3FF] hover:text-white transition-colors font-bold tracking-widest flex items-center gap-2 mt-2"><ShieldCheck size={14} /> REGULATORY COMPLIANCE</button></li>
             </ul>
           </div>
           <div>
@@ -2027,15 +1973,15 @@ const Footer: React.FC<{
             </h4>
             <ul className="space-y-4 text-sm">
               <li>
-                <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">DEPLOYMENTS</span>
+                <span className="block text-[10px] text-gray-300 mb-1 tracking-widest font-bold">DEPLOYMENTS</span>
                 <a href="mailto:pilot@aice.network" className="text-white hover:text-[#00F3FF] transition-colors font-mono block break-all">pilot@aice.network</a>
               </li>
               <li>
-                <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">SUPPORT</span>
+                <span className="block text-[10px] text-gray-300 mb-1 tracking-widest font-bold">SUPPORT</span>
                 <a href="mailto:support@aice.network" className="text-white hover:text-[#00F3FF] transition-colors font-mono block break-all">support@aice.network</a>
               </li>
               <li>
-                <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">FINANCIAL DISPATCH</span>
+                <span className="block text-[10px] text-gray-300 mb-1 tracking-widest font-bold">FINANCIAL DISPATCH</span>
                 <a href="mailto:finance@aice.network" className="text-white hover:text-[#00F3FF] transition-colors font-mono block break-all">finance@aice.network</a>
               </li>
               {/* --- NEW CONTACT US LINK INJECTED HERE --- */}
@@ -2047,6 +1993,14 @@ const Footer: React.FC<{
                   <Terminal size={14} /> INTAKE FORM / CONTACT US
                 </button>
               </li>
+              <li className="pt-2">
+                <button 
+                  onClick={() => setView('CAREERS')} 
+                  className="text-[#00F3FF] hover:text-white transition-colors font-mono font-bold tracking-widest text-xs flex items-center gap-2"
+                >
+                  <UserPlus size={14} /> THE ARCHITECTS / CAREERS
+                </button>
+              </li>
             </ul>
           </div>
           <div>
@@ -2055,7 +2009,7 @@ const Footer: React.FC<{
             </h4>
             <ul className="space-y-4 text-sm">
               <li>
-                <span className="block text-[10px] text-gray-500 mb-1 tracking-widest">A.I.C.E. SYSTEMS CORP.</span>
+                <span className="block text-[10px] text-gray-300 mb-1 tracking-widest font-bold uppercase">A.I.C.E. SYSTEMS CORP.</span>
                 <span className="text-white font-mono block text-xs leading-relaxed mt-2 border-l-2 border-[#00F3FF]/50 pl-3">
                   200 Edgar Ln<br />
                   Sherwood Park, AB T8H 2X6<br />
@@ -2068,46 +2022,41 @@ const Footer: React.FC<{
         </div>
 
       </div>
-
-      {/* FULL-WIDTH COMPLIANCE DECLARATION TO SQUARE OFF THE BOTTOM */}
-      <div className="w-full p-6 border border-[#00F3FF]/20 bg-[#00F3FF]/5 rounded-xl text-[10px] md:text-xs text-gray-400 font-mono leading-relaxed shadow-inner">
-        <strong className="text-[#00F3FF]">FINANCIAL COMPLIANCE DECLARATION:</strong> A.I.C.E. Systems Corp. is exclusively an enterprise Software-as-a-Service (SaaS) provider. We provide autonomous system monitoring and stabilization within defined computational environments. <strong className="text-white">We do not execute trades, move funds, act as a custodian, or interact directly with client financial ledgers.</strong> All licensing transactions are strictly B2B and processed via regulated, third-party Tier-1 payment gateways.
-      </div>
-
     </div>
 
     {/* PREMIUM COMPLIANCE BAR — 2026 FORTUNE-500 SECURITY SHOWCASE */}
-    <div className="border-t border-white/10 bg-black/90 py-6">
-      <div className="max-w-[95rem] mx-auto px-6">
+    <div className="border-t border-white/10 bg-black pt-8 pb-12 w-full">
+      <div className="max-w-[95rem] mx-auto px-6 flex flex-col items-center gap-6">
 
-        <div className="flex flex-wrap items-center justify-start gap-8 md:gap-16">
-          <div className="flex items-center text-[10px] font-mono text-gray-500">
-            <span>© 2026 A.I.C.E. PROTOCOL. ALL RIGHTS RESERVED.</span>
+        {/* SECURITY BADGES (CENTERED) */}
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-[10px]">
+          <div className="flex items-center gap-1.5 group">
+            <ShieldCheck size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">SOC 2 TYPE II</span>
           </div>
-
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-[10px]">
-            <div className="flex items-center gap-1.5 group">
-              <ShieldCheck size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-gray-400 group-hover:text-white transition-colors">SOC 2 TYPE II</span>
-            </div>
-            <div className="flex items-center gap-1.5 group">
-              <Lock size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-gray-400 group-hover:text-white transition-colors">AES-256 + QUANTUM</span>
-            </div>
-            <div className="flex items-center gap-1.5 group">
-              <Server size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-gray-400 group-hover:text-white transition-colors">AIR-GAPPED ENCLAVES</span>
-            </div>
-            <div className="flex items-center gap-1.5 group">
-              <Shield size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-gray-400 group-hover:text-white transition-colors">ZERO-TRUST ARCHITECTURE</span>
-            </div>
-            <div className="flex items-center gap-1.5 group">
-              <Fingerprint size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-gray-400 group-hover:text-white transition-colors">ISO 27001 CERTIFIED</span>
-            </div>
+          <div className="flex items-center gap-1.5 group">
+            <Lock size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">AES-256 + QUANTUM</span>
+          </div>
+          <div className="flex items-center gap-1.5 group">
+            <Server size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">AIR-GAPPED ENCLAVES</span>
+          </div>
+          <div className="flex items-center gap-1.5 group">
+            <Shield size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">ZERO-TRUST ARCHITECTURE</span>
+          </div>
+          <div className="flex items-center gap-1.5 group">
+            <Fingerprint size={14} className="text-[#00F3FF] group-hover:scale-110 transition-transform" />
+            <span className="font-medium text-gray-400 group-hover:text-white transition-colors">ISO 27001 CERTIFIED</span>
           </div>
         </div>
+
+        {/* COPYRIGHT (BOTTOM CENTER) */}
+        <div className="flex items-center justify-center text-[10px] font-mono text-gray-600 mt-2">
+          <span>© 2026 A.I.C.E. SYSTEMS CORP. ALL RIGHTS RESERVED.</span>
+        </div>
+
       </div>
     </div>
   </footer>
@@ -2125,6 +2074,111 @@ const Footer: React.FC<{
 */
 
 // --- MASTER COMPONENT (SCROLL PHYSICS & LAYOUT FIX) ---
+
+// --- NEW TACTICAL COMMAND DOCK COMPONENT (GHOST BREATHING SEQUENCE) ---
+const TacticalCommandDock: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
+  const [isIdle, setIsIdle] = useState(false);
+  const hoverRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+      hoverRef.current = true;
+      setIsIdle(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
+
+  const handleMouseLeave = () => {
+      hoverRef.current = false;
+      // Wait exactly 3 seconds after mouse leaves before starting the breathing sequence
+      timeoutRef.current = setTimeout(() => {
+          if (!hoverRef.current) setIsIdle(true);
+      }, 3000);
+  };
+
+  // Start the idle timer on initial mount
+  useEffect(() => {
+      handleMouseLeave();
+      return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+  }, []);
+
+  return (
+      <div 
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          /* Tightened chassis: w-[170px] reduces lateral bleed */
+          className={`absolute top-32 left-4 z-[100] hidden md:flex flex-col w-[170px] bg-black/30 backdrop-blur-md border border-white/10 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.6)] overflow-hidden animate-in slide-in-from-left-8 duration-1000 ease-out delay-500 group/dock hover:bg-black/50 hover:backdrop-blur-xl hover:border-[#00F3FF]/50 hover:shadow-[0_0_40px_rgba(0,243,255,0.2)] transition-all duration-500 ${isIdle ? 'dock-idle-cont' : ''}`}
+      >
+          {/* INJECTED CSS FOR THE 17-SECOND ROLLING SEQUENCE (12s active + 5s pause) */}
+          <style>{`
+            @keyframes pulse-b1 {
+              0%, 17.6%, 100% { border-color: rgba(255,255,255,0.1); box-shadow: none; }
+              8.8% { border-color: rgba(255,255,255,0.7); box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+            }
+            @keyframes pulse-b2 {
+              0%, 17.6%, 100% { border-color: rgba(0,243,255,0.2); box-shadow: none; }
+              8.8% { border-color: rgba(0,243,255,0.9); box-shadow: 0 0 15px rgba(0,243,255,0.6); }
+            }
+            @keyframes pulse-b3 {
+              0%, 17.6%, 100% { border-color: rgba(255,69,0,0.2); box-shadow: none; }
+              8.8% { border-color: rgba(255,69,0,0.9); box-shadow: 0 0 15px rgba(255,69,0,0.6); }
+            }
+            @keyframes pulse-cont {
+              0%, 17.6%, 100% { border-color: rgba(255,255,255,0.1); box-shadow: 0 0 50px rgba(0,0,0,0.6); }
+              8.8% { border-color: rgba(0,243,255,0.8); box-shadow: 0 0 40px rgba(0,243,255,0.4); }
+            }
+            .dock-idle-b1 { animation: pulse-b1 17s infinite ease-in-out; animation-delay: 0s; }
+            .dock-idle-b2 { animation: pulse-b2 17s infinite ease-in-out; animation-delay: 3s; }
+            .dock-idle-b3 { animation: pulse-b3 17s infinite ease-in-out; animation-delay: 6s; }
+            .dock-idle-cont { animation: pulse-cont 17s infinite ease-in-out; animation-delay: 9s; }
+          `}</style>
+
+          {/* DOCK HEADER */}
+          <div className="px-4 pt-4 pb-1.5 border-b border-white/5 bg-gradient-to-b from-[#00F3FF]/5 to-transparent relative z-10 opacity-80 group-hover/dock:opacity-100 transition-opacity duration-500">
+              <div className="flex items-center gap-2 mb-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#00F3FF] animate-pulse shadow-[0_0_8px_#00F3FF]"></div>
+                  <span className="text-[11px] font-mono font-black text-[#00F3FF] tracking-[0.15em] uppercase">Tactical Uplink</span>
+              </div>
+              <p className="text-[8px] text-gray-400 font-mono tracking-[0.1em] uppercase">Explore • Verify • Deploy</p>
+          </div>
+
+          {/* THE BUTTON MATRIX */}
+          <div className="flex flex-col px-2 pt-1 pb-2 gap-1.5 relative z-10 transition-opacity duration-500">
+              
+              {/* BUTTON 1: HOW IT WORKS */}
+              <button onClick={() => setView('HOW_IT_WORKS')} className={`relative w-full flex items-center gap-2.5 px-2.5 py-2.5 bg-white/10 border border-white/10 rounded-xl transition-all duration-300 group hover:scale-[1.05] hover:z-10 hover:bg-black overflow-hidden ${isIdle ? 'dock-idle-b1' : ''}`}>
+                  <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-white/50 group-hover:shadow-[inset_0_0_15px_rgba(255,255,255,0.15),0_0_15px_rgba(255,255,255,0.3)] transition-all duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out pointer-events-none"></div>
+                  <Wrench size={16} className="text-gray-300 group-hover:text-white transition-colors relative z-10 shrink-0" />
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-white uppercase transition-colors relative z-10 text-left">How It Works</span>
+              </button>
+
+              {/* BUTTON 2: TELEMETRY VAULT */}
+              <button onClick={() => setView('TELEMETRY')} className={`relative w-full flex items-center gap-2.5 px-2.5 py-2.5 bg-[#00F3FF]/10 border border-[#00F3FF]/20 rounded-xl transition-all duration-300 group hover:scale-[1.05] hover:z-10 hover:bg-black overflow-hidden ${isIdle ? 'dock-idle-b2' : ''}`}>
+                  <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-[#00F3FF] group-hover:shadow-[inset_0_0_15px_rgba(0,243,255,0.25),0_0_15px_rgba(0,243,255,0.4)] transition-all duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00F3FF]/20 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out pointer-events-none"></div>
+                  <Database size={16} className="text-[#00F3FF] relative z-10 group-hover:drop-shadow-[0_0_5px_#00F3FF] shrink-0" />
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-white uppercase transition-colors relative z-10 text-left">Telemetry Vault</span>
+              </button>
+
+              {/* BUTTON 3: PILOT PROGRAMS */}
+              <button onClick={() => setView('PILOT_PROGRAMS')} className={`relative w-full flex items-center gap-2.5 px-2.5 py-2.5 bg-orange-500/10 border border-orange-500/20 rounded-xl transition-all duration-300 group hover:scale-[1.05] hover:z-10 hover:bg-black overflow-hidden ${isIdle ? 'dock-idle-b3' : ''}`}>
+                  <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-orange-500 group-hover:shadow-[inset_0_0_15px_rgba(255,69,0,0.25),0_0_15px_rgba(255,69,0,0.4)] transition-all duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-500/20 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out pointer-events-none"></div>
+                  <ClipboardCheck size={16} className="text-orange-500 relative z-10 group-hover:drop-shadow-[0_0_5px_#FF4500] shrink-0" />
+                  <span className="text-[10px] font-mono font-bold tracking-widest text-white uppercase transition-colors relative z-10 text-left">Pilot Programs</span>
+              </button>
+          </div>
+
+          {/* DOCK FOOTER */}
+          <div className="px-4 py-3 bg-black/40 border-t border-white/5 flex items-center justify-between relative z-10 opacity-80 group-hover/dock:opacity-100 transition-opacity duration-500">
+              <span className="text-[8px] font-mono text-gray-500 tracking-widest uppercase">System Status:</span>
+              <span className="text-[8px] font-mono text-green-500 tracking-widest uppercase font-bold flex items-center gap-1.5">
+                  <CheckCircle2 size={12} /> ONLINE
+              </span>
+          </div>
+      </div>
+  );
+};
 
 const PATH_TO_VIEW: Record<string, ViewState> = {
   "/": "HOME",
@@ -2145,6 +2199,7 @@ const PATH_TO_VIEW: Record<string, ViewState> = {
   "/privacy": "PRIVACY_POLICY",
   "/compliance-briefing": "COMPLIANCE",
   "/aml-policy": "AML_POLICY",
+  "/information-security": "ISP_POLICY",
   "/acceptable-use": "ACCEPTABLE_USE",
   "/transmission": "TRANSMISSION_READER",
   "/godsbrainbook": "THE_SPARK",
@@ -2157,7 +2212,12 @@ const PATH_TO_VIEW: Record<string, ViewState> = {
   "/command-deck": "COMMAND_DECK",
   "/secure-portal": "SECURE_PORTAL",
   "/contact_us": "CONTACT_US",
-  "/catastrophe": "CATASTROPHE"
+  "/catastrophe": "CATASTROPHE",
+  "/matrix": "MATRIX_PDF",
+  "/security-overview": "SECURITY_COMPLIANCE",
+  "/vendor-subprocessors": "VENDOR_SUB_LIST",
+  "/enterprise-features": "FEATURES",
+  "/careers": "CAREERS"
 };
 
 const VIEW_TO_PATH: Record<ViewState, string> = {
@@ -2181,6 +2241,7 @@ const VIEW_TO_PATH: Record<ViewState, string> = {
   PRIVACY_POLICY: "/privacy",
   COMPLIANCE: "/compliance-briefing",
   AML_POLICY: "/aml-policy",
+  ISP_POLICY: "/information-security",
   ACCEPTABLE_USE: "/acceptable-use",
   TRANSMISSION_READER: "/transmission",
   THE_SPARK: "/godsbrainbook",
@@ -2191,7 +2252,12 @@ const VIEW_TO_PATH: Record<ViewState, string> = {
   COMMAND_DECK: "/command-deck",
   SECURE_PORTAL: "/secure-portal",
   CONTACT_US: "/contact_us",
-  CATASTROPHE: "/catastrophe"
+  CATASTROPHE: "/catastrophe",
+  MATRIX_PDF: "/matrix",
+  SECURITY_COMPLIANCE: "/security-overview",
+  VENDOR_SUB_LIST: "/vendor-subprocessors",
+  FEATURES: "/enterprise-features",
+  CAREERS: "/careers"
 };
 
 const routeTitles: Record<ViewState, string> = {
@@ -2215,6 +2281,7 @@ const routeTitles: Record<ViewState, string> = {
   PRIVACY_POLICY: "A.I.C.E. // PRIVACY POLICY",
   COMPLIANCE: "A.I.C.E. // COMPLIANCE BRIEFING",
   AML_POLICY: "A.I.C.E. // AML POLICY",
+  ISP_POLICY: "A.I.C.E. // INFO SECURITY POLICY",
   ACCEPTABLE_USE: "A.I.C.E. // ACCEPTABLE USE",
   TRANSMISSION_READER: "A.I.C.E. // TRANSMISSION",
   THE_SPARK: "THE GOD'S BRAIN THEORY",
@@ -2225,7 +2292,12 @@ const routeTitles: Record<ViewState, string> = {
   COMMAND_DECK: "A.I.C.E. // COMMAND DECK",
   SECURE_PORTAL: "A.I.C.E. // SECURE PORTAL",
   CONTACT_US: "A.I.C.E. // CONTACT US",
-  CATASTROPHE: "A.I.C.E. // CATASTROPHE LOGS"
+  CATASTROPHE: "A.I.C.E. // CATASTROPHE LOGS",
+  MATRIX_PDF: "A.I.C.E. // GLOBAL MATRIX",
+  SECURITY_COMPLIANCE: "A.I.C.E. // SECURITY OVERVIEW",
+  VENDOR_SUB_LIST: "A.I.C.E. // VENDORS & SUBPROCESSORS",
+  FEATURES: "A.I.C.E. // ENTERPRISE FEATURES",
+  CAREERS: "A.I.C.E. // JOIN A.I.C.E."
 };
 
 const viewFromPath = (path: string): ViewState => PATH_TO_VIEW[path] ?? "HOME";
@@ -2244,6 +2316,21 @@ const AppContent: React.FC = () => {
   const [navVisible, setNavVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
  
+  // --- NEW: VIDEO CONTROL STATE & REF ---
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+
+  const toggleVideo = () => {
+      if (videoRef.current) {
+          if (isVideoPlaying) {
+              videoRef.current.pause();
+          } else {
+              videoRef.current.play();
+          }
+          setIsVideoPlaying(!isVideoPlaying);
+      }
+  };
+
   const handleDisconnect = async () => {
       try {
           await signOut(auth);
@@ -2407,7 +2494,7 @@ const AppContent: React.FC = () => {
   // Doc Content Logic
   // UPDATE 3: Map document types to PDF file paths
   const getDocContent = (type: DocType) => {
-    if (type === 'WHITEPAPER') return { title: 'TECHNICAL WHITE PAPER v1.1', fileUrl: DOC_LINKS.WHITEPAPER };
+    if (type === 'WHITEPAPER') return { title: 'A.I.C.E. PUBLIC WHITE PAPER', fileUrl: DOC_LINKS.WHITEPAPER };
     if (type === 'TOS') return { title: 'TERMS OF SERVICE', fileUrl: DOC_LINKS.LEGAL_BUNDLE };
     if (type === 'PRIVACY') return { title: 'PRIVACY POLICY', fileUrl: DOC_LINKS.LEGAL_BUNDLE };
     if (type === 'PATENT') return { title: 'OFFICIAL PATENT FILINGS', fileUrl: DOC_LINKS.PATENT };
@@ -2460,7 +2547,9 @@ const AppContent: React.FC = () => {
 
       {/* BACKGROUND LAYER — APEX VECTOR VIDEO (HOME) & STATIC FALLBACKS (OTHER VIEWS) */}
       {view === 'HOME' ? (
+        <>
           <video
+            ref={videoRef}
             autoPlay
             loop
             muted
@@ -2470,20 +2559,38 @@ const AppContent: React.FC = () => {
             className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none transition-all duration-1000 ease-in-out"
             style={{ objectPosition: 'center 20%' }}
           >
-          {/* Mapped exactly to the updated 19-second loop in your homepage folder */}
-          <source src="/assets/images/homepage/brain-wave-master-loop.webm" type="video/webm" />
-        </video>
+            {/* Mapped exactly to the updated 19-second loop in your homepage folder */}
+            <source src="/assets/images/homepage/brain-wave-master-loop.webm" type="video/webm" />
+          </video>
+          
+          {/* --- DISCREET VIDEO TOGGLE (Scrolls away natively) --- */}
+          <div className="absolute top-[calc(100svh-120px)] right-8 z-[50] hidden md:block">
+             <button 
+                onClick={toggleVideo} 
+                title={isVideoPlaying ? "Pause Background Simulation" : "Resume Background Simulation"}
+                className="p-2.5 bg-black/30 backdrop-blur-md border border-white/10 rounded-full text-white/30 hover:text-[#00F3FF] hover:border-[#00F3FF]/50 hover:bg-black/60 transition-all shadow-lg group"
+             >
+                {isVideoPlaying ? (
+                    <Pause size={14} className="group-hover:scale-110 transition-transform" />
+                ) : (
+                    <Play size={14} className="group-hover:scale-110 transition-transform ml-[2px]" />
+                )}
+             </button>
+          </div>
+        </>
       ) : (
 
         <div 
           className="absolute inset-0 z-0 pointer-events-none bg-black transition-all duration-1000 ease-in-out"
           style={{
             backgroundImage: `url(${BACKGROUNDS[view]})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center 80px',
+            backgroundSize: view === 'PILOT_PROGRAMS' ? 'cover' : 'cover',
+            /* Shift the origin to the absolute top for Diagnostics, leave standard offset for others */
+            backgroundPosition: view === 'PILOT_PROGRAMS' ? 'center top' : 'center 80px',
             backgroundRepeat: 'no-repeat',
             opacity: view === 'SALES' ? 0 : 1,
-            transform: 'scale(1.05)',
+            /* Apply a targeted Y-axis expansion matrix to pull the image lower on the screen */
+            transform: view === 'PILOT_PROGRAMS' ? 'scaleX(1.05) scaleY(1.15) translateY(2%)' : 'scale(1.05)',
             filter: 'none',
           }}
         />
@@ -2541,20 +2648,8 @@ const AppContent: React.FC = () => {
           </div>
       )}
 
-      {/* DESKTOP SIDEBAR */}
-      <div className="absolute top-32 left-8 z-50 hidden md:flex flex-col gap-4 animate-in slide-in-from-left-4 duration-700 delay-500">
-          <button onClick={() => setView('HOW_IT_WORKS')} className="flex items-center gap-3 px-4 py-2 border border-white/20 bg-black/60 backdrop-blur-sm rounded hover:border-[#00F3FF] transition-all group">
-              <Wrench size={16} className="text-[#00F3FF]" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-[#00F3FF] uppercase">How It Works</span>
-          </button>
-          
-          <button onClick={() => setView('TELEMETRY')} className="flex items-center gap-3 px-4 py-2 border border-[#00F3FF]/30 bg-black/60 backdrop-blur-sm rounded hover:border-[#00F3FF] transition-all group shadow-[0_0_15px_rgba(0,243,255,0.15)]">
-              <Database size={16} className="text-[#00F3FF]" /> <span className="text-[10px] font-mono font-bold tracking-widest text-[#00F3FF] group-hover:text-white uppercase drop-shadow-[0_0_5px_rgba(0,243,255,0.5)]">Telemetry Vault</span>
-          </button>
-
-          <button onClick={() => setView('PILOT_PROGRAMS')} className="flex items-center gap-3 px-4 py-2 border border-orange-500/30 bg-black/60 backdrop-blur-sm rounded hover:border-orange-500 transition-all group shadow-[0_0_10px_rgba(255,69,0,0.1)]">
-              <ClipboardCheck size={16} className="text-orange-500" /> <span className="text-[10px] font-mono font-bold tracking-widest text-white group-hover:text-orange-500 uppercase">Pilot Programs</span>
-          </button>
-      </div>
+      {/* DESKTOP SIDEBAR: TACTICAL COMMAND DOCK (HOME VIEW ONLY) */}
+      {view === 'HOME' && <TacticalCommandDock setView={setView} />}
 
       {/* LOCKING TOP GRAPHICS EXCLUSIVELY TO HOME VIEW */}
       {view === 'HOME' && <SystemTicker />} 
@@ -2579,14 +2674,20 @@ const AppContent: React.FC = () => {
                       <div className="bg-white/5 px-4 py-2 border-b border-white/10 text-[8px] text-gray-500 font-mono uppercase tracking-widest flex items-center gap-2">
                           <ShieldCheck size={10} className="text-[#00F3FF]" /> Corporate Governance
                       </div>
-                      <button onClick={(e) => { e.stopPropagation(); setView('TERMS_OF_SERVICE'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
-                          <Scale size={14} /> TERMS OF SERVICE
+                      <button onClick={(e) => { e.stopPropagation(); setView('SECURITY_COMPLIANCE'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
+                          <Shield size={14} /> SECURITY OVERVIEW
                       </button>
-                      <button onClick={(e) => { e.stopPropagation(); setView('REFUND_POLICY'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
-                          <CreditCard size={14} /> REFUND POLICY
+                      <button onClick={(e) => { e.stopPropagation(); setView('ACCEPTABLE_USE'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
+                          <FileText size={14} /> ACCEPTABLE USE
                       </button>
                       <button onClick={(e) => { e.stopPropagation(); setView('PRIVACY_POLICY'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
                           <Eye size={14} /> PRIVACY POLICY
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); setView('TERMS_OF_SERVICE'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
+                          <Scale size={14} /> TERMS OF SERVICE
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); setView('VENDOR_SUB_LIST'); }} className="w-full text-left px-4 py-3 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-[#00F3FF] hover:text-black transition-all flex items-center gap-3">
+                          <Database size={14} /> VENDORS & SUBPROCESSORS
                       </button>
                   </div>
               </div>
@@ -2625,11 +2726,11 @@ const AppContent: React.FC = () => {
                   <div className="absolute top-full left-0 pt-4 hidden group-hover:block w-64 z-[100]">
                     <div className="bg-black/90 backdrop-blur-xl border border-red-500/30 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(239,68,68,0.15)]">
                       <div className="bg-red-500/10 px-4 py-2 border-b border-red-500/20 text-[8px] text-red-500 font-mono uppercase tracking-widest font-bold">
-                        Containment Protocol
+                        Historical Fallout
                       </div>
-                      <button onClick={(e) => { e.stopPropagation(); setView('HOW_IT_WORKS'); }} className="w-full text-left px-4 py-4 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-red-500 hover:text-white transition-all flex items-center gap-3">
-                        <ShieldCheck size={14} className="shrink-0 text-red-500 group-hover:text-white" /> 
-                        NEUTRALIZATION ARCHITECTURE
+                      <button onClick={(e) => { e.stopPropagation(); setView('CATASTROPHE'); }} className="w-full text-left px-4 py-4 text-[10px] font-mono font-bold tracking-widest text-gray-300 hover:bg-red-500 hover:text-white transition-all flex items-center gap-3">
+                        <AlertTriangle size={14} className="shrink-0 text-red-500 group-hover:text-white" /> 
+                        CATASTROPHE LOGS
                       </button>
                     </div>
                   </div>
@@ -2687,7 +2788,7 @@ const AppContent: React.FC = () => {
             {view === 'ENTROPY' && <EntropyView setView={setView} />}
             {view === 'CONTROL' && <ControlView setView={setView} />}
             {view === 'SYSTEM' && <SystemView setView={setView} />}
-            {view === 'CATASTROPHE' && <CatastropheView setView={setView} />}
+            {view === 'CATASTROPHE' && <CatastropheLogs setView={setView} />}
 	    {view === 'CONTACT_US' && <ContactUsPage />}
             {view === 'SALES' && <SalesView openLogin={() => { setLoginMode('login'); setIsLoginOpen(true); }} user={user} />}
             {view === 'BOOK' && (user && ['COMMANDER', 'CLASS_S', 'CLASS_1', 'CLASS_2', 'CLASS_3', 'LEVEL_5'].includes(userTier) ? <BookView onBuy={handlePayment} /> : <div className="pt-40 pb-20 text-red-500 font-bold px-6 text-center font-mono tracking-widest flex flex-col items-center gap-6"><Lock size={64} className="text-red-500 animate-pulse"/><p className="text-2xl uppercase">ACCESS DENIED.<br/>CLEARANCE REQUIRED.</p></div>)}
@@ -2743,12 +2844,18 @@ const AppContent: React.FC = () => {
             {view === 'PRIVACY_POLICY' && <PrivacyPolicy />}
 	    {view === 'COMPLIANCE' && <ComplianceView />}
             {view === 'AML_POLICY' && <AMLPolicy />}
+            {view === 'ISP_POLICY' && <ISPPolicy />}
             {view === 'ACCEPTABLE_USE' && <AcceptableUse />}
             {view === 'TRANSMISSION_SUCCESS' && <TransmissionSuccessPage />}
 	    {view === 'ABOUT' && <AboutUsView />}
             {view === 'TELEMETRY' && <TelemetryVault />}
             {view === 'COMMAND_DECK' && <CommandDeck />}
 	    {view === 'SECURE_PORTAL' && <SecurePortal />}
+ 	    {view === 'MATRIX_PDF' && <GlobalMatrixPDF />}
+	    {view === 'SECURITY_COMPLIANCE' && <SecurityCompliance />}
+	    {view === 'VENDOR_SUB_LIST' && <VendorSubList />}
+	    {view === 'FEATURES' && <EnterpriseFeaturesPage />}
+	    {view === 'CAREERS' && <Careers />}
           </main>
 
           <Footer 
@@ -2775,7 +2882,8 @@ const AppContent: React.FC = () => {
       <GlobalChat /> 
       {/* ----------------------------- */}
       
-      <div className="fixed bottom-8 left-8 z-[90]">
+      <div className="fixed bottom-8 left-8 z-[90] flex flex-col gap-3 items-start">
+         <SystemQueryUplink setView={setView} />
          <button onClick={() => setActiveDoc('WHITEPAPER')} className="flex items-center gap-2 px-4 py-2 bg-black/80 border border-white/10 rounded-lg text-white/50 text-xs font-mono uppercase tracking-widest hover:text-[#00F3FF] hover:border-[#00F3FF] transition-all shadow-lg backdrop-blur-sm">
             <BookOpen size={14} /> WHITE PAPER
          </button>

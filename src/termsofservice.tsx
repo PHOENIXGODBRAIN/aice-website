@@ -43,7 +43,7 @@ export const TermsOfService = () => {
                 Effective Date: March 2026 // Status: IMMUTABLE
             </div>
             <a 
-                href="/assets/images/Terms%20of%20Service/A.I.C.E._TERMS_OF_SERVICE.pdf" 
+                href="/assets/images/Terms%20of%20Service/A.I.C.E.%20Enterprise%20Terms%20of%20Service.pdf" 
                 download 
                 target="_blank"
                 rel="noopener noreferrer"
@@ -55,201 +55,237 @@ export const TermsOfService = () => {
 
         <div className="space-y-12 relative z-10">
 
-          {/* 1. LEGAL ENTITY ALIGNMENT */}
+          {/* 1. LEGAL ENTITY ALIGNMENT & ACCEPTANCE */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">1.</span> Legal Entity Alignment
+              <span className="text-[#00F3FF]">1.</span> Legal Entity Alignment & Acceptance
             </h3>
             <p>
               These Terms of Service constitute a legally binding agreement between you ("User")
-              and <strong className="text-white uppercase tracking-wider">A.I.C.E. Systems Corp.</strong>, a corporation incorporated under the <strong className="text-[#00F3FF]">Canada Business Corporations Act (Corporation No. 1773376-3)</strong>. By utilizing the A.I.C.E. Network, its software, or its literature, you consent to these terms in full. A.I.C.E. Systems Corp. is registered under Corporation No. 1773376-3 and maintains its registered offices throughout Canada. 
+              and <strong className="text-white uppercase tracking-wider">A.I.C.E. Systems Corp.</strong>, a corporation incorporated under the <strong className="text-[#00F3FF]">Canada Business Corporations Act (Corporation No. 1773376-3)</strong>. By utilizing the A.I.C.E. Network, its software, its literature, or its hardware systems, you consent to these terms in full. A.I.C.E. Systems Corp. maintains its registered offices throughout Canada. If you do not agree to these Terms, you must immediately cease all use of the Platform and Services.
             </p>
           </section>
 
-          {/* 2 */}
+          {/* 2. DEFINITIONS */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">2.</span> Operational Assets & Commercial Scope
+              <span className="text-[#00F3FF]">2.</span> Definitions
             </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
-                <strong className="text-white block mb-2"><Terminal size={16} className="inline mr-2 text-[#00F3FF]" />Software Implementations</strong>
-                Adaptive intelligence and entropy control systems.
-              </div>
-              <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
-                <strong className="text-white block mb-2"><Server size={16} className="inline mr-2 text-[#00F3FF]" />Hardware Implementations</strong>
-                Physical and air-gapped processing units.
-              </div>
-            </div>
+            <p className="mb-4">To ensure absolute clarity and enforceability, the following definitions apply throughout this document:</p>
+            <ul className="space-y-3 pl-6 border-l-2 border-[#00F3FF]/50 text-gray-300">
+              <li><strong className="text-white">"Platform"</strong> refers to the A.I.C.E. Network, associated websites, dashboards, and digital infrastructure.</li>
+              <li><strong className="text-white">"Services"</strong> refers to all products offered, including algorithmic trading software, analytical tooling, literature, and hardware implementations.</li>
+              <li><strong className="text-white">"Content"</strong> refers to all text, data, code, architecture, and literature provided by A.I.C.E. Systems Corp.</li>
+              <li><strong className="text-white">"Account"</strong> refers to the secured digital access point provisioned to a User.</li>
+              <li><strong className="text-white">"Subscription"</strong> refers to the recurring billing arrangement for continued access to designated Services.</li>
+              <li><strong className="text-white">"Intellectual Property"</strong> encompasses all patents, copyrights, trade secrets, system architectures, and proprietary algorithms owned by A.I.C.E. Systems Corp.</li>
+            </ul>
           </section>
 
-          {/* 3. IP SOVEREIGNTY & PATENTS */}
+          {/* 3. ELIGIBILITY REQUIREMENTS */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">3.</span> IP Sovereignty & Patents
+              <span className="text-[#00F3FF]">3.</span> Eligibility Requirements
+            </h3>
+            <p>
+              Access to the Platform and Services is restricted to entities and individuals who possess the legal capacity to form a binding contract. You must be at least eighteen (18) years of age. By accessing the Platform, you warrant that you are not located in, under the control of, or a national or resident of any jurisdiction subject to comprehensive Canadian or international economic sanctions.
+            </p>
+          </section>
+
+          {/* 4. ACCOUNT REGISTRATION & SECURITY */}
+          <section>
+            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+              <span className="text-[#00F3FF]">4.</span> Account Registration & Security
+            </h3>
+            <p className="mb-4">
+              Users are mandated to provide precise, current, and complete information during registration. The operational security of your Account remains your exclusive responsibility.
+            </p>
+            <ul className="space-y-2 pl-6 border-l-2 border-white/10 text-gray-400">
+              <li>- You must immediately notify A.I.C.E. Systems Corp. of any unauthorized access or breach of security.</li>
+              <li>- We reserve the right to suspend or terminate Accounts that deploy falsified credentials or exhibit compromised security profiles, acting defensively to protect the Platform's integrity.</li>
+            </ul>
+          </section>
+
+          {/* 5. PRIVACY POLICY INTEGRATION */}
+          <section>
+            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+              <span className="text-[#00F3FF]">5.</span> Privacy Policy Integration
+            </h3>
+            <p>
+              By accessing and utilizing the Platform, you expressly acknowledge and agree to the A.I.C.E. Privacy Policy. The integration of our Privacy Policy dictates the collection, processing, and safeguarding of operational telemetry and user data necessary for system security and entropy control.
+            </p>
+          </section>
+
+          {/* 6. IP SOVEREIGNTY, PATENTS & DIGITAL IDENTIFIERS */}
+          <section>
+            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+              <span className="text-[#00F3FF]">6.</span> IP Sovereignty, Patents & Digital Identifiers
             </h3>
             <p className="mb-6">
-              All System architecture and entropic control laws are the exclusive intellectual property of A.I.C.E. Systems Corp.
+              All System architecture, entropic control laws, and literature ("God's Brain Theory") are the exclusive intellectual property of A.I.C.E. Systems Corp.
             </p>
             <ul className="space-y-6 pl-6 border-l-2 border-[#00F3FF]/50 mb-6">
                 <li>
-                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-[#00F3FF]">A. Global Patent Pending Status (CIPO)</strong> 
-                    <span>Technology is protected under Patent Pending status, including Canadian Patent Applications <strong className="text-white">3,301,227</strong> and <strong className="text-white">3,302,897</strong>. International protection is being pursued through WIPO.</span>
+                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-[#00F3FF]">A. Global Patent Protection (CIPO & WIPO)</strong> 
+                    <span>The A.I.C.E. technology is patented and fully protected under Canadian Patents <strong className="text-white">3,301,227</strong> and <strong className="text-white">3,302,897</strong>. International intellectual property enforcement is actively maintained through WIPO.</span>
                 </li>
                 <li>
-                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-red-500">B. Prohibition on Derivative Works & LLM Manipulation</strong>
-                    <p className="text-gray-300">
-                      Users may not use artificial intelligence systems, including large language models (LLMs), to paraphrase, rewrite, reproduce, or create derivative works from copyrighted material originating from the A.I.C.E. platform without express written authorization.
-                    </p>
+                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-[#00F3FF]">B. Immutable Literary Registration (CERN / ZENODO)</strong>
+                    <p className="text-gray-300">"God's Brain Theory" is cryptographically archived and immutable, secured via Digital Object Identifiers: 10.5281/zenodo.18229619 and 10.5281/zenodo.18209429.</p>
                 </li>
                 <li>
-                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-[#00F3FF]">C. Third-Party Distributors</strong>
-                    <p className="text-gray-300">
-                      Copies of software acquired through external distributors (including but not limited to digital storefronts or publishing platforms) remain subject to the distribution terms of those platforms as well as these Terms. Such third-party acquisitions do not grant additional rights to create derivative works or redistribute the materials.
-                    </p>
+                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-red-500">C. Prohibition on Derivative Works & LLM Manipulation</strong>
+                    <p className="text-gray-300">Users may not utilize artificial intelligence systems, including Large Language Models (LLMs), to paraphrase, rewrite, reproduce, or generate derivative works from copyrighted material originating from the A.I.C.E. platform without express, written authorization.</p>
                 </li>
                 <li>
-                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-[#00F3FF]">D. Reverse Engineering & Model Extraction Prohibition</strong>
-                    <p className="text-gray-300">
-                      Users may not reverse engineer, decompile, disassemble, extract model weights, attempt to replicate, or otherwise derive the source code, proprietary algorithms, model parameters, or system architecture of any A.I.C.E. System without express written permission. Any unauthorized attempt to reproduce or extract intellectual property will be treated as a material breach of these Terms and may result in legal action.
-                    </p>
+                    <strong className="text-white block mb-1 uppercase text-xs tracking-widest text-red-500">D. Reverse Engineering & Model Extraction Prohibition</strong>
+                    <p className="text-gray-300">Users are strictly prohibited from attempting to reverse engineer, decompile, disassemble, extract model weights, replicate, or otherwise derive the source code, proprietary algorithms, model parameters, or system architecture of any A.I.C.E. System. Any unauthorized extraction attempts will trigger immediate legal action and permanent network expulsion.</p>
                 </li>
             </ul>
           </section>
 
-          {/* 4 */}
+          {/* 7. ACCEPTABLE USE POLICY (AUP) */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">4.</span> System Telemetry & Safety Controls
+              <span className="text-[#00F3FF]">7.</span> Acceptable Use Policy (AUP)
+            </h3>
+            <p className="mb-4">Operational stability demands strict adherence to our Acceptable Use Policy. Users shall not:</p>
+            <ul className="space-y-2 pl-6 border-l-2 border-red-500/50 text-gray-400">
+              <li>- Deploy automated scripts, bots, spiders, or scrapers to extract Content or telemetry from the Platform.</li>
+              <li>- Attempt to bypass, disable, or interfere with security-related features, licensing validation, or entropy control protocols.</li>
+              <li>- Utilize the Services for any illegal acts, market manipulation, or unauthorized financial engineering.</li>
+              <li>- Misuse API endpoints or intentionally overload network infrastructure (e.g., DDoS attacks).</li>
+            </ul>
+          </section>
+
+          {/* 8. USER CONTENT & LICENSE GRANT */}
+          <section>
+            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+              <span className="text-[#00F3FF]">8.</span> User Content & License Grant
             </h3>
             <p>
-              Use of the System may involve collection of operational telemetry strictly necessary for
-              stability, security, and performance monitoring to prevent system runaways. No personal data is sold or shared with third parties except where required by law.
+              Should the User upload, submit, or generate operational data, metadata, or logs within the Platform, the User retains ownership of their distinct data. However, the User grants A.I.C.E. Systems Corp. a perpetual, worldwide, royalty-free license to use, process, and analyze this data strictly for the purposes of system telemetry, algorithmic improvement, and security reinforcement.
             </p>
           </section>
 
-        {/* 5. GOVERNING LAW: THE CANADIAN ANCHOR */}
-          <section className="bg-[#00F3FF]/5 border border-[#00F3FF]/30 p-8 rounded-xl shadow-inner relative">
-            <div className="absolute top-8 right-8 opacity-30"><ShieldCheck size={48} className="text-[#00F3FF]" /></div>
-            <h3 className="text-xl md:text-2xl font-black text-[#00F3FF] uppercase tracking-widest mb-4">
-              5. Governing Law & Jurisdiction
+          {/* 9. SERVICE AVAILABILITY & UPTIME DISCLAIMER */}
+          <section>
+            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+              <span className="text-[#00F3FF]">9.</span> Service Availability & Uptime Disclaimer
             </h3>
-            <p className="text-white relative z-10 font-bold">
-              These Terms and any disputes arising from the use of the System shall be governed by and construed in accordance with the laws of Canada and the Province of Alberta. You consent to the exclusive jurisdiction of the competent courts of Canada and Alberta for the resolution of any dispute relating to these Terms or the System. Nothing in this section limits additional protections, liability limitations, dispute procedures, or class‑action waivers described elsewhere in these Terms.
+            <p>
+              A.I.C.E. Systems Corp. operates high-performance infrastructure but does not guarantee uninterrupted uptime. The Services may be subject to scheduled maintenance windows, network latency, or unforeseen service interruptions. We disclaim any liability for potential losses stemming from platform downtime or execution delays.
             </p>
           </section>
 
-          {/* 6 */}
+          {/* 10. LIABILITY & REFUND POLICY */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">6.</span> Secure Contact Channels
-            </h3>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-sm">
-              <li className="p-4 bg-black/50 border border-white/10 rounded">Legal: <span className="text-[#00F3FF]">admin@aice.network</span></li>
-              <li className="p-4 bg-black/50 border border-white/10 rounded">Support: <span className="text-[#00F3FF]">support@aice.network</span></li>
-              <li className="p-4 bg-black/50 border border-white/10 rounded">Privacy: <span className="text-[#00F3FF]">privacy@aice.network</span></li>
-              <li className="p-4 bg-black/50 border border-white/10 rounded">Billing: <span className="text-[#00F3FF]">finance@aice.network</span></li>
-            </ul>
-          </section>
-
-          {/* 7. FINANCIAL LIABILITY & REFUND SHIELD */}
-          <section>
-            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">7.</span> Liability & Refund Policy
+              <span className="text-[#00F3FF]">10.</span> Liability & Refund Policy
             </h3>
             <p className="mb-4">
-              A.I.C.E. Systems Corp. provides advanced tools for system governance and entropy analysis. All operational deployments are executed at the User's sole risk.
+              A.I.C.E. Systems Corp. engineers tools for advanced algorithmic analysis; we do not provide financial, investment, legal, or tax advice. All market participation is executed at the User's sole risk.
             </p>
-            <ul className="space-y-4 pl-6 border-l-2 border-white/10 text-sm font-mono text-gray-400">
-              <li>- TOTAL LIABILITY CAP: THE GREATER OF (A) TEN THOUSAND (US$10,000) OR (B) THE TOTAL AMOUNT PAID BY THE USER IN THE TWELVE (12) MONTHS PRECEDING THE EVENT GIVING RISE TO THE CLAIM.</li>
-              <li>- A.I.C.E. SHALL NOT BE LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, LOSS OF DATA, LOSS OF BUSINESS OPPORTUNITY, OR SERVICE INTERRUPTION, TO THE MAXIMUM EXTENT PERMITTED BY LAW.</li>
-              <li>- ALL DIGITAL SALES (SOFTWARE, LICENSES, DATA) ARE IRREVERSIBLE AND NON-REFUNDABLE UPON ACCESS.</li>
-              <li>- SUBSCRIPTIONS MAY BE TERMINATED AT ANY TIME VIA DASHBOARD; NO PRORATED REFUNDS ISSUED.</li>
+            <ul className="space-y-4 pl-6 border-l-2 border-white/10 text-sm font-mono text-gray-400 uppercase">
+              <li>- TOTAL LIABILITY CAP: THE GREATER OF (A) TEN THOUSAND DOLLARS (US$10,000) OR (B) THE TOTAL AMOUNT PAID BY THE USER IN THE TWELVE (12) MONTHS PRECEDING THE EVENT GIVING RISE TO THE CLAIM.</li>
+              <li>- LIMITATION OF DAMAGES: A.I.C.E. SHALL NOT BE LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES, INCLUDING LOSS OF PROFITS, DATA, OR BUSINESS OPPORTUNITIES.</li>
+              <li>- REFUND POLICY: ALL DIGITAL SALES (BOOKS, BOTS, DATA) AND CRYPTOCURRENCY TRANSACTIONS ARE FINAL, IRREVERSIBLE, AND NON-REFUNDABLE UPON ACCESS. A.I.C.E. IS NOT RESPONSIBLE FOR BLOCKCHAIN ERRORS OR MISCONFIGURED WALLETS.</li>
             </ul>
           </section>
 
-          {/* 8. WARRANTY DISCLAIMER */}
+          {/* 11. WARRANTY DISCLAIMER */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">8.</span> Warranty Disclaimer
+              <span className="text-[#00F3FF]">11.</span> Warranty Disclaimer
             </h3>
-            <p>
-              THE SYSTEM AND ALL ASSOCIATED SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. A.I.C.E. DOES NOT WARRANT THAT THE SYSTEM WILL BE UNINTERRUPTED, ERROR-FREE, OR COMPLETELY SECURE.
+            <p className="font-mono text-sm uppercase text-gray-400">
+              THE SYSTEM AND ALL ASSOCIATED SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
             </p>
           </section>
 
-          {/* 9 */}
+          {/* 12. TERMINATION & POST-TERMINATION CONSEQUENCES */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">9.</span> No Financial Advice
+              <span className="text-[#00F3FF]">12.</span> Termination & Post-Termination Consequences
+            </h3>
+            <p className="mb-4">
+              A.I.C.E. Systems Corp. reserves the right to suspend or terminate access to the System immediately, without prior notice, for any violation of these Terms.
+            </p>
+            <ul className="space-y-2 pl-6 border-l-2 border-white/10 text-gray-400">
+              <li>- Upon termination, all licenses granted to the User are instantly revoked.</li>
+              <li>- The User must destroy any downloaded proprietary software or classified literature.</li>
+              <li>- No refunds, prorated or otherwise, will be issued upon termination. Provisions relating to IP sovereignty, liability limitations, and indemnification shall survive termination.</li>
+            </ul>
+          </section>
+
+          {/* 13. DMCA & COPYRIGHT COMPLAINT PROCEDURE */}
+          <section>
+            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+              <span className="text-[#00F3FF]">13.</span> DMCA & Copyright Complaint Procedure
             </h3>
             <p>
-              The System does not provide financial, investment, legal, or tax advice. All infrastructural and operational decisions are made solely at the User's risk.
+              A.I.C.E. Systems Corp. respects global intellectual property rights. If you believe your copyrighted work has been infringed upon within our Platform, submit a formal takedown notice including your physical/electronic signature, identification of the infringed work, and your contact parameters to our legal division at <span className="text-[#00F3FF]">admin@aice.network</span>.
             </p>
           </section>
 
-          {/* 10 */}
-          <section>
-            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">10.</span> Termination & Access Control
-            </h3>
-            <p>
-              A.I.C.E. Systems Corp. reserves the right to suspend or terminate access to the System at
-              any time for violations of these Terms or applicable law.
-            </p>
-          </section>
-
-          {/* 11. INDEMNIFICATION */}
-          <section>
-            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">11.</span> Indemnification
-            </h3>
-            <p>
-              You agree to defend, indemnify and hold harmless A.I.C.E. Systems Corp., its officers, directors, employees and agents from and against any claims, liabilities, damages, losses, and expenses, including reasonable legal fees and costs, arising out of or in any way connected with your access to or use of the System, your violation of these Terms, or your breach of any rights of a third party.
-            </p>
-          </section>
-
-          {/* 12. DISPUTE RESOLUTION & CLASS ACTION WAIVER */}
-          <section className="bg-[#00F3FF]/5 border border-[#00F3FF]/30 p-8 rounded-xl shadow-inner relative">
+          {/* 14. DISPUTE RESOLUTION & CLASS ACTION WAIVER */}
+          <section className="bg-[#00F3FF]/5 border border-[#00F3FF]/30 p-8 rounded-xl shadow-inner relative mt-8">
             <div className="absolute top-8 right-8 opacity-30"><ShieldCheck size={48} className="text-[#00F3FF]" /></div>
             <h3 className="text-xl md:text-2xl font-black text-[#00F3FF] uppercase tracking-widest mb-4">
-              12. Dispute Resolution & Class Action Waiver
+              14. Dispute Resolution & Class Action Waiver
             </h3>
-            <p className="text-white relative z-10">
-              To the maximum extent permitted by applicable law, any dispute arising out of or relating to these Terms shall be brought exclusively in the courts located in Alberta, Canada. YOU AND A.I.C.E. AGREE THAT ALL DISPUTES WILL BE RESOLVED INDIVIDUALLY, AND, TO THE MAXIMUM EXTENT PERMITTED BY LAW, YOU WAIVE ANY RIGHT TO PARTICIPATE IN A CLASS ACTION OR REPRESENTATIVE PROCEEDING.
+            <p className="text-white relative z-10 font-bold">
+              To the maximum extent permitted by applicable law, any dispute arising out of or relating to these Terms shall be governed by the laws of Canada and the Province of Alberta. You consent to exclusive jurisdiction in the courts of Alberta, Canada. ALL DISPUTES WILL BE RESOLVED INDIVIDUALLY. YOU EXPRESSLY WAIVE ANY RIGHT TO PARTICIPATE IN A CLASS ACTION OR REPRESENTATIVE PROCEEDING.
             </p>
           </section>
 
-          {/* 13. MISCELLANEOUS */}
+          {/* 15. EXPORT CONTROL & SANCTIONS COMPLIANCE */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">13.</span> Miscellaneous
+              <span className="text-[#00F3FF]">15.</span> Export Control & Sanctions Compliance
             </h3>
             <p>
-              These Terms constitute the entire agreement between you and A.I.C.E. regarding the subject matter herein and supersede any prior agreements. If any provision of these Terms is found to be unenforceable, that provision will be modified to reflect the parties' intention and the remaining provisions will remain in full force and effect.
-              Users may not train, fine-tune, or otherwise use content from this website or the A.I.C.E. platform to create or improve external machine learning models without express written permission. Bulk scraping, crawling, or automated extraction of content for model training is strictly prohibited.
+              Users must comply with all applicable export control laws and economic sanctions regulations of Canada. The platform, software, and related technologies may not be utilized, exported, or transferred to any sanctioned nation, individual, or entity without express government authorization.
             </p>
           </section>
 
-          {/* 14. EXPORT CONTROL */}
+          {/* 16. MISCELLANEOUS & MODIFICATION OF TERMS */}
           <section>
             <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">14.</span> Export Control & Sanctions Compliance
+              <span className="text-[#00F3FF]">16.</span> Miscellaneous & Modification of Terms
             </h3>
             <p>
-              Users agree to comply with all applicable export control laws and economic sanctions regulations of Canada and other relevant jurisdictions. The A.I.C.E. platform, software, and related technologies may not be used, exported, re-exported, or transferred to any country, individual, or entity subject to government embargoes or sanctions without proper authorization.
+              These Terms supersede any prior agreements. If a provision is deemed unenforceable, it will be modified to reflect the strategic intent, leaving the remainder intact. A.I.C.E. Systems Corp. reserves the right to update these Terms at any time; continued use of the Platform dictates immediate acceptance of the updated conditions.
             </p>
           </section>
 
-          {/* 15. MODIFICATION OF TERMS */}
-          <section>
-            <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
-              <span className="text-[#00F3FF]">15.</span> Modification of Terms
+          {/* SCHEDULES OVERVIEW */}
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-white/10">
+            <div className="bg-black/50 border border-white/10 p-6 rounded-xl">
+              <strong className="text-[#00F3FF] block mb-3 uppercase tracking-widest"><BookOpen size={18} className="inline mr-2" />Schedule A: Digital Literature</strong>
+              <p className="text-sm text-gray-400">Purchases of proprietary literature are finalized immediately upon access. Third-party acquisitions grant zero rights for derivative works.</p>
+            </div>
+            <div className="bg-black/50 border border-white/10 p-6 rounded-xl">
+              <strong className="text-[#00F3FF] block mb-3 uppercase tracking-widest"><Terminal size={18} className="inline mr-2" />Schedule B: Algorithmic Software</strong>
+              <p className="text-sm text-gray-400">Licensed access to execution systems. Subscriptions auto-renew. No prorated refunds will be issued for partial usage.</p>
+            </div>
+            <div className="bg-black/50 border border-white/10 p-6 rounded-xl">
+              <strong className="text-[#00F3FF] block mb-3 uppercase tracking-widest"><Server size={18} className="inline mr-2" />Schedule C: Hardware Implementation</strong>
+              <p className="text-sm text-gray-400">Physical tampering or unauthorized housing breaches immediately voids all warranties and licenses.</p>
+            </div>
+          </section>
+
+          {/* CONTACT SECURE CHANNELS */}
+          <section className="pt-6">
+            <h3 className="text-lg font-black text-white uppercase tracking-widest mb-4 flex items-center gap-3">
+              Secure Contact Channels
             </h3>
-            <p>
-              A.I.C.E. Systems Corp. reserves the right to modify or update these Terms of Service at any time. Updated versions will be posted on this page with a revised effective date. Continued use of the website, platform, or associated services after such modifications constitutes acceptance of the updated Terms.
-            </p>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 font-mono text-xs">
+              <li className="p-4 bg-white/5 border border-white/10 rounded">Legal: <span className="text-[#00F3FF] block mt-1">admin@aice.network</span></li>
+              <li className="p-4 bg-white/5 border border-white/10 rounded">Support: <span className="text-[#00F3FF] block mt-1">support@aiprotocol.pro</span></li>
+              <li className="p-4 bg-white/5 border border-white/10 rounded">Privacy: <span className="text-[#00F3FF] block mt-1">privacy@aice.network</span></li>
+              <li className="p-4 bg-white/5 border border-white/10 rounded">Billing: <span className="text-[#00F3FF] block mt-1">billing@aice.network</span></li>
+            </ul>
           </section>
 
         </div>

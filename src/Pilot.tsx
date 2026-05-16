@@ -346,7 +346,23 @@ export const Pilot_Program: React.FC<{ onBuy: (product: string) => void }> = ({ 
 // ──────────────────────────────────────────────────────────────
 export const PilotProgramView: React.FC<{ onOpenDoc: (type: DocType) => void, setView: (v: ViewState) => void }> = ({ onOpenDoc, setView }) => (
   <div className="relative z-10 pt-28 pb-32 px-6 min-h-screen flex flex-col items-center">
-    <SectorHeader title="Enterprise Solutions" subtitle="Deployment & Licensing Architecture" icon={<Server size={48} className="text-[#00F3FF]" />} />
+    {/* CUSTOM ENTERPRISE HEADER WITH STYLIZED PILL BOX */}
+    <div className="flex flex-col items-center text-center mb-4 relative z-20 w-full">
+        <div className="mb-6 bg-[#00F3FF]/10 p-5 rounded-full border border-[#00F3FF]/30 shadow-[0_0_30px_rgba(0,243,255,0.2)]">
+            <Server size={56} className="text-[#00F3FF] drop-shadow-[0_0_15px_rgba(0,243,255,0.8)]" />
+        </div>
+        <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter mb-8 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+            Enterprise Solutions
+        </h2>
+        
+        {/* THE PILL BOX UPGRADE */}
+        <div className="inline-flex items-center justify-center px-10 py-4 bg-[#020202]/95 backdrop-blur-2xl border-2 border-[#00F3FF] rounded-full shadow-[0_0_50px_rgba(0,243,255,0.4)] relative overflow-hidden">
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-[#00F3FF]/10 to-transparent"></div>
+            <span className="text-[#00F3FF] font-black uppercase tracking-[0.25em] text-lg md:text-2xl drop-shadow-[0_0_12px_rgba(0,243,255,0.9)] relative z-10">
+                Deployment & Licensing Architecture
+            </span>
+        </div>
+    </div>
     
     <div className="max-w-[95rem] w-full flex flex-col gap-12 mt-12">
         

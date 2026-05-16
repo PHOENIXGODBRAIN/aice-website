@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   MessageSquare, Lock, ShieldCheck, Cpu, Flame, Users, 
   BookOpen, Plus, X, Send, Globe, Zap, Crown, 
-  Fingerprint, Server, ArrowLeft, Trash2, Edit3, Activity, History, Pin
+  Fingerprint, Server, ArrowLeft, Trash2, Edit3, Activity, History, Pin,
+  Settings, ImagePlus, ChevronDown, ChevronRight, Wrench
 } from 'lucide-react';
 import { 
   collection, addDoc, query, where, orderBy, onSnapshot, 
@@ -38,6 +39,16 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
   const [editContent, setEditContent] = useState('');
   const [editCategory, setEditCategory] = useState(''); // COMMANDER OVERRIDE STATE
 
+  // Operative Optics & Payload States
+  const [userFont, setUserFont] = useState(() => localStorage.getItem('nexus_font') || 'font-mono');
+  const [fontScale, setFontScale] = useState(() => parseFloat(localStorage.getItem('nexus_scale') || '1'));
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [showSettings, setShowSettings] = useState(false);
+
+  // Automatically save preferences to the operative's local machine
+  useEffect(() => { localStorage.setItem('nexus_font', userFont); }, [userFont]);
+  useEffect(() => { localStorage.setItem('nexus_scale', fontScale.toString()); }, [fontScale]);
+
   // Security/Identity States
   const [forumProfile, setForumProfile] = useState<any>(null);
   const [aliasInput, setAliasInput] = useState('');
@@ -57,6 +68,7 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
   const categories = [
     { id: 'PUBLIC_NEXUS', name: 'Public Intelligence', icon: <Globe size={18} />, reqLevel: 6, desc: "Open terminal for general inquiries." },
     { id: 'OPERATIVE_COMMS', name: 'Operative Comms', icon: <Users size={18} />, reqLevel: 5, desc: "Verified deployment strategies." },
+    { id: 'TROUBLESHOOTING', name: 'Troubleshooting', icon: <Wrench size={18} />, reqLevel: 6, desc: "Diagnostic support and system fixes." },
     { id: 'CLASS_3_COMMERCIAL', name: 'Commercial & Edge AI', icon: <Cpu size={18} />, reqLevel: 4, desc: "Class 3 Clearance. Thermal throttling data." },
     { id: 'CLASS_2_ENTERPRISE', name: 'Enterprise Grid', icon: <Server size={18} />, reqLevel: 3, desc: "Class 2 Clearance. Multi-node orchestration." },
     { id: 'CLASS_1_SYSTEMIC', name: 'Systemic & Financial', icon: <Flame size={18} />, reqLevel: 2, desc: "Class 1 Clearance. Yearly Contracts and Investors" },
@@ -98,9 +110,11 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
       const fetched = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       // Sort client-side to bypass complex Firebase indexing requirements
       fetched.sort((a: any, b: any) => {
+          if (a.isMasterPinned && !b.isMasterPinned) return -1;
+          if (!a.isMasterPinned && b.isMasterPinned) return 1;
           if (a.isPinned && !b.isPinned) return -1;
           if (!a.isPinned && b.isPinned) return 1;
-          return 0; // If both are pinned or neither are, rely on the original timestamp sort
+          return 0; // Fallback to timestamp sort
       });
       setLiveThreads(fetched);
     });
@@ -158,9 +172,30 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
       setForumProfile(profileData);
       setPhase('SECTORS');
       setAuthError('');
-    } catch (e) { 
-      setAuthError("DATABASE ERROR. RETRY UPLINK."); 
-    } finally { setIsSubmitting(false); }
+    } catch (error: any) { 
+      console.error("UPLINK FAILURE DETAILS:", error);
+      // Expose the specific Firebase error code if available, otherwise fallback
+      const exactError = error?.code || error?.message || "UNKNOWN REJECTION";
+      setAuthError(`DATABASE ERROR: ${exactError}. Check console for full diagnostics.`); 
+    } finally { 
+      setIsSubmitting(false); 
+    }
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || []);
+      if (attachments.length + files.length > 2) {
+          alert("MAXIMUM OVERRIDE: Only 2 images permitted per transmission.");
+          return;
+      }
+      const validFiles = files.filter(f => {
+          if (f.size > 2 * 1024 * 1024) { // 2MB restriction
+              alert(`PAYLOAD REJECTED: ${f.name} exceeds 2MB limit.`);
+              return false;
+          }
+          return true;
+      });
+      setAttachments([...attachments, ...validFiles]);
   };
 
   const handleCreateThread = async () => {
@@ -178,9 +213,10 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
         createdAt: serverTimestamp(),
         replies: 0,
         isPinned: false,
+        isMasterPinned: false,
         isLocked: false
       });
-      setNewTitle(''); setNewContent(''); setIsCreating(false);
+      setNewTitle(''); setNewContent(''); setAttachments([]); setIsCreating(false);
     } catch (error) {
       alert("Error: Database Access Denied.");
     } finally { setIsSubmitting(false); }
@@ -226,6 +262,15 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
       } catch (error) { alert("LOCK OVERRIDE REJECTED."); }
   };
 
+  const handleToggleMasterPin = async (thread: any, e: React.MouseEvent) => {
+      e.stopPropagation();
+      try {
+          const newState = !thread.isMasterPinned;
+          await updateDoc(doc(db, 'forum_threads', thread.id), { isMasterPinned: newState });
+          if (selectedThread?.id === thread.id) setSelectedThread({ ...selectedThread, isMasterPinned: newState });
+      } catch (error) { alert("MASTER PIN OVERRIDE REJECTED."); }
+  };
+
   const handleDeleteThread = async (threadId: string, e: React.MouseEvent) => {
       e.stopPropagation();
       if (!window.confirm("TERMINATE TRANSMISSION? This action is irreversible.")) return;
@@ -248,7 +293,6 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
       try {
           const payload: any = { content: editContent, editedAt: serverTimestamp() };
           
-          // Apply Commander Sector Override if editing a thread
           if (collectionName === 'forum_threads' && isCommander && editCategory) {
               payload.category = editCategory;
           }
@@ -271,8 +315,7 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
     setSelectedThread(thread);
     setPhase('THREAD_VIEW');
   };
-
-  // --- RENDER PIPELINE ---
+// --- RENDER PIPELINE ---
 
   if (phase === 'AUTHENTICATING') {
       return <div className="min-h-screen pt-40 text-center text-[#00F3FF] font-mono tracking-widest uppercase animate-pulse">Establishing Secure Nexus Handshake...</div>;
@@ -330,48 +373,98 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
 
       <div className="max-w-[90rem] mx-auto grid grid-cols-1 md:grid-cols-12 gap-8">
         
-        {/* LEFT COLUMN: SIDEBAR */}
-        <div className="md:col-span-4 space-y-4">
-          <div className="bg-[#050505] border-2 border-[#00F3FF]/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(0,243,255,0.1)] mb-8 relative overflow-hidden group">
+        {/* LEFT COLUMN: SIDEBAR EXPLORER TREE */}
+        <div className="md:col-span-4 h-[calc(100vh-8rem)] sticky top-28 overflow-y-auto pr-4 space-y-4 pb-12 scrollbar-thin scrollbar-thumb-[#00F3FF]/30 scrollbar-track-transparent">
+          
+          {/* Identity & Optic Controls */}
+          <div className="bg-[#050505] border-2 border-[#00F3FF]/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(0,243,255,0.1)] mb-6 relative overflow-hidden group">
              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none"></div>
-             <div className="relative z-10 flex items-center gap-4">
-                 <img src={operativeAvatar} alt="Avatar" className="w-16 h-16 rounded-full border-2 border-[#00F3FF] object-cover bg-black" />
-                 <div>
-                     <div className="font-mono text-[10px] text-[#00F3FF] uppercase tracking-widest font-bold mb-1 flex items-center gap-2">OPERATIVE IDENTITY <ShieldCheck size={12}/></div>
-                     <div className="text-xl font-black text-white tracking-widest uppercase truncate mb-1">{forumProfile?.alias}</div>
-                     <div className="text-[10px] font-mono bg-white/10 text-gray-300 inline-block px-2 py-0.5 rounded border border-white/20 uppercase tracking-widest">TIER: {userTier}</div>
+             <div className="relative z-10 flex items-center justify-between">
+                 <div className="flex items-center gap-4">
+                     <img src={operativeAvatar} alt="Avatar" onError={(e) => { e.currentTarget.src = DEFAULT_AVATAR; }} className="w-14 h-14 rounded-full border-2 border-[#00F3FF] object-cover bg-black" />
+                     <div>
+                         <div className="font-mono text-[10px] text-[#00F3FF] uppercase tracking-widest font-bold mb-1 flex items-center gap-2">OPERATIVE <ShieldCheck size={12}/></div>
+                         <div className="text-lg font-black text-white tracking-widest uppercase truncate">{forumProfile?.alias}</div>
+                     </div>
                  </div>
+                 <button onClick={() => setShowSettings(!showSettings)} className="p-2 bg-white/5 hover:bg-[#00F3FF]/20 rounded-lg border border-white/10 hover:border-[#00F3FF] transition-all text-white hover:text-[#00F3FF]">
+                    <Settings size={20} />
+                 </button>
              </div>
+
+             {/* Optic Preferences Expandable */}
+             {showSettings && (
+                 <div className="mt-4 pt-4 border-t border-white/10 space-y-4 animate-in fade-in slide-in-from-top-2">
+                     <div>
+                         <label className="text-[10px] font-mono text-gray-400 uppercase tracking-widest block mb-2">Select Font Style (Typography Matrix)</label>
+                         <select value={userFont} onChange={(e) => setUserFont(e.target.value)} className="w-full bg-black border border-white/20 text-white text-xs p-2 rounded-lg outline-none">
+                             <option value="font-mono">System Mono (Standard)</option>
+                             <option value="font-sans">Clean Sans (Modern)</option>
+                             <option value="font-serif">Literary Serif (Classic)</option>
+                         </select>
+                     </div>
+                     <div>
+                         <label className="text-[10px] font-mono text-gray-400 uppercase tracking-widest block mb-2"> Font Size (Optical Zoom) [Scale: {Math.round(fontScale * 100)}%]</label>
+                         <input type="range" min="0.8" max="1.5" step="0.1" value={fontScale} onChange={(e) => setFontScale(parseFloat(e.target.value))} className="w-full accent-[#00F3FF]" />
+                     </div>
+                 </div>
+             )}
           </div>
           
           <button 
-             onClick={() => { setPhase('DASHBOARD'); setIsCreating(false); }}
-             className={`w-full text-left p-4 rounded-xl border-2 mb-4 flex items-center justify-between transition-all group ${phase === 'DASHBOARD' ? 'bg-[#FFD700]/10 border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.2)]' : 'bg-[#050505] border-white/10 hover:border-[#FFD700]/50'}`}
+             onClick={() => { setPhase('DASHBOARD'); setIsCreating(false); setSelectedThread(null); }}
+             className={`w-full text-left p-4 rounded-xl border-2 mb-2 flex items-center justify-between transition-all group ${phase === 'DASHBOARD' ? 'bg-[#FFD700]/10 border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.2)]' : 'bg-[#050505] border-white/10 hover:border-[#FFD700]/50'}`}
           >
-             <div className={`flex items-center gap-3 font-black tracking-widest uppercase text-xs ${phase === 'DASHBOARD' ? 'text-[#FFD700]' : 'text-gray-300'}`}>
-                <Activity size={16} /> OPERATIVE DASHBOARD
+             <div className={`flex items-center gap-3 font-black tracking-widest uppercase text-sm ${phase === 'DASHBOARD' ? 'text-[#FFD700]' : 'text-gray-300'}`}>
+                <Activity size={18} /> OPERATIVE DASHBOARD
              </div>
-             <History size={16} className={phase === 'DASHBOARD' ? 'text-[#FFD700]' : 'text-gray-600'} />
           </button>
 
-          {categories.map((cat) => {
-            const hasAccess = currentLevel <= cat.reqLevel;
-            return (
-              <button 
-                key={cat.id} disabled={!hasAccess}
-                onClick={() => { setActiveCategory(cat.id); setIsCreating(false); setPhase('SECTORS'); }}
-                className={`w-full text-left p-6 rounded-2xl border-2 flex flex-col gap-3 transition-all group ${!hasAccess ? 'bg-black border-red-500/10 opacity-40 cursor-not-allowed' : activeCategory === cat.id && phase !== 'THREAD_VIEW' && phase !== 'DASHBOARD' ? 'bg-[#00F3FF]/5 border-[#00F3FF] shadow-[0_0_30px_rgba(0,243,255,0.15)] scale-[1.02]' : 'bg-[#050505] border-white/5 hover:border-[#00F3FF]/30 hover:bg-white/5'}`}
-              >
-                <div className="flex justify-between items-center w-full">
-                  <div className={`flex items-center gap-4 font-black tracking-widest uppercase text-sm ${activeCategory === cat.id && phase !== 'THREAD_VIEW' && phase !== 'DASHBOARD' ? 'text-[#00F3FF]' : 'text-white'}`}>
-                    {cat.icon} {cat.name}
-                  </div>
-                  {!hasAccess && <Lock size={16} className="text-red-500" />}
+          {/* Dynamic Navigation Tree */}
+          <div className="space-y-2">
+            {categories.map((cat) => {
+              const hasAccess = currentLevel <= cat.reqLevel;
+              const isActiveSector = activeCategory === cat.id && phase !== 'DASHBOARD';
+
+              return (
+                <div key={cat.id} className="flex flex-col">
+                  <button 
+                    disabled={!hasAccess}
+                    onClick={() => { setActiveCategory(cat.id); setIsCreating(false); setPhase('SECTORS'); setSelectedThread(null); }}
+                    className={`w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group ${!hasAccess ? 'bg-black border-red-500/10 opacity-40 cursor-not-allowed' : isActiveSector ? 'bg-[#00F3FF]/10 border-[#00F3FF] shadow-[0_0_20px_rgba(0,243,255,0.15)] z-10' : 'bg-[#050505] border-white/5 hover:border-[#00F3FF]/30 hover:bg-white/5'}`}
+                  >
+                    <div className="flex flex-col gap-1">
+                      <div className={`flex items-center gap-3 font-black tracking-widest uppercase text-sm md:text-base ${isActiveSector ? 'text-[#00F3FF]' : 'text-white'}`}>
+                        {cat.icon} {cat.name}
+                      </div>
+                      <div className="text-xs font-mono text-gray-500 pl-8">{cat.desc}</div>
+                    </div>
+                    {hasAccess ? (isActiveSector ? <ChevronDown size={18} className="text-[#00F3FF] shrink-0" /> : <ChevronRight size={18} className="text-gray-600 group-hover:text-[#00F3FF] shrink-0" />) : <Lock size={16} className="text-red-500 shrink-0" />}
+                  </button>
+
+                  {/* SUB-THREAD EXPLORER LIST */}
+                  {isActiveSector && hasAccess && (
+                    <div className="pl-6 pt-2 pb-4 space-y-2 animate-in slide-in-from-top-2 border-l-2 border-[#00F3FF]/20 ml-6">
+                       {liveThreads.length === 0 ? (
+                          <div className="text-[10px] font-mono text-gray-600 uppercase tracking-widest pl-2">No active transmissions.</div>
+                       ) : (
+                          liveThreads.map(thread => (
+                             <button 
+                               key={thread.id} 
+                               onClick={() => openThread(thread)}
+                               className={`w-full text-left py-2 px-3 rounded-lg text-sm transition-all truncate border-l-2 ${selectedThread?.id === thread.id ? 'bg-[#00F3FF]/5 border-[#00F3FF] text-[#00F3FF] font-bold shadow-inner' : 'border-transparent text-gray-400 hover:text-white hover:bg-white/5 font-medium'}`}
+                             >
+                               {thread.isMasterPinned && <Crown size={12} className="inline text-[#00F3FF] mr-2" />}
+                               {thread.title}
+                             </button>
+                          ))
+                       )}
+                    </div>
+                  )}
                 </div>
-                <div className="text-xs font-mono text-gray-500 leading-relaxed pl-9">{cat.desc}</div>
-              </button>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* RIGHT COLUMN: MAIN FORUM AREA */}
@@ -406,7 +499,23 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
                      </div>
                      <div>
                          <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest mb-3">Data Payload (Message)</label>
-                         <textarea value={newContent} onChange={(e) => setNewContent(e.target.value)} placeholder="Input intelligence data here..." rows={8} className="w-full bg-black border-2 border-white/10 rounded-2xl p-5 text-gray-300 font-mono text-sm outline-none focus:border-[#00F3FF] transition-colors resize-none shadow-inner" />
+                         <textarea value={newContent} onChange={(e) => setNewContent(e.target.value)} placeholder="Input intelligence data here..." rows={8} style={{ fontSize: `${0.875 * fontScale}rem` }} className={`w-full bg-black border-2 border-white/10 rounded-2xl p-5 text-gray-300 ${userFont} outline-none focus:border-[#00F3FF] transition-colors resize-none shadow-inner`} />
+                         
+                         {/* Attachment UI */}
+                         <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
+                             <div className="flex items-center gap-4">
+                                 <label className="cursor-pointer px-4 py-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2 hover:bg-[#00F3FF]/20 hover:border-[#00F3FF] transition-colors text-xs font-mono uppercase text-gray-300 hover:text-[#00F3FF]">
+                                     <ImagePlus size={16} /> Attach Photos
+                                     <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageSelect} />
+                                 </label>
+                                 <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{attachments.length}/2 Uplinked (Max 2MB)</span>
+                             </div>
+                             <div className="flex gap-2">
+                                 {attachments.map((file, i) => (
+                                     <span key={i} className="text-[10px] px-2 py-1 bg-gray-800 rounded text-gray-300 truncate max-w-[100px]">{file.name}</span>
+                                 ))}
+                             </div>
+                         </div>
                      </div>
                      <button onClick={handleCreateThread} disabled={isSubmitting || !newTitle.trim() || !newContent.trim()} className={`w-full py-6 font-black uppercase tracking-[0.2em] text-sm rounded-xl flex items-center justify-center gap-3 transition-all duration-300 ${(!newTitle.trim() || !newContent.trim()) ? 'bg-gray-800 text-gray-500 cursor-not-allowed' : 'bg-[#00F3FF] text-black hover:bg-white shadow-[0_0_40px_rgba(0,243,255,0.4)] hover:scale-[1.02]'}`}>
                          {isSubmitting ? 'ENCRYPTING & TRANSMITTING...' : <><Send size={20} /> SECURE DEPLOYMENT</>}
@@ -425,12 +534,13 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
                         <div key={thread.id} onClick={() => openThread(thread)} className="p-6 border rounded-2xl transition-all duration-300 flex justify-between items-center group cursor-pointer shadow-md bg-black border-white/20 hover:border-[#00F3FF]/50 hover:shadow-[0_0_30px_rgba(0,243,255,0.15)] relative">
                            <div className="flex-1 pr-6">
                              <div className="flex items-center gap-3 mb-3">
-                                {thread.isPinned && <Pin size={18} className="text-[#FFD700] fill-[#FFD700] shrink-0 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]" />}
+                                {thread.isMasterPinned && <Crown size={18} className="text-[#00F3FF] shrink-0 drop-shadow-[0_0_8px_rgba(0,243,255,0.8)]" />}
+                                {thread.isPinned && !thread.isMasterPinned && <Pin size={18} className="text-[#FFD700] fill-[#FFD700] shrink-0 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]" />}
                                 {thread.isLocked && <Lock size={18} className="text-red-500 shrink-0" />}
                                 <h4 className={`font-bold text-lg md:text-xl transition-colors leading-tight ${phase === 'DASHBOARD' ? 'text-[#FFD700]' : 'text-white group-hover:text-[#00F3FF]'}`}>{thread.title}</h4>
                              </div>
                              <div className="flex items-center gap-3 text-[10px] md:text-xs font-mono uppercase tracking-widest">
-                                 <img src={thread.authorPhoto || DEFAULT_AVATAR} alt="OP" className="w-5 h-5 rounded-full border border-gray-600 bg-black" />
+                                 <img src={operativeAvatar} alt="Avatar" onError={(e) => { e.currentTarget.src = DEFAULT_AVATAR; }} className="w-14 h-14 rounded-full border-2 border-[#00F3FF] object-cover bg-black" />
                                  <span className="text-gray-400 flex items-center gap-2"><span className="text-white font-bold">{thread.authorName}</span></span>
                                  <span className="text-gray-700">|</span>
                                  <span className="px-3 py-1 rounded font-bold bg-[#00F3FF]/10 text-[#00F3FF] border border-[#00F3FF]/30">{thread.authorTier}</span>
@@ -465,12 +575,13 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
                     <div className="bg-black border border-[#00F3FF]/30 p-8 rounded-2xl shadow-[0_0_30px_rgba(0,243,255,0.1)] relative overflow-hidden group">
                        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none"><ShieldCheck size={120} /></div>
                        
-                       {/* God Mode Edit/Delete Controls */}
+                       {/* God Mode Edit/Delete Controls - HOVER FRICTION REMOVED */}
                        {(selectedThread.authorUid === user.uid || isCommander) && (
-                           <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                           <div className="absolute top-4 right-4 flex gap-2 z-20">
                                {isCommander && (
                                   <>
                                     <span className="text-[9px] font-mono text-red-500 font-bold tracking-widest uppercase mr-2 self-center animate-pulse">OVERRIDE ACTIVE</span>
+                                    <button onClick={(e) => handleToggleMasterPin(selectedThread, e)} className={`p-2 rounded transition-colors ${selectedThread.isMasterPinned ? 'bg-[#00F3FF]/20 text-[#00F3FF]' : 'bg-white/10 text-white hover:text-[#00F3FF]'}`} title="Toggle Master Priority"><Crown size={16}/></button>
                                     <button onClick={(e) => handleTogglePin(selectedThread, e)} className={`p-2 rounded transition-colors ${selectedThread.isPinned ? 'bg-[#FFD700]/20 text-[#FFD700]' : 'bg-white/10 text-white hover:text-[#FFD700]'}`} title="Toggle Pin"><Pin size={16}/></button>
                                     <button onClick={(e) => handleToggleLock(selectedThread, e)} className={`p-2 rounded transition-colors ${selectedThread.isLocked ? 'bg-red-500/20 text-red-500' : 'bg-white/10 text-white hover:text-red-500'}`} title="Toggle Lock"><Lock size={16}/></button>
                                   </>
@@ -482,7 +593,7 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
 
                        <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-widest mb-4 relative z-10 leading-tight pr-16">{selectedThread.title}</h2>
                        <div className="flex flex-wrap items-center gap-4 text-[10px] md:text-xs font-mono text-gray-400 mb-8 border-b border-white/10 pb-6 relative z-10">
-                         <img src={selectedThread.authorPhoto || DEFAULT_AVATAR} alt="OP" className="w-8 h-8 rounded-full border border-[#00F3FF] bg-black" />
+                         <img src={selectedThread.authorPhoto || DEFAULT_AVATAR} alt="OP" onError={(e) => { e.currentTarget.src = DEFAULT_AVATAR; }} className="w-8 h-8 rounded-full border border-[#00F3FF] bg-black" />
                          <span className="text-[#00F3FF] font-bold">OP: {selectedThread.authorName}</span>
                          <span className="hidden md:inline">|</span>
                          <span className="bg-white/10 px-2 py-1 rounded text-white border border-white/20">TIER: {selectedThread.authorTier}</span>
@@ -504,7 +615,7 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
                                </div>
                            </div>
                        ) : (
-                           <p className="text-gray-200 font-mono text-sm leading-loose whitespace-pre-wrap relative z-10">{selectedThread.content}</p>
+                           <p style={{ fontSize: `${1 * fontScale}rem` }} className={`text-gray-100 ${userFont} leading-loose whitespace-pre-wrap relative z-10`}>{selectedThread.content}</p>
                        )}
                     </div>
 
@@ -523,7 +634,7 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
 
                             <div className="flex justify-between items-start mb-4 pr-12">
                                <div className="flex items-center gap-3">
-                                 <img src={reply.authorPhoto || DEFAULT_AVATAR} alt="OP" className="w-6 h-6 rounded-full border border-gray-600 bg-black" />
+                                 <img src={reply.authorPhoto || DEFAULT_AVATAR} alt="OP" onError={(e) => { e.currentTarget.src = DEFAULT_AVATAR; }} className="w-6 h-6 rounded-full border border-gray-600 bg-black" />
                                  <span className="text-white font-mono text-xs font-bold uppercase tracking-widest">{reply.authorName}</span>
                                  <span className="text-[#00F3FF] font-mono text-[9px] uppercase bg-[#00F3FF]/10 border border-[#00F3FF]/30 px-2 py-0.5 rounded">{reply.authorTier}</span>
                                </div>
@@ -539,7 +650,7 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
                                     </div>
                                 </div>
                             ) : (
-                                <p className="text-gray-300 font-mono text-sm leading-relaxed whitespace-pre-wrap">{reply.content}</p>
+                                <p style={{ fontSize: `${0.95 * fontScale}rem` }} className={`text-gray-200 ${userFont} leading-relaxed whitespace-pre-wrap mt-3`}>{reply.content}</p>
                             )}
                          </div>
                        ))}
@@ -562,7 +673,8 @@ export const ForumView: React.FC<ForumProps> = ({ userTier, user, openLogin }) =
                             onChange={(e) => setReplyContent(e.target.value)}
                             placeholder="Transmit intelligence reply..."
                             rows={4}
-                            className="w-full bg-[#020202] border border-white/10 rounded-xl p-5 text-white font-mono text-sm outline-none focus:border-[#00F3FF] transition-colors resize-none mb-4 shadow-inner"
+                            style={{ fontSize: `${0.875 * fontScale}rem` }}
+                            className={`w-full bg-[#020202] border border-white/10 rounded-xl p-5 text-white ${userFont} outline-none focus:border-[#00F3FF] transition-colors resize-none mb-4 shadow-inner`}
                           />
                           <button
                             onClick={handlePostReply}

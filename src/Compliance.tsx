@@ -177,6 +177,11 @@ export const ComplianceView: React.FC = () => {
           </p>
         </section>
 
+        {/* FINANCIAL COMPLIANCE DECLARATION (THE MASTER ANCHOR) */}
+        <div className="w-full mt-8 p-6 border border-[#00F3FF]/30 bg-[#00F3FF]/10 rounded-xl text-[10px] md:text-xs text-gray-300 font-mono leading-relaxed shadow-inner">
+            <strong className="text-[#00F3FF] text-sm mb-2 block">FINANCIAL COMPLIANCE DECLARATION:</strong> A.I.C.E. Systems Corp. is exclusively an enterprise Software-as-a-Service (SaaS) provider. We provide autonomous system monitoring and stabilization within defined computational environments. <strong className="text-white">We do not execute trades, move funds, act as a custodian, or interact directly with client financial ledgers.</strong> All licensing transactions are strictly B2B and processed via regulated, third-party Tier-1 payment gateways.
+        </div>
+
       </div>
     </div>
   );

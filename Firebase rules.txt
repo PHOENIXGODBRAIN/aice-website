@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- COMMANDER CLEARANCE PROTOCOL ---
+    function isCommander() {
+      // Validates Commander override authority
+      return request.auth != null && request.auth.token.role == 'COMMANDER';
+    }
+
+    // --- GLOBAL TELEMETRY UPLINK ---
+    // Opens the live dashboard feed to the public. 
+    // Write access remains false; only the Python Admin SDK can push data here.
+    match /aice_telemetry/{document=**} {
+      allow read: if true;
+      allow write: if false; 
+    }
+
+    // --- SERVER-SIDE FINANCIAL LEDGERS (ABSOLUTE LOCKDOWN) ---
+    // These collections are manipulated exclusively by the backend Stripe Webhook via the Admin SDK.
+    // The Admin SDK automatically bypasses these rules. Client access is strictly denied.
+    match /pending_sessions/{document=**} { allow read, write: if false; }
+    match /system_events/{document=**} { allow read, write: if false; }
+    match /audit_logs/{document=**} { allow read, write: if false; }
+    match /payments/{document=**} { allow read, write: if false; }
+
+    // --- ARTIFACTS PERIMETER SECUREMENT ---
+    match /artifacts/aice-6bd8e/users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isCommander());
+      
+      // Clients can create their profile, but cannot assign themselves high-clearance roles.
+      allow create: if request.auth != null && request.auth.uid == userId
+                    && !request.resource.data.keys().hasAny(['role', 'auditStatus', 'amountPaid', 'paymentVerified']);
+      
+      // EXPLICIT SCHEMA & TYPE LOCK: Allows specific fields AND enforces data types.
+      allow update: if isCommander() || (
+                      request.auth != null && 
+                      request.auth.uid == userId &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['company', 'sector', 'subSector', 'telemetryUpdated', 'alias']) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['company']) || request.resource.data.company is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['sector']) || request.resource.data.sector is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['subSector']) || request.resource.data.subSector is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['alias']) || request.resource.data.alias is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['telemetryUpdated']) || request.resource.data.telemetryUpdated is timestamp)
+                    );
+                    
+      allow delete: if isCommander();
+    }
+
+    // Default Deny for anything else in the artifacts folder
+    match /artifacts/{document=**} {
+      allow read, write: if false; 
+    }
+
+    // --- FORUM PROTOCOLS ---
+    match /forum_profiles/{userId} {
+      allow read: if request.auth != null; 
+      
+      // STRICT ALLOWLIST FOR FORUM: Defines exactly what can be written during minting and updates.
+      allow create: if isCommander() || (
+                      request.auth != null && 
+                      request.auth.uid == userId &&
+                      request.resource.data.keys().hasOnly(['displayName', 'bio', 'avatarUrl', 'updatedAt', 'alias', 'createdAt'])
+                    );
+
+      allow update: if isCommander() || (
+                      request.auth != null && 
+                      request.auth.uid == userId &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'bio', 'avatarUrl', 'updatedAt', 'alias', 'createdAt']) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['displayName']) || request.resource.data.displayName is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['alias']) || request.resource.data.alias is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['bio']) || request.resource.data.bio is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['avatarUrl']) || request.resource.data.avatarUrl is string) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['updatedAt']) || request.resource.data.updatedAt is timestamp) &&
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['createdAt']) || request.resource.data.createdAt is timestamp)
+                    );
+
+      allow delete: if isCommander();
+    }
+
+    match /forum_threads/{threadId} {
+      allow read, create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorUid || isCommander());
+    }
+
+    match /forum_replies/{replyId} {
+      allow read, create: if request.auth != null;
+      allow update, delete: if request.auth != null && (request.auth.uid == resource.data.authorUid || isCommander());
+    }
+  }
+}
